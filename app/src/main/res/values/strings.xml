@@ -1,0 +1,21 @@
+<resources>
+    <string name="app_name">My Expense Manager</string>
+    <string name="action_settings">Settings</string>
+
+    <!-- Create Company field names -->
+    <string name="title_create_company">Create Company</string>
+    <string name="name">Name*</string>
+    <string name="financialyearstartingfrom">Financial Year Starting from</string>
+    <string name="bookstartingfrom">Book Starting from</string>
+    <string name="address">Address</string>
+    <string name="state">State</string>
+    <string name="country">Country</string>
+    <string name="pin">Pin</string>
+    <string name="phonenumber">Phone Number</string>
+    <string name="email">Email</string>
+    <string name="aadhar">Aadhar</string>
+    <string name="pan">Pan</string>
+    <string name="tan">Tan</string>
+    <string name="err_msg_name">Name cannot be empty</string>
+    <string name="err_msg_email">Invalid email address</string>
+</resources>
