@@ -1,16 +1,32 @@
 package com.scorpio.myexpensemanager;
 
+import android.arch.lifecycle.Observer;
+import android.arch.lifecycle.ViewModelProviders;
 import android.content.Intent;
 import android.os.Bundle;
+import android.support.annotation.Nullable;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
 
 import com.scorpio.myexpensemanager.activity.CreateCompany;
+import com.scorpio.myexpensemanager.adapters.CompanyRvAdapter;
+import com.scorpio.myexpensemanager.db.vo.Company;
+import com.scorpio.myexpensemanager.viewmodels.CompanyViewModel;
+
+import java.util.ArrayList;
+import java.util.List;
 
 public class MyExpenseManager extends AppCompatActivity {
+
+    private CompanyViewModel companyViewModel;
+
+    private RecyclerView companyRv;
+    private CompanyRvAdapter companyRvAdapter;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -24,15 +40,16 @@ public class MyExpenseManager extends AppCompatActivity {
             Intent intent = new Intent(this, CreateCompany.class);
             startActivity(intent);
         });
-//        fab.setOnClickListener(
-//
-//                new View.OnClickListener() {
-//            @Override
-//            public void onClick(View view) {
-//                Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
-//                        .setAction("Action", null).show();
-//            }
-//        });
+        companyRv = findViewById(R.id.companyRv);
+        companyRv.setLayoutManager(new LinearLayoutManager(this));
+        companyRvAdapter = new CompanyRvAdapter(new ArrayList<Company>());
+
+        companyRv.setAdapter(companyRvAdapter);
+
+        companyViewModel = ViewModelProviders.of(this).get(CompanyViewModel.class);
+        companyViewModel.fetchAllCompany().observe(MyExpenseManager.this, (companyList -> {
+            companyRvAdapter.addItms(companyList);
+        }));
     }
 
     @Override

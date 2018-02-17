@@ -1,8 +1,11 @@
 package com.scorpio.myexpensemanager.db.vo;
 
+import android.arch.persistence.room.ColumnInfo;
 import android.arch.persistence.room.Entity;
+import android.arch.persistence.room.Index;
 import android.arch.persistence.room.PrimaryKey;
 import android.arch.persistence.room.TypeConverters;
+import android.support.annotation.NonNull;
 
 import com.scorpio.myexpensemanager.db.utils.TimestampConverter;
 
@@ -16,6 +19,8 @@ public class Company implements Serializable {
 
     @PrimaryKey(autoGenerate = true)
     private Long id;
+    @NonNull
+    @ColumnInfo(index = true)
     private String name;
     private String address1;
     private String address2;

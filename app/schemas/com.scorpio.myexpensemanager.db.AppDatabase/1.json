@@ -2,11 +2,11 @@
   "formatVersion": 1,
   "database": {
     "version": 1,
-    "identityHash": "cb1ad34055c309edf071dc32cdb61f45",
+    "identityHash": "214107486383cf8586500c450d025e55",
     "entities": [
       {
         "tableName": "Company",
-        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`id` INTEGER PRIMARY KEY AUTOINCREMENT, `name` TEXT, `address1` TEXT, `address2` TEXT, `state` TEXT, `country` TEXT, `pincode` TEXT, `email` TEXT, `phone` TEXT, `tan` TEXT, `pan` TEXT, `aadhar` TEXT, `finYearStart` INTEGER, `finYearEnd` INTEGER, `bookStart` INTEGER, `currencyId` TEXT, `isPasswordProtected` INTEGER NOT NULL, `password` TEXT, `dbName` TEXT, `modifiedDate` INTEGER)",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`id` INTEGER PRIMARY KEY AUTOINCREMENT, `name` TEXT NOT NULL, `address1` TEXT, `address2` TEXT, `state` TEXT, `country` TEXT, `pincode` TEXT, `email` TEXT, `phone` TEXT, `tan` TEXT, `pan` TEXT, `aadhar` TEXT, `finYearStart` INTEGER, `finYearEnd` INTEGER, `bookStart` INTEGER, `currencyId` TEXT, `isPasswordProtected` INTEGER NOT NULL, `password` TEXT, `dbName` TEXT, `modifiedDate` INTEGER)",
         "fields": [
           {
             "fieldPath": "id",
@@ -18,7 +18,7 @@
             "fieldPath": "name",
             "columnName": "name",
             "affinity": "TEXT",
-            "notNull": false
+            "notNull": true
           },
           {
             "fieldPath": "address1",
@@ -135,13 +135,22 @@
           ],
           "autoGenerate": true
         },
-        "indices": [],
+        "indices": [
+          {
+            "name": "index_Company_name",
+            "unique": false,
+            "columnNames": [
+              "name"
+            ],
+            "createSql": "CREATE  INDEX `index_Company_name` ON `${TABLE_NAME}` (`name`)"
+          }
+        ],
         "foreignKeys": []
       }
     ],
     "setupQueries": [
       "CREATE TABLE IF NOT EXISTS room_master_table (id INTEGER PRIMARY KEY,identity_hash TEXT)",
-      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, \"cb1ad34055c309edf071dc32cdb61f45\")"
+      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, \"214107486383cf8586500c450d025e55\")"
     ]
   }
 }

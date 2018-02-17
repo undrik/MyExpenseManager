@@ -1,13 +1,13 @@
 package com.scorpio.myexpensemanager.activity;
 
+import android.arch.lifecycle.ViewModelProviders;
+import android.os.Bundle;
 import android.support.design.widget.Snackbar;
 import android.support.design.widget.TextInputEditText;
 import android.support.design.widget.TextInputLayout;
 import android.support.v7.app.AppCompatActivity;
-import android.os.Bundle;
 import android.support.v7.widget.Toolbar;
 import android.text.Editable;
-import android.text.TextUtils;
 import android.text.TextWatcher;
 import android.util.Patterns;
 import android.view.Menu;
@@ -16,6 +16,9 @@ import android.view.View;
 import android.view.WindowManager;
 
 import com.scorpio.myexpensemanager.R;
+import com.scorpio.myexpensemanager.db.AppDatabase;
+import com.scorpio.myexpensemanager.db.vo.Company;
+import com.scorpio.myexpensemanager.viewmodels.CompanyViewModel;
 
 public class CreateCompany extends AppCompatActivity {
 
@@ -23,6 +26,8 @@ public class CreateCompany extends AppCompatActivity {
     View view;
     TextInputLayout textInputName, textInputEmail;
     TextInputEditText inputName, inputEmail;
+    private AppDatabase appDb;
+    private CompanyViewModel companyViewModel;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -46,6 +51,9 @@ public class CreateCompany extends AppCompatActivity {
         inputEmail = findViewById(R.id.inputEmail);
         inputEmail.addTextChangedListener(new CreateCompanyTextWatcher(inputEmail));
 
+        appDb = AppDatabase.getDatabase(this.getApplication());
+
+        companyViewModel = ViewModelProviders.of(this).get(CompanyViewModel.class);
     }
 
     @Override
@@ -60,7 +68,15 @@ public class CreateCompany extends AppCompatActivity {
         int id = item.getItemId();
 
         if (id == R.id.actionCheck) {
-            Snackbar.make(view, "Your code on action goes here", Snackbar.LENGTH_LONG).show();
+//            Snackbar.make(view, "Your code on action goes here", Snackbar.LENGTH_LONG).show();
+            if (validateName()) {
+                //This code should be changed later TODO
+                Company company = new Company();
+                company.setName(inputName.getText().toString());
+                companyViewModel.addCompany(company);
+                finishActivity(0);
+                return true;
+            }
         }
 
         return super.onOptionsItemSelected(item);
@@ -68,7 +84,8 @@ public class CreateCompany extends AppCompatActivity {
 
     private void requestFocus(View view) {
         if (view.requestFocus()) {
-            getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_VISIBLE);
+            getWindow().setSoftInputMode(WindowManager.LayoutParams
+                    .SOFT_INPUT_STATE_ALWAYS_VISIBLE);
         }
     }
 
