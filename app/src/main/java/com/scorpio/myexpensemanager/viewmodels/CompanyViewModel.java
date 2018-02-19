@@ -31,10 +31,19 @@ public class CompanyViewModel extends AndroidViewModel {
         return companyLiveData;
     }
 
+    public Company fetchCompanyByName(@NonNull final String name) {
+        return appDb.companyDao().findCompanyByName(name);
+    }
+
     public void addCompany(final Company company) {
         if (null != company && null != company.getName()) {
             new AddCompanyTask(appDb).execute(company);
         }
+    }
+
+    public boolean isCompanyExists(final String name) {
+//        Company company = appDb.companyDao().findCompanyByName(name);
+        return false;
     }
 
 

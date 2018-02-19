@@ -2,7 +2,6 @@ package com.scorpio.myexpensemanager.activity;
 
 import android.arch.lifecycle.ViewModelProviders;
 import android.os.Bundle;
-import android.support.design.widget.Snackbar;
 import android.support.design.widget.TextInputEditText;
 import android.support.design.widget.TextInputLayout;
 import android.support.v7.app.AppCompatActivity;
@@ -20,6 +19,8 @@ import com.scorpio.myexpensemanager.db.AppDatabase;
 import com.scorpio.myexpensemanager.db.vo.Company;
 import com.scorpio.myexpensemanager.viewmodels.CompanyViewModel;
 
+import java.util.List;
+
 public class CreateCompany extends AppCompatActivity {
 
     Toolbar toolbar;
@@ -28,6 +29,7 @@ public class CreateCompany extends AppCompatActivity {
     TextInputEditText inputName, inputEmail;
     private AppDatabase appDb;
     private CompanyViewModel companyViewModel;
+    private List<Company> companyList;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -54,6 +56,9 @@ public class CreateCompany extends AppCompatActivity {
         appDb = AppDatabase.getDatabase(this.getApplication());
 
         companyViewModel = ViewModelProviders.of(this).get(CompanyViewModel.class);
+        companyViewModel.fetchAllCompany().observe(CreateCompany.this, (companies -> {
+            this.companyList = companies;
+        }));
     }
 
     @Override
@@ -74,7 +79,7 @@ public class CreateCompany extends AppCompatActivity {
                 Company company = new Company();
                 company.setName(inputName.getText().toString());
                 companyViewModel.addCompany(company);
-                finishActivity(0);
+                this.finish();
                 return true;
             }
         }
@@ -92,6 +97,10 @@ public class CreateCompany extends AppCompatActivity {
     private boolean validateName() {
         if (inputName.getText().toString().trim().isEmpty()) {
             textInputName.setError(getString(R.string.err_msg_name));
+            requestFocus(inputName);
+            return false;
+        } else if (isCompanyExist(inputName.getText().toString().trim())) {
+            textInputName.setError(getString(R.string.err_msg_name_exists));
             requestFocus(inputName);
             return false;
         } else {
@@ -114,6 +123,17 @@ public class CreateCompany extends AppCompatActivity {
         textInputEmail.setErrorEnabled(false);
         return true;
 
+    }
+
+    public boolean isCompanyExist(final String name) {
+        if (null != companyList && companyList.size() != 0) {
+            for (Company company : companyList) {
+                if (company.getName().equalsIgnoreCase(name)) {
+                    return true;
+                }
+            }
+        }
+        return false;
     }
 
     private class CreateCompanyTextWatcher implements TextWatcher {
