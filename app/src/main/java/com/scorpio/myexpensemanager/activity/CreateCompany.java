@@ -1,5 +1,6 @@
 package com.scorpio.myexpensemanager.activity;
 
+import android.app.DatePickerDialog;
 import android.arch.lifecycle.ViewModelProviders;
 import android.os.Bundle;
 import android.support.design.widget.TextInputEditText;
@@ -15,10 +16,12 @@ import android.view.View;
 import android.view.WindowManager;
 
 import com.scorpio.myexpensemanager.R;
+import com.scorpio.myexpensemanager.commons.Util;
 import com.scorpio.myexpensemanager.db.AppDatabase;
 import com.scorpio.myexpensemanager.db.vo.Company;
 import com.scorpio.myexpensemanager.viewmodels.CompanyViewModel;
 
+import java.util.Calendar;
 import java.util.List;
 
 public class CreateCompany extends AppCompatActivity {
@@ -26,7 +29,8 @@ public class CreateCompany extends AppCompatActivity {
     Toolbar toolbar;
     View view;
     TextInputLayout textInputName, textInputEmail;
-    TextInputEditText inputName, inputEmail;
+    TextInputEditText inputName, inputEmail, finYearStart, bookStart;
+
     private AppDatabase appDb;
     private CompanyViewModel companyViewModel;
     private List<Company> companyList;
@@ -52,6 +56,44 @@ public class CreateCompany extends AppCompatActivity {
         textInputEmail = findViewById(R.id.textInputEmail);
         inputEmail = findViewById(R.id.inputEmail);
         inputEmail.addTextChangedListener(new CreateCompanyTextWatcher(inputEmail));
+
+        //
+        Calendar calendar = Calendar.getInstance();
+        finYearStart = findViewById(R.id.finYearStart);
+        bookStart = findViewById(R.id.bookStart);
+        //set the Financial Year start and Book start date as 1-Apr of financial year
+        Calendar calendar1April = Calendar.getInstance();
+        calendar1April.set(calendar.get(Calendar.YEAR), Calendar.APRIL, 1);
+        String firstAprilStr = new String();
+        if (calendar.getTimeInMillis() > calendar1April.getTimeInMillis()) {
+            firstAprilStr = Util.convertToDDMMMYYYY(calendar1April.getTimeInMillis());
+        } else {
+            calendar1April.set(calendar.get(Calendar.YEAR) - 1, Calendar.APRIL, 1);
+            firstAprilStr = Util.convertToDDMMMYYYY(calendar1April.getTimeInMillis());
+        }
+        finYearStart.setText(firstAprilStr);
+        bookStart.setText(firstAprilStr);
+
+        finYearStart.setOnClickListener((view) -> {
+            DatePickerDialog datePickerDialog = new DatePickerDialog(CreateCompany.this);
+            datePickerDialog.setOnDateSetListener((v, year, month, dayOfMonth) -> {
+                calendar.set(year, month, dayOfMonth);
+                String dateText = Util.convertToDDMMMYYYY(calendar.getTimeInMillis());
+                finYearStart.setText(dateText);
+                bookStart.setText(dateText);
+            });
+
+            datePickerDialog.show();
+        });
+
+        bookStart.setOnClickListener((bsv) -> {
+            DatePickerDialog datePickerDialog = new DatePickerDialog(CreateCompany.this);
+            datePickerDialog.setOnDateSetListener((v, year, month, dayOfMonth) -> {
+                calendar.set(year, month, dayOfMonth);
+                bookStart.setText(Util.convertToDDMMMYYYY(calendar.getTimeInMillis()));
+            });
+            datePickerDialog.show();
+        });
 
         appDb = AppDatabase.getDatabase(this.getApplication());
 
