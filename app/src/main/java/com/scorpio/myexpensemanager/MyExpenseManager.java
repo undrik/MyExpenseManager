@@ -56,7 +56,7 @@ public class MyExpenseManager extends AppCompatActivity implements CompanyRvTouc
         //Add the item touch helperr
         // Only ItemTouchHelper.LEFT added to detect Right to Left Swipe
         ItemTouchHelper.SimpleCallback companySwiteCallback = new CompanyRvTouchHelper(0,
-                ItemTouchHelper.LEFT, this);
+                ItemTouchHelper.LEFT | ItemTouchHelper.RIGHT, this);
         new ItemTouchHelper(companySwiteCallback).attachToRecyclerView(companyRv);
 
         companyViewModel = ViewModelProviders.of(this).get(CompanyViewModel.class);
@@ -90,23 +90,26 @@ public class MyExpenseManager extends AppCompatActivity implements CompanyRvTouc
     @Override
     public void onSwiped(RecyclerView.ViewHolder viewHolder, int direction, int position) {
         if (viewHolder instanceof CompanyRvAdapter.CompanyViewHolder) {
-            // Delete index position
-//            final int deletedIndex = viewHolder.getAdapterPosition();
-
             final String companyName = companyRvAdapter.getItems().get(position).getName();
             final Company company = companyRvAdapter.getItems().get(position);
+            if (direction == ItemTouchHelper.LEFT) {
+                //remove the item from the recycler view
+                companyRvAdapter.removeItem(position);
 
-            //remove the item from the recycler view
-            companyRvAdapter.removeItem(position);
+                // showing Snackbar with UNDO option
+                Snackbar snackbar = Snackbar.make(expenseManagerLayout, companyName + " deleted " +
+                        "from " +
 
-            // showing Snackbar with UNDO option
-            Snackbar snackbar = Snackbar.make(expenseManagerLayout, companyName + " deleted from " +
-                    "list!", Snackbar.LENGTH_LONG);
-            snackbar.setAction("UNDO", (view) -> {
-                companyRvAdapter.restoreItem(company, position);
-            });
-            snackbar.setActionTextColor(Color.YELLOW);
-            snackbar.show();
+                        "list!", Snackbar.LENGTH_LONG);
+                snackbar.setAction("UNDO", (view) -> {
+                    companyRvAdapter.restoreItem(company, position);
+                });
+                snackbar.setActionTextColor(Color.YELLOW);
+                snackbar.show();
+            } else {
+                Intent intent = new Intent(this, CreateCompany.class);
+                startActivity(intent);
+            }
         }
     }
 }

@@ -80,6 +80,7 @@ public class CreateCompany extends AppCompatActivity {
 
         finYearStart.setOnClickListener((view) -> {
             DatePickerDialog datePickerDialog = new DatePickerDialog(CreateCompany.this);
+            datePickerDialog.getDatePicker().setMaxDate(Calendar.getInstance().getTimeInMillis());
             datePickerDialog.setOnDateSetListener((v, year, month, dayOfMonth) -> {
                 calendar.set(year, month, dayOfMonth);
                 String dateText = Util.convertToDDMMMYYYY(calendar.getTimeInMillis());
@@ -92,6 +93,7 @@ public class CreateCompany extends AppCompatActivity {
 
         bookStart.setOnClickListener((bsv) -> {
             DatePickerDialog datePickerDialog = new DatePickerDialog(CreateCompany.this);
+            datePickerDialog.getDatePicker().setMaxDate(Calendar.getInstance().getTimeInMillis());
             datePickerDialog.setOnDateSetListener((v, year, month, dayOfMonth) -> {
                 calendar.set(year, month, dayOfMonth);
                 bookStart.setText(Util.convertToDDMMMYYYY(calendar.getTimeInMillis()));

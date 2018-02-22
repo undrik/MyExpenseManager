@@ -5,6 +5,7 @@
     <string name="placeholder">Placeholder</string>
 
     <!-- actions -->
+    <string name="edit">EDIT</string>
     <string name="delete">DELETE</string>
 
     <!-- Create Company field names -->

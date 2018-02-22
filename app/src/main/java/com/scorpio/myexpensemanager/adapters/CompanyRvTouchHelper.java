@@ -53,6 +53,19 @@ public class CompanyRvTouchHelper extends ItemTouchHelper.SimpleCallback {
     public void onChildDraw(Canvas c, RecyclerView recyclerView, RecyclerView.ViewHolder
             viewHolder, float dX, float dY, int actionState, boolean isCurrentlyActive) {
 //        super.onChildDraw(c, recyclerView, viewHolder, dX, dY, actionState, isCurrentlyActive);
+        if (dX > 0) {
+            //swipe from Left ->Right
+            ((CompanyRvAdapter.CompanyViewHolder) viewHolder).deleteBackground.setVisibility(View
+                    .INVISIBLE);
+            ((CompanyRvAdapter.CompanyViewHolder) viewHolder).editBackgroud.setVisibility(View
+                    .VISIBLE);
+        } else {
+            // swipe from Right->Left
+            ((CompanyRvAdapter.CompanyViewHolder) viewHolder).editBackgroud.setVisibility(View
+                    .INVISIBLE);
+            ((CompanyRvAdapter.CompanyViewHolder) viewHolder).deleteBackground.setVisibility(View
+                    .VISIBLE);
+        }
         final View companyCv = ((CompanyRvAdapter.CompanyViewHolder) viewHolder).companyCv;
         getDefaultUIUtil().onDraw(c, recyclerView, companyCv, dX, dY, actionState,
                 isCurrentlyActive);

@@ -68,14 +68,16 @@ public class CompanyRvAdapter extends RecyclerView.Adapter<CompanyRvAdapter.Comp
         private TextView companyNameTv;
         private TextView companyLastUpdateTv;
         public CardView companyCv;
-        public RelativeLayout viewBackgroud;
+        public RelativeLayout editBackgroud, deleteBackground;
+
 
         public CompanyViewHolder(View itemView) {
             super(itemView);
             companyNameTv = itemView.findViewById(R.id.companyNameTv);
             companyLastUpdateTv = itemView.findViewById(R.id.companyLastUpdateTv);
             companyCv = itemView.findViewById(R.id.companyCv);
-            viewBackgroud = itemView.findViewById(R.id.viewBackground);
+            editBackgroud = itemView.findViewById(R.id.editBackground);
+            deleteBackground = itemView.findViewById(R.id.deleteBackground);
 
         }
     }
