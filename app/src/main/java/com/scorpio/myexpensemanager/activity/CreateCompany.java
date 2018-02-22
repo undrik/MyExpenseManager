@@ -3,9 +3,11 @@ package com.scorpio.myexpensemanager.activity;
 import android.app.DatePickerDialog;
 import android.arch.lifecycle.ViewModelProviders;
 import android.os.Bundle;
+import android.support.constraint.ConstraintLayout;
 import android.support.design.widget.TextInputEditText;
 import android.support.design.widget.TextInputLayout;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
 import android.text.Editable;
 import android.text.TextWatcher;
@@ -16,6 +18,8 @@ import android.view.View;
 import android.view.WindowManager;
 
 import com.scorpio.myexpensemanager.R;
+import com.scorpio.myexpensemanager.adapters.CompanyRvAdapter;
+import com.scorpio.myexpensemanager.adapters.CompanyRvTouchHelper;
 import com.scorpio.myexpensemanager.commons.Util;
 import com.scorpio.myexpensemanager.db.AppDatabase;
 import com.scorpio.myexpensemanager.db.vo.Company;
@@ -27,9 +31,9 @@ import java.util.List;
 public class CreateCompany extends AppCompatActivity {
 
     Toolbar toolbar;
-    View view;
     TextInputLayout textInputName, textInputEmail;
     TextInputEditText inputName, inputEmail, finYearStart, bookStart;
+    ConstraintLayout createCompanyLayout;
 
     private AppDatabase appDb;
     private CompanyViewModel companyViewModel;
@@ -40,7 +44,7 @@ public class CreateCompany extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_create_company);
 
-        view = findViewById(R.id.createCompanyLayout);
+        createCompanyLayout = findViewById(R.id.createCompanyLayout);
 
         toolbar = findViewById(R.id.main_toolbar);
         toolbar.setTitle(getString(R.string.title_create_company));

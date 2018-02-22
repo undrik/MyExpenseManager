@@ -1,9 +1,11 @@
 package com.scorpio.myexpensemanager.adapters;
 
+import android.support.v7.widget.CardView;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.scorpio.myexpensemanager.R;
@@ -43,19 +45,38 @@ public class CompanyRvAdapter extends RecyclerView.Adapter<CompanyRvAdapter.Comp
         notifyDataSetChanged();
     }
 
+    public void removeItem(int position) {
+        companyList.remove(position);
+        notifyItemRemoved(position);
+    }
+
+    public void restoreItem(Company company, int position) {
+        companyList.add(position, company);
+        notifyItemInserted(position);
+    }
+
     @Override
     public int getItemCount() {
         return companyList.size();
     }
 
+    public List<Company> getItems() {
+        return companyList;
+    }
+
     public static class CompanyViewHolder extends RecyclerView.ViewHolder {
         private TextView companyNameTv;
         private TextView companyLastUpdateTv;
+        public CardView companyCv;
+        public RelativeLayout viewBackgroud;
 
         public CompanyViewHolder(View itemView) {
             super(itemView);
             companyNameTv = itemView.findViewById(R.id.companyNameTv);
             companyLastUpdateTv = itemView.findViewById(R.id.companyLastUpdateTv);
+            companyCv = itemView.findViewById(R.id.companyCv);
+            viewBackgroud = itemView.findViewById(R.id.viewBackground);
+
         }
     }
 }
