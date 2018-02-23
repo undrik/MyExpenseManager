@@ -1,13 +1,15 @@
 package com.scorpio.myexpensemanager.activity;
 
+import android.annotation.SuppressLint;
 import android.app.DatePickerDialog;
 import android.arch.lifecycle.ViewModelProviders;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.constraint.ConstraintLayout;
+import android.support.design.widget.Snackbar;
 import android.support.design.widget.TextInputEditText;
 import android.support.design.widget.TextInputLayout;
 import android.support.v7.app.AppCompatActivity;
-import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
 import android.text.Editable;
 import android.text.TextWatcher;
@@ -18,8 +20,7 @@ import android.view.View;
 import android.view.WindowManager;
 
 import com.scorpio.myexpensemanager.R;
-import com.scorpio.myexpensemanager.adapters.CompanyRvAdapter;
-import com.scorpio.myexpensemanager.adapters.CompanyRvTouchHelper;
+import com.scorpio.myexpensemanager.commons.Constants;
 import com.scorpio.myexpensemanager.commons.Util;
 import com.scorpio.myexpensemanager.db.AppDatabase;
 import com.scorpio.myexpensemanager.db.vo.Company;
@@ -32,7 +33,7 @@ public class CreateCompany extends AppCompatActivity {
 
     Toolbar toolbar;
     TextInputLayout textInputName, textInputEmail;
-    TextInputEditText inputName, inputEmail, finYearStart, bookStart;
+    TextInputEditText inputName, inputEmail, inputFinYearStart, inputBookStart;
     ConstraintLayout createCompanyLayout;
 
     private AppDatabase appDb;
@@ -63,8 +64,8 @@ public class CreateCompany extends AppCompatActivity {
 
         //
         Calendar calendar = Calendar.getInstance();
-        finYearStart = findViewById(R.id.finYearStart);
-        bookStart = findViewById(R.id.bookStart);
+        inputFinYearStart = findViewById(R.id.inputFinYearStart);
+        inputBookStart = findViewById(R.id.inputBookStart);
         //set the Financial Year start and Book start date as 1-Apr of financial year
         Calendar calendar1April = Calendar.getInstance();
         calendar1April.set(calendar.get(Calendar.YEAR), Calendar.APRIL, 1);
@@ -75,28 +76,28 @@ public class CreateCompany extends AppCompatActivity {
             calendar1April.set(calendar.get(Calendar.YEAR) - 1, Calendar.APRIL, 1);
             firstAprilStr = Util.convertToDDMMMYYYY(calendar1April.getTimeInMillis());
         }
-        finYearStart.setText(firstAprilStr);
-        bookStart.setText(firstAprilStr);
+        inputFinYearStart.setText(firstAprilStr);
+        inputBookStart.setText(firstAprilStr);
 
-        finYearStart.setOnClickListener((view) -> {
+        inputFinYearStart.setOnClickListener((view) -> {
             DatePickerDialog datePickerDialog = new DatePickerDialog(CreateCompany.this);
             datePickerDialog.getDatePicker().setMaxDate(Calendar.getInstance().getTimeInMillis());
             datePickerDialog.setOnDateSetListener((v, year, month, dayOfMonth) -> {
                 calendar.set(year, month, dayOfMonth);
                 String dateText = Util.convertToDDMMMYYYY(calendar.getTimeInMillis());
-                finYearStart.setText(dateText);
-                bookStart.setText(dateText);
+                inputFinYearStart.setText(dateText);
+                inputBookStart.setText(dateText);
             });
 
             datePickerDialog.show();
         });
 
-        bookStart.setOnClickListener((bsv) -> {
+        inputBookStart.setOnClickListener((bsv) -> {
             DatePickerDialog datePickerDialog = new DatePickerDialog(CreateCompany.this);
             datePickerDialog.getDatePicker().setMaxDate(Calendar.getInstance().getTimeInMillis());
             datePickerDialog.setOnDateSetListener((v, year, month, dayOfMonth) -> {
                 calendar.set(year, month, dayOfMonth);
-                bookStart.setText(Util.convertToDDMMMYYYY(calendar.getTimeInMillis()));
+                inputBookStart.setText(Util.convertToDDMMMYYYY(calendar.getTimeInMillis()));
             });
             datePickerDialog.show();
         });
@@ -126,8 +127,15 @@ public class CreateCompany extends AppCompatActivity {
                 //This code should be changed later TODO
                 Company company = new Company();
                 company.setName(inputName.getText().toString());
-                companyViewModel.addCompany(company);
-                this.finish();
+                company.setFinYearStart(Util.convertToDateFromDDMMYYYY(inputFinYearStart.getText
+                        ().toString().trim()));
+                company.setBookStart(Util.convertToDateFromDDMMYYYY(inputBookStart.getText()
+                        .toString().trim()));
+                company.setDbName(new Long(Calendar.getInstance().getTimeInMillis()).toString() +
+                        Constants.DB_EXTENSION);
+                new AddCompanyTask(AppDatabase.getDatabase(this.getApplication())).execute(company);
+//                companyViewModel.addCompany(company);
+//                this.finish();
                 return true;
             }
         }
@@ -212,6 +220,34 @@ public class CreateCompany extends AppCompatActivity {
                     validateEmail();
                     break;
             }
+        }
+    }
+
+    private class AddCompanyTask extends AsyncTask<Company, Void, Long> {
+        private AppDatabase appDb;
+
+        public AddCompanyTask(final AppDatabase appDb) {
+            this.appDb = appDb;
+        }
+
+        @Override
+        protected Long doInBackground(Company... companies) {
+            return appDb.companyDao().save(companies[0]);
+        }
+
+        @Override
+        protected void onPostExecute(Long aLong) {
+//            super.onPostExecute(aLong);
+            Snackbar snackbar;
+            if (aLong > 0) {
+                snackbar = Snackbar.make(createCompanyLayout, getString(R.string.success_create),
+                        Snackbar.LENGTH_LONG);
+            } else {
+                snackbar = Snackbar.make(createCompanyLayout, getString(R.string.failed_create),
+                        Snackbar.LENGTH_LONG);
+            }
+            snackbar.show();
+            CreateCompany.this.finish();
         }
     }
 }

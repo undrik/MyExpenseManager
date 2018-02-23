@@ -14,12 +14,15 @@ import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
 import android.support.v7.widget.helper.ItemTouchHelper;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
 
 import com.scorpio.myexpensemanager.activity.CreateCompany;
 import com.scorpio.myexpensemanager.adapters.CompanyRvAdapter;
 import com.scorpio.myexpensemanager.adapters.CompanyRvTouchHelper;
+import com.scorpio.myexpensemanager.commons.Constants;
 import com.scorpio.myexpensemanager.db.vo.Company;
 import com.scorpio.myexpensemanager.viewmodels.CompanyViewModel;
 
@@ -27,7 +30,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class MyExpenseManager extends AppCompatActivity implements CompanyRvTouchHelper
-        .CompanyRvItemSwipeListener {
+        .CompanyRvItemSwipeListener, CompanyRvAdapter.OnItemClickListner {
 
     private CompanyViewModel companyViewModel;
 
@@ -51,7 +54,10 @@ public class MyExpenseManager extends AppCompatActivity implements CompanyRvTouc
         companyRv = findViewById(R.id.companyRv);
         companyRv.setLayoutManager(new LinearLayoutManager(this));
         companyRvAdapter = new CompanyRvAdapter(new ArrayList<Company>());
+        companyRvAdapter.setItemClickListner(this);
         companyRv.setAdapter(companyRvAdapter);
+
+
 
         //Add the item touch helperr
         // Only ItemTouchHelper.LEFT added to detect Right to Left Swipe
@@ -111,5 +117,11 @@ public class MyExpenseManager extends AppCompatActivity implements CompanyRvTouc
                 startActivity(intent);
             }
         }
+    }
+
+    @Override
+    public void onItemClick(View view) {
+        Company company = (Company)view.getTag();
+        Log.v(Constants.APP_NAME, company.getName());
     }
 }

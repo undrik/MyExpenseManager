@@ -8,6 +8,11 @@
     <string name="edit">EDIT</string>
     <string name="delete">DELETE</string>
 
+    <!-- Messages -->
+    <string name="success_create">Successfully created</string>
+    <string name="failed_create">Failed to create</string>
+
+
     <!-- Create Company field names -->
     <string name="title_create_company">Create Company</string>
     <string name="name">Name*</string>

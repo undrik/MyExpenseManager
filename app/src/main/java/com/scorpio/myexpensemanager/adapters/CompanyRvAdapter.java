@@ -17,11 +17,17 @@ import java.util.List;
  * Created by hkundu on 16-02-2018.
  */
 
-public class CompanyRvAdapter extends RecyclerView.Adapter<CompanyRvAdapter.CompanyViewHolder> {
+public class CompanyRvAdapter extends RecyclerView.Adapter<CompanyRvAdapter.CompanyViewHolder>
+        implements View.OnClickListener {
     private List<Company> companyList;
+    private OnItemClickListner itemClickListner = null;
 
     public CompanyRvAdapter(List<Company> companyList) {
         this.companyList = companyList;
+    }
+
+    public void setItemClickListner(OnItemClickListner listner) {
+        this.itemClickListner = listner;
     }
 
     @Override
@@ -36,7 +42,10 @@ public class CompanyRvAdapter extends RecyclerView.Adapter<CompanyRvAdapter.Comp
             Company company = companyList.get(position);
             holder.companyNameTv.setText(company.getName());
             holder.companyLastUpdateTv.setText("");
-            holder.itemView.setTag(company);
+            holder.companyCv.setTag(company);
+            if (null != itemClickListner) {
+                holder.companyCv.setOnClickListener(this);
+            }
         }
     }
 
@@ -64,6 +73,13 @@ public class CompanyRvAdapter extends RecyclerView.Adapter<CompanyRvAdapter.Comp
         return companyList;
     }
 
+    @Override
+    public void onClick(View view) {
+        if (null != itemClickListner) {
+            itemClickListner.onItemClick(view);
+        }
+    }
+
     public static class CompanyViewHolder extends RecyclerView.ViewHolder {
         private TextView companyNameTv;
         private TextView companyLastUpdateTv;
@@ -80,5 +96,9 @@ public class CompanyRvAdapter extends RecyclerView.Adapter<CompanyRvAdapter.Comp
             deleteBackground = itemView.findViewById(R.id.deleteBackground);
 
         }
+    }
+
+    public interface OnItemClickListner {
+        public void onItemClick(View view);
     }
 }

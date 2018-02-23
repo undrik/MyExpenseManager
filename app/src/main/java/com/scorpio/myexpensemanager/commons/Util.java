@@ -45,6 +45,19 @@ public class Util {
         return dateFormat.format(new Date(timeInMils));
     }
 
+    public static Date convertToDateFromDDMMYYYY(String strDate){
+        SimpleDateFormat format = new SimpleDateFormat(Constants.DATE_FORMAT_D_MMM_YYYY);
+
+        try {
+            return format.parse(strDate);
+        } catch (ParseException e) {
+            e.printStackTrace();
+        }
+
+        //if the parsing fail in that case return the current date
+        return new Date();
+    }
+
     public  static long convertToTimeFromddMMMyyyy(String date){
         SimpleDateFormat format = new SimpleDateFormat(Constants.DATE_FORMAT_D_MMM_YYYY);
         try {
