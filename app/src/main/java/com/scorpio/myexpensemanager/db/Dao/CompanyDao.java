@@ -32,6 +32,4 @@ public interface CompanyDao {
 
     @Delete
     int delete(final Company company);
-
-
 }

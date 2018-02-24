@@ -9,8 +9,8 @@
     <string name="delete">DELETE</string>
 
     <!-- Messages -->
-    <string name="success_create">Successfully created</string>
-    <string name="failed_create">Failed to create</string>
+    <string name="success">Successful</string>
+    <string name="failed">Failed</string>
 
 
     <!-- Create Company field names -->

@@ -1,27 +1,35 @@
 package com.scorpio.myexpensemanager.db.vo;
 
 
+import android.arch.persistence.room.Entity;
+import android.arch.persistence.room.PrimaryKey;
+import android.arch.persistence.room.TypeConverters;
+
+import com.scorpio.myexpensemanager.db.converters.NatureOfGroupEnumConverter;
+
 import java.io.Serializable;
 
+@Entity
 public class Ledger implements Serializable {
 
-
+    @PrimaryKey(autoGenerate = true)
     private Long id = null;
     private String name = null;
     //    private Long groupId = null;
     private String groupName = null;
+    @TypeConverters(NatureOfGroupEnumConverter.class)
     private NatureOfGroup groupType = null;
     private String barcode = null;
     private Double openingBalance = null;
     private Long openingBalanceAsOn = null;
     private Double currentBalance = null;
     private Long currentBalanceAsOn = null;
-    private Boolean active = null;
+    private Boolean active;
     private Long attachmentId = null;
     private Long addressId = null;
     private Long bankAccountId = null;
     private Long taxId = null;
-    private Attachment attachment = null;
+//    private Attachment attachment = null;
 
     public Ledger() {
         super();
@@ -55,9 +63,6 @@ public class Ledger implements Serializable {
         return openingBalance;
     }
 
-    public void setOpeningBalance(double openingBalance) {
-        this.openingBalance = openingBalance;
-    }
 
     public Long getOpeningBalanceAsOn() {
         return openingBalanceAsOn;
@@ -115,10 +120,6 @@ public class Ledger implements Serializable {
         return active;
     }
 
-    public Boolean isActive() {
-        return active;
-    }
-
     public void setActive(Boolean active) {
         this.active = active;
     }
@@ -147,13 +148,13 @@ public class Ledger implements Serializable {
         this.taxId = taxId;
     }
 
-    public Attachment getAttachment() {
-        return attachment;
-    }
-
-    public void setAttachment(Attachment attachment) {
-        this.attachment = attachment;
-    }
+//    public Attachment getAttachment() {
+//        return attachment;
+//    }
+//
+//    public void setAttachment(Attachment attachment) {
+//        this.attachment = attachment;
+//    }
 
     public Long getAttachmentId() {
         return attachmentId;

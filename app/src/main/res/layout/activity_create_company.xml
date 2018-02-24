@@ -5,7 +5,7 @@
     android:id="@+id/createCompanyLayout"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context="com.scorpio.myexpensemanager.activity.CreateCompany">
+    tools:context="com.scorpio.myexpensemanager.activity.CreateUpdateCompany">
 
     <android.support.design.widget.AppBarLayout
         android:id="@+id/createCompanyToolbar"

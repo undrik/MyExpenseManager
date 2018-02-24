@@ -21,29 +21,43 @@ import android.view.WindowManager;
 
 import com.scorpio.myexpensemanager.R;
 import com.scorpio.myexpensemanager.commons.Constants;
+import com.scorpio.myexpensemanager.commons.PopulateDefaults;
 import com.scorpio.myexpensemanager.commons.Util;
 import com.scorpio.myexpensemanager.db.AppDatabase;
+import com.scorpio.myexpensemanager.db.CompanyDb;
+import com.scorpio.myexpensemanager.db.vo.AccountGroup;
 import com.scorpio.myexpensemanager.db.vo.Company;
+import com.scorpio.myexpensemanager.viewmodels.AccountGroupViewModel;
 import com.scorpio.myexpensemanager.viewmodels.CompanyViewModel;
 
 import java.util.Calendar;
 import java.util.List;
+import java.util.stream.Collectors;
 
-public class CreateCompany extends AppCompatActivity {
+public class CreateUpdateCompany extends AppCompatActivity {
 
     Toolbar toolbar;
     TextInputLayout textInputName, textInputEmail;
-    TextInputEditText inputName, inputEmail, inputFinYearStart, inputBookStart;
+    TextInputEditText inputName, inputFinYearStart, inputBookStart, inputAddress1, inputAddress2,
+            inputState, inputCountry, inputPin, inputPhone, inputPan, inputTan, inputEmail;
     ConstraintLayout createCompanyLayout;
+    Company updateCompany = null;
+    int currentAction = Constants.CREATE_ACTION;
 
     private AppDatabase appDb;
     private CompanyViewModel companyViewModel;
     private List<Company> companyList;
 
+    @SuppressLint("NewApi")
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_create_company);
+
+        updateCompany = (Company) getIntent().getSerializableExtra(Constants.COMANY_OBJ);
+        if (null != updateCompany) {
+            currentAction = Constants.UPDATE_ACTION;
+        }
 
         createCompanyLayout = findViewById(R.id.createCompanyLayout);
 
@@ -54,13 +68,27 @@ public class CreateCompany extends AppCompatActivity {
 
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
+        initialize();
+
+        appDb = AppDatabase.getDatabase(this.getApplication());
+
+        companyViewModel = ViewModelProviders.of(this).get(CompanyViewModel.class);
+        companyViewModel.fetchAllCompany().observe(CreateUpdateCompany.this, (companies -> {
+            this.companyList = companies;
+            if (null != updateCompany && null != companyList && companyList.size() > 0) {
+                companyList = companyList.stream().filter(company -> !company.getName()
+                        .equalsIgnoreCase(updateCompany.getName())).collect(Collectors.toList());
+                populateFields();
+            }
+        }));
+    }
+
+    @SuppressLint("NewApi")
+    private void initialize() {
         textInputName = findViewById(R.id.textInputName);
         inputName = findViewById(R.id.inputName);
         inputName.addTextChangedListener(new CreateCompanyTextWatcher(inputName));
 
-        textInputEmail = findViewById(R.id.textInputEmail);
-        inputEmail = findViewById(R.id.inputEmail);
-        inputEmail.addTextChangedListener(new CreateCompanyTextWatcher(inputEmail));
 
         //
         Calendar calendar = Calendar.getInstance();
@@ -69,7 +97,7 @@ public class CreateCompany extends AppCompatActivity {
         //set the Financial Year start and Book start date as 1-Apr of financial year
         Calendar calendar1April = Calendar.getInstance();
         calendar1April.set(calendar.get(Calendar.YEAR), Calendar.APRIL, 1);
-        String firstAprilStr = new String();
+        String firstAprilStr;
         if (calendar.getTimeInMillis() > calendar1April.getTimeInMillis()) {
             firstAprilStr = Util.convertToDDMMMYYYY(calendar1April.getTimeInMillis());
         } else {
@@ -80,7 +108,7 @@ public class CreateCompany extends AppCompatActivity {
         inputBookStart.setText(firstAprilStr);
 
         inputFinYearStart.setOnClickListener((view) -> {
-            DatePickerDialog datePickerDialog = new DatePickerDialog(CreateCompany.this);
+            DatePickerDialog datePickerDialog = new DatePickerDialog(CreateUpdateCompany.this);
             datePickerDialog.getDatePicker().setMaxDate(Calendar.getInstance().getTimeInMillis());
             datePickerDialog.setOnDateSetListener((v, year, month, dayOfMonth) -> {
                 calendar.set(year, month, dayOfMonth);
@@ -93,7 +121,7 @@ public class CreateCompany extends AppCompatActivity {
         });
 
         inputBookStart.setOnClickListener((bsv) -> {
-            DatePickerDialog datePickerDialog = new DatePickerDialog(CreateCompany.this);
+            DatePickerDialog datePickerDialog = new DatePickerDialog(CreateUpdateCompany.this);
             datePickerDialog.getDatePicker().setMaxDate(Calendar.getInstance().getTimeInMillis());
             datePickerDialog.setOnDateSetListener((v, year, month, dayOfMonth) -> {
                 calendar.set(year, month, dayOfMonth);
@@ -102,12 +130,22 @@ public class CreateCompany extends AppCompatActivity {
             datePickerDialog.show();
         });
 
-        appDb = AppDatabase.getDatabase(this.getApplication());
+        inputAddress1 = findViewById(R.id.inputAddress1);
+        inputAddress2 = findViewById(R.id.inputAddress2);
+        inputState = findViewById(R.id.inputState);
+        inputCountry = findViewById(R.id.inputCountry);
+        inputPin = findViewById(R.id.inputPin);
+        inputPhone = findViewById(R.id.inputPhone);
+        inputPan = findViewById(R.id.inputPan);
+        inputTan = findViewById(R.id.inputTan);
 
-        companyViewModel = ViewModelProviders.of(this).get(CompanyViewModel.class);
-        companyViewModel.fetchAllCompany().observe(CreateCompany.this, (companies -> {
-            this.companyList = companies;
-        }));
+        textInputEmail = findViewById(R.id.textInputEmail);
+        inputEmail = findViewById(R.id.inputEmail);
+        inputEmail.addTextChangedListener(new CreateCompanyTextWatcher(inputEmail));
+    }
+
+    private void populateFields() {
+        inputName.setText(updateCompany.getName());
     }
 
     @Override
@@ -131,9 +169,9 @@ public class CreateCompany extends AppCompatActivity {
                         ().toString().trim()));
                 company.setBookStart(Util.convertToDateFromDDMMYYYY(inputBookStart.getText()
                         .toString().trim()));
-                company.setDbName(new Long(Calendar.getInstance().getTimeInMillis()).toString() +
-                        Constants.DB_EXTENSION);
-                new AddCompanyTask(AppDatabase.getDatabase(this.getApplication())).execute(company);
+                company.setDbName(Long.valueOf(Calendar.getInstance().getTimeInMillis()).toString
+                        () + Constants.DB_EXTENSION);
+                new CompanyTask(AppDatabase.getDatabase(this.getApplication())).execute(company);
 //                companyViewModel.addCompany(company);
 //                this.finish();
                 return true;
@@ -223,16 +261,27 @@ public class CreateCompany extends AppCompatActivity {
         }
     }
 
-    private class AddCompanyTask extends AsyncTask<Company, Void, Long> {
+    private class CompanyTask extends AsyncTask<Company, Void, Long> {
         private AppDatabase appDb;
 
-        public AddCompanyTask(final AppDatabase appDb) {
+        CompanyTask(final AppDatabase appDb) {
             this.appDb = appDb;
         }
 
         @Override
         protected Long doInBackground(Company... companies) {
-            return appDb.companyDao().save(companies[0]);
+            if (null == updateCompany) {
+                Long result = appDb.companyDao().save(companies[0]);
+//                CompanyDb companyDb = CompanyDb.getDatabase(getApplication(), companies[0]
+//                        .getDbName());
+                AccountGroupViewModel groupViewModel = new AccountGroupViewModel(getApplication()
+                        , companies[0]);
+                List<AccountGroup> groups = PopulateDefaults.predefinedGroups();
+                groupViewModel.addAccountGroups(groups.toArray(new AccountGroup[groups.size()]));
+                return result;
+            } else {
+                return Long.valueOf(appDb.companyDao().update(companies[0]));
+            }
         }
 
         @Override
@@ -240,14 +289,16 @@ public class CreateCompany extends AppCompatActivity {
 //            super.onPostExecute(aLong);
             Snackbar snackbar;
             if (aLong > 0) {
-                snackbar = Snackbar.make(createCompanyLayout, getString(R.string.success_create),
+                snackbar = Snackbar.make(createCompanyLayout, getString(R.string.success),
                         Snackbar.LENGTH_LONG);
             } else {
-                snackbar = Snackbar.make(createCompanyLayout, getString(R.string.failed_create),
+                snackbar = Snackbar.make(createCompanyLayout, getString(R.string.failed),
                         Snackbar.LENGTH_LONG);
             }
             snackbar.show();
-            CreateCompany.this.finish();
+            if (aLong > 0) {
+                CreateUpdateCompany.this.finish();
+            }
         }
     }
 }

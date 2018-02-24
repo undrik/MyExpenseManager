@@ -1,6 +1,10 @@
 package com.scorpio.myexpensemanager.db.vo;
 
 
+import android.arch.persistence.room.Entity;
+import android.arch.persistence.room.ForeignKey;
+import android.arch.persistence.room.Index;
+import android.arch.persistence.room.PrimaryKey;
 import android.os.Parcel;
 import android.os.Parcelable;
 
@@ -11,11 +15,25 @@ import android.os.Parcelable;
  * @generated
  */
 
+@Entity(foreignKeys = {
+        @ForeignKey(entity = Ledger.class,
+                parentColumns = "id",
+                childColumns = "ledgerId"
+        ),
+        @ForeignKey(entity = Voucher.class,
+                parentColumns = "id",
+                childColumns = "voucherId",
+                onDelete = ForeignKey.CASCADE)
+},
+        indices = {@Index("ledgerId"), @Index("voucherId")
+        }
+)
 public class VoucherEntry extends BaseVO implements Parcelable {
+    @PrimaryKey(autoGenerate = true)
     public Long id;
     public Long ledgerId;
     public Long voucherId;
-    public DebitCredit debitOrCredit;
+    public Integer debitOrCredit;
     public Double amount;
     private String narration;
     public Long date;
@@ -49,11 +67,11 @@ public class VoucherEntry extends BaseVO implements Parcelable {
         this.voucherId = voucherId;
     }
 
-    public DebitCredit getDebitOrCredit() {
+    public Integer getDebitOrCredit() {
         return debitOrCredit;
     }
 
-    public void setDebitOrCredit(DebitCredit debitOrCredit) {
+    public void setDebitOrCredit(Integer debitOrCredit) {
         this.debitOrCredit = debitOrCredit;
     }
 
@@ -100,7 +118,7 @@ public class VoucherEntry extends BaseVO implements Parcelable {
             dest.writeLong(voucherId);
         }
         if (debitOrCredit != null) {
-            dest.writeInt(debitOrCredit.ordinal());
+            dest.writeInt(debitOrCredit);
         }
         if (amount != null) {
             dest.writeDouble(amount);
@@ -122,7 +140,7 @@ public class VoucherEntry extends BaseVO implements Parcelable {
     private VoucherEntry(Parcel in) {
         ledgerId = in.readLong();
         voucherId = in.readLong();
-        debitOrCredit = in.readInt() == 0 ? DebitCredit.DEBIT : DebitCredit.CREDIT;
+        debitOrCredit = in.readInt();
         amount = in.readDouble();
 
     }

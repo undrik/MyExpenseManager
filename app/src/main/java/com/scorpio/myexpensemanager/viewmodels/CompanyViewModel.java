@@ -35,13 +35,13 @@ public class CompanyViewModel extends AndroidViewModel {
         return appDb.companyDao().findCompanyByName(name);
     }
 
-    public void addCompany(final Company company) {
+    public void addCompany(@NonNull final Company company) {
         if (null != company && null != company.getName()) {
             new AddCompanyTask(appDb).execute(company);
         }
     }
 
-    public boolean isCompanyExists(final String name) {
+    public boolean isCompanyExists(@NonNull final String name) {
 //        Company company = appDb.companyDao().findCompanyByName(name);
         return false;
     }
@@ -55,7 +55,7 @@ public class CompanyViewModel extends AndroidViewModel {
         }
 
         @Override
-        protected Long doInBackground(Company... companies) {
+        protected Long doInBackground(@NonNull Company... companies) {
             return appDb.companyDao().save(companies[0]);
         }
     }
@@ -69,7 +69,7 @@ public class CompanyViewModel extends AndroidViewModel {
         }
 
         @Override
-        protected Integer doInBackground(Company... companies) {
+        protected Integer doInBackground(@NonNull Company... companies) {
             return appDb.companyDao().delete(companies[0]);
         }
     }

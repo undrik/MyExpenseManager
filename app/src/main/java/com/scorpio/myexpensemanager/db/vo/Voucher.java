@@ -1,6 +1,8 @@
 package com.scorpio.myexpensemanager.db.vo;
 
 
+import android.arch.persistence.room.Entity;
+import android.arch.persistence.room.PrimaryKey;
 import android.os.Parcel;
 import android.os.Parcelable;
 
@@ -13,14 +15,16 @@ import java.util.ArrayList;
  * @generated
  */
 
+@Entity
 public class Voucher implements Parcelable {
+    @PrimaryKey(autoGenerate = true)
     private Long id;
     private String number;
     private Long typeId;
     private Long dateLong;
     private String narration;
     private String guid;
-    private ArrayList<VoucherEntry> voucherEntryList = new ArrayList<>();
+//    private ArrayList<VoucherEntry> voucherEntryList = new ArrayList<>();
 
     public Voucher() {
         super();
@@ -54,6 +58,10 @@ public class Voucher implements Parcelable {
         return dateLong;
     }
 
+    public void setDateLong(Long dateLong) {
+        this.dateLong = dateLong;
+    }
+
     public void setDate(long date) {
         this.dateLong = date;
     }
@@ -74,13 +82,13 @@ public class Voucher implements Parcelable {
         this.guid = guid;
     }
 
-    public ArrayList<VoucherEntry> getVoucherEntryList() {
-        return voucherEntryList;
-    }
-
-    public void setVoucherEntryList(ArrayList<VoucherEntry> voucherEntryList) {
-        this.voucherEntryList = voucherEntryList;
-    }
+//    public ArrayList<VoucherEntry> getVoucherEntryList() {
+//        return voucherEntryList;
+//    }
+//
+//    public void setVoucherEntryList(ArrayList<VoucherEntry> voucherEntryList) {
+//        this.voucherEntryList = voucherEntryList;
+//    }
 
     @Override
     public int describeContents() {

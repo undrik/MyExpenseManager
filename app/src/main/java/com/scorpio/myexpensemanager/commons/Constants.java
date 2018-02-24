@@ -7,6 +7,8 @@ public interface Constants {
     String GROUP_OBJ = "groupobj";
     String G_NAME_OBJ = "gNameObj";
     String CREATE_GROUP = "creategroup";
+    int CREATE_ACTION = 10;
+    int UPDATE_ACTION = 20;
     int CREATE_GROUP_VALUE = 10;
     String CREATE_LEDGER = "createledger";
     int CREATE_LEDGER_VALUE = 20;
@@ -42,6 +44,8 @@ public interface Constants {
     String NO = "No";
     String DR = "Dr";
     String CR = "Cr";
+    int DEBIT = 0;
+    int CREDIT = 1;
     String SINGLE_SPACE = " ";
     String FORMAT_ASON = "(As on {0,date,d-MMM})";
     String DATE_FORMAT_RANGE = "({0,date,d-MMM-yyyy} to {1,date,d-MMM-yyyy})";

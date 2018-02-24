@@ -2,12 +2,11 @@ package com.scorpio.myexpensemanager.db.vo;
 
 import android.arch.persistence.room.ColumnInfo;
 import android.arch.persistence.room.Entity;
-import android.arch.persistence.room.Index;
 import android.arch.persistence.room.PrimaryKey;
 import android.arch.persistence.room.TypeConverters;
 import android.support.annotation.NonNull;
 
-import com.scorpio.myexpensemanager.db.utils.TimestampConverter;
+import com.scorpio.myexpensemanager.db.converters.TimestampConverter;
 
 import java.io.Serializable;
 import java.util.Date;

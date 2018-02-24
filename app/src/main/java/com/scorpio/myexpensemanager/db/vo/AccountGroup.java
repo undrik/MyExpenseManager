@@ -1,7 +1,13 @@
 package com.scorpio.myexpensemanager.db.vo;
 
 
-import com.myexpense.common.Constants;
+import android.arch.persistence.room.Entity;
+import android.arch.persistence.room.Ignore;
+import android.arch.persistence.room.PrimaryKey;
+import android.arch.persistence.room.TypeConverters;
+
+import com.scorpio.myexpensemanager.commons.Constants;
+import com.scorpio.myexpensemanager.db.converters.NatureOfGroupEnumConverter;
 
 import java.io.Serializable;
 
@@ -12,8 +18,11 @@ import java.io.Serializable;
  * @generated
  */
 
+@Entity
+@TypeConverters(NatureOfGroupEnumConverter.class)
 public class AccountGroup implements Serializable {
 
+    @PrimaryKey(autoGenerate = true)
     private Long id = null;
     private String name = null;
     //    private Long parentId = null;
@@ -27,8 +36,10 @@ public class AccountGroup implements Serializable {
         super();
     }
 
-    public AccountGroup(String name, String parentName, NatureOfGroup type, Boolean predefinied,
-                        Boolean deemedPositive) {
+    @Ignore
+    public AccountGroup(Long id, String name, String parentName, NatureOfGroup type, Boolean
+            predefinied, Boolean deemedPositive) {
+        this.id = id;
         this.name = name;
         this.parentName = parentName;
         this.type = type;
@@ -36,8 +47,14 @@ public class AccountGroup implements Serializable {
         this.deemedPositive = deemedPositive;
     }
 
-    public AccountGroup(String name) {
+    @Ignore
+    public AccountGroup(String name, String parentName, NatureOfGroup type, Boolean predefinied,
+                        Boolean deemedPositive) {
         this.name = name;
+        this.parentName = parentName;
+        this.type = type;
+        this.predefinied = predefinied;
+        this.deemedPositive = deemedPositive;
     }
 
     public Long getId() {
@@ -95,7 +112,8 @@ public class AccountGroup implements Serializable {
     public void setDeemedPositive(boolean deemedPositive) {
         this.deemedPositive = deemedPositive;
     }
-    public boolean isPrimary(){
+
+    public boolean isPrimary() {
         return parentName.equalsIgnoreCase(Constants.PRIMARY);
     }
 }

@@ -1,11 +1,9 @@
 package com.scorpio.myexpensemanager;
 
-import android.arch.lifecycle.Observer;
 import android.arch.lifecycle.ViewModelProviders;
 import android.content.Intent;
 import android.graphics.Color;
 import android.os.Bundle;
-import android.support.annotation.Nullable;
 import android.support.design.widget.CoordinatorLayout;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
@@ -19,7 +17,7 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 
-import com.scorpio.myexpensemanager.activity.CreateCompany;
+import com.scorpio.myexpensemanager.activity.CreateUpdateCompany;
 import com.scorpio.myexpensemanager.adapters.CompanyRvAdapter;
 import com.scorpio.myexpensemanager.adapters.CompanyRvTouchHelper;
 import com.scorpio.myexpensemanager.commons.Constants;
@@ -27,7 +25,6 @@ import com.scorpio.myexpensemanager.db.vo.Company;
 import com.scorpio.myexpensemanager.viewmodels.CompanyViewModel;
 
 import java.util.ArrayList;
-import java.util.List;
 
 public class MyExpenseManager extends AppCompatActivity implements CompanyRvTouchHelper
         .CompanyRvItemSwipeListener, CompanyRvAdapter.OnItemClickListner {
@@ -47,16 +44,15 @@ public class MyExpenseManager extends AppCompatActivity implements CompanyRvTouc
 
         FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
         fab.setOnClickListener((view) -> {
-            Intent intent = new Intent(this, CreateCompany.class);
+            Intent intent = new Intent(this, CreateUpdateCompany.class);
             startActivity(intent);
         });
         expenseManagerLayout = findViewById(R.id.expenseManagerLayout);
         companyRv = findViewById(R.id.companyRv);
         companyRv.setLayoutManager(new LinearLayoutManager(this));
-        companyRvAdapter = new CompanyRvAdapter(new ArrayList<Company>());
+        companyRvAdapter = new CompanyRvAdapter(new ArrayList<>());
         companyRvAdapter.setItemClickListner(this);
         companyRv.setAdapter(companyRvAdapter);
-
 
 
         //Add the item touch helperr
@@ -66,9 +62,8 @@ public class MyExpenseManager extends AppCompatActivity implements CompanyRvTouc
         new ItemTouchHelper(companySwiteCallback).attachToRecyclerView(companyRv);
 
         companyViewModel = ViewModelProviders.of(this).get(CompanyViewModel.class);
-        companyViewModel.fetchAllCompany().observe(MyExpenseManager.this, (companyList -> {
-            companyRvAdapter.addItms(companyList);
-        }));
+        companyViewModel.fetchAllCompany().observe(MyExpenseManager.this, (companyList ->
+                companyRvAdapter.addItms(companyList)));
     }
 
     @Override
@@ -107,13 +102,13 @@ public class MyExpenseManager extends AppCompatActivity implements CompanyRvTouc
                         "from " +
 
                         "list!", Snackbar.LENGTH_LONG);
-                snackbar.setAction("UNDO", (view) -> {
-                    companyRvAdapter.restoreItem(company, position);
-                });
+                snackbar.setAction("UNDO", (view) -> companyRvAdapter.restoreItem(company,
+                        position));
                 snackbar.setActionTextColor(Color.YELLOW);
                 snackbar.show();
             } else {
-                Intent intent = new Intent(this, CreateCompany.class);
+                Intent intent = new Intent(this, CreateUpdateCompany.class);
+                intent.putExtra(Constants.COMANY_OBJ, company);
                 startActivity(intent);
             }
         }
@@ -121,7 +116,7 @@ public class MyExpenseManager extends AppCompatActivity implements CompanyRvTouc
 
     @Override
     public void onItemClick(View view) {
-        Company company = (Company)view.getTag();
+        Company company = (Company) view.getTag();
         Log.v(Constants.APP_NAME, company.getName());
     }
 }

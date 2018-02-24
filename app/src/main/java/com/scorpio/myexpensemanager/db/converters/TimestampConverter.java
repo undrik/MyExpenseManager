@@ -1,4 +1,4 @@
-package com.scorpio.myexpensemanager.db.utils;
+package com.scorpio.myexpensemanager.db.converters;
 
 import android.arch.persistence.room.TypeConverter;
 
