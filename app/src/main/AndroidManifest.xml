@@ -23,7 +23,11 @@
         </activity>
         <activity
             android:name=".activity.CreateUpdateCompany"
-            android:parentActivityName=".MyExpenseManager"></activity>
+            android:parentActivityName=".MyExpenseManager" />
+        <activity
+            android:name=".activity.CompanyMain"
+            android:label="@string/title_activity_company_main"
+            android:theme="@style/AppTheme.NoActionBar"></activity>
     </application>
 
 </manifest>

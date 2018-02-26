@@ -30,4 +30,22 @@
     <string name="err_msg_name">Name cannot be empty</string>
     <string name="err_msg_name_exists">Company name already exist</string>
     <string name="err_msg_email">Invalid email address</string>
+
+
+    <string name="title_activity_company_main">Dashboard</string>
+    <string name="navigation_drawer_open">Open navigation drawer</string>
+    <string name="navigation_drawer_close">Close navigation drawer</string>
+
+    <!-- Drawer Menu Title -->
+    <string name="master">Master</string>
+    <string name="account">Account</string>
+    <string name="group">Group</string>
+    <string name="transactions">Transactions</string>
+    <string name="voucher">Voucher</string>
+    <string name="reports">Reports</string>
+    <string name="balance_sheet">Balance Sheet</string>
+    <string name="income_expense">Income &amp; Expense</string>
+    <string name="imports">Imports</string>
+    <string name="account_group">Account &amp; Group</string>
+
 </resources>

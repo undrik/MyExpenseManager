@@ -89,7 +89,7 @@ public class CompanyRvAdapter extends RecyclerView.Adapter<CompanyRvAdapter.Comp
 
         public CompanyViewHolder(View itemView) {
             super(itemView);
-            companyNameTv = itemView.findViewById(R.id.companyNameTv);
+            companyNameTv = itemView.findViewById(R.id.companyNameDrawerTv);
             companyLastUpdateTv = itemView.findViewById(R.id.companyLastUpdateTv);
             companyCv = itemView.findViewById(R.id.companyCv);
             editBackgroud = itemView.findViewById(R.id.editBackground);

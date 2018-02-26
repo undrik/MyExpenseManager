@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    tools:showIn="navigation_view">
+
+    <item android:title="@string/master">
+        <menu>
+            <item
+                android:id="@+id/nav_account"
+                android:icon="@drawable/ic_menu_share"
+                android:title="@string/account" />
+            <item
+                android:id="@+id/nav_group"
+                android:icon="@drawable/ic_menu_send"
+                android:title="@string/group" />
+        </menu>
+    </item>
+
+    <item android:title="@string/transactions">
+        <menu>
+            <item
+                android:id="@+id/nav_voucher"
+                android:icon="@drawable/ic_menu_gallery"
+                android:title="@string/voucher" />
+        </menu>
+    </item>
+
+    <item android:title="@string/reports">
+        <menu>
+            <item
+                android:id="@+id/nav_balance_sheet"
+                android:icon="@drawable/ic_menu_slideshow"
+                android:title="@string/balance_sheet" />
+            <item
+                android:id="@+id/nav_income_expense"
+                android:icon="@drawable/ic_menu_camera"
+                android:title="@string/income_expense" />
+        </menu>
+    </item>
+
+    <item android:title="@string/imports">
+        <menu>
+            <item
+                android:id="@+id/nav_imp_account_group"
+                android:icon="@drawable/ic_menu_slideshow"
+                android:title="@string/account_group" />
+            <item
+                android:id="@+id/nav_imp_voucher"
+                android:icon="@drawable/ic_menu_camera"
+                android:title="@string/voucher" />
+        </menu>
+    </item>
+
+</menu>

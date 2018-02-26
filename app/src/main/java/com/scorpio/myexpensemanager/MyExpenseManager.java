@@ -17,9 +17,11 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 
+import com.scorpio.myexpensemanager.activity.CompanyMain;
 import com.scorpio.myexpensemanager.activity.CreateUpdateCompany;
 import com.scorpio.myexpensemanager.adapters.CompanyRvAdapter;
 import com.scorpio.myexpensemanager.adapters.CompanyRvTouchHelper;
+import com.scorpio.myexpensemanager.commons.Cache;
 import com.scorpio.myexpensemanager.commons.Constants;
 import com.scorpio.myexpensemanager.db.vo.Company;
 import com.scorpio.myexpensemanager.viewmodels.CompanyViewModel;
@@ -118,5 +120,8 @@ public class MyExpenseManager extends AppCompatActivity implements CompanyRvTouc
     public void onItemClick(View view) {
         Company company = (Company) view.getTag();
         Log.v(Constants.APP_NAME, company.getName());
+        Cache.getInstance().setCompany(company);
+        Intent intent = new Intent(this, CompanyMain.class);
+        startActivity(intent);
     }
 }
