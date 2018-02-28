@@ -29,10 +29,13 @@ public interface LedgerDao {
     LiveData<List<Ledger>> findAll();
 
     @Insert
-    void save(@NonNull final List<Ledger> ledgers);
+    List<Long> save(@NonNull final List<Ledger> ledgers);
 
     @Insert
-    long save(@NonNull final Ledger ledger);
+    List<Long> save(@NonNull final Ledger... ledgers);
+
+    @Insert
+    Long save(@NonNull final Ledger ledger);
 
     @Update
     int update(final Ledger ledger);

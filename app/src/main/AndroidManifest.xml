@@ -27,7 +27,12 @@
         <activity
             android:name=".activity.CompanyMain"
             android:label="@string/title_activity_company_main"
-            android:theme="@style/AppTheme.NoActionBar"></activity>
+            android:theme="@style/AppTheme.NoActionBar" />
+        <activity android:name=".activity.CreateUpdateAccount" />
+        <activity
+            android:name=".activity.LedgerList"
+            android:label="@string/title_activity_ledger_list"
+            android:theme="@style/AppTheme.NoActionBar" />
     </application>
 
 </manifest>

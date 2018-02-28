@@ -13,6 +13,7 @@ import com.scorpio.myexpensemanager.db.vo.Company;
 import java.util.List;
 
 /**
+ * Dao to handle Company entity
  * Created by User on 06-02-2018.
  */
 
@@ -25,7 +26,7 @@ public interface CompanyDao {
     LiveData<List<Company>> findAll();
 
     @Insert
-    long save(final Company company);
+    Long save(final Company company);
 
     @Update
     int update(final Company company);

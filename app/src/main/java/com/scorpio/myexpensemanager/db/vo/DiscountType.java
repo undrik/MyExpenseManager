@@ -7,5 +7,5 @@ package com.scorpio.myexpensemanager.db.vo;
  */
 public enum DiscountType
 {
-	FIXED, PERCENTAGE;
+	FIXED, PERCENTAGE
 }

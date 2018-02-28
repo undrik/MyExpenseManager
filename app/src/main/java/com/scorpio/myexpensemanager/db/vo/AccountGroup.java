@@ -11,13 +11,6 @@ import com.scorpio.myexpensemanager.db.converters.NatureOfGroupEnumConverter;
 
 import java.io.Serializable;
 
-/**
- * <!-- begin-user-doc -->
- * <!--  end-user-doc  -->
- *
- * @generated
- */
-
 @Entity
 @TypeConverters(NatureOfGroupEnumConverter.class)
 public class AccountGroup implements Serializable {

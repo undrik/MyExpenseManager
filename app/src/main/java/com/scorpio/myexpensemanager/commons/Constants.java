@@ -196,6 +196,9 @@ public interface Constants {
     String UNSECURED_LOANS = "Unsecured Loans";
     String CREDIT_CARD = "Credit Card";
 
+    //Default Ledger
+    String CASH_IN_WALLET = "Cash-in-Wallet";
+
 
     //Tally voucher xml tag constants
     String ENVELOPE = "ENVELOPE";
@@ -237,8 +240,8 @@ public interface Constants {
     String[] My_BANK_ACCOUNTS = new String[]{Constants.BANK_ACCOUNTS, Constants.BANK_OD_ACCOUNT};
 
     //Supported SMS
-    static final String CITIBK = "CITIBK";
-    static final String ZETAAA = "ZETAAA";
+    String CITIBK = "CITIBK";
+    String ZETAAA = "ZETAAA";
     //Citibank pattern
     //(([r|R][s|S][\s\.])([\d,]*[\.]\d*)([\s\w]+\s[\s\w]+)(\d{4}X*\d{4})(\son\s)
     // (\d+[-:][a-zA-Z]+?[-:]\d{2,4})(\sat\s)([\w\s]+[a-zA-Z\.]+))

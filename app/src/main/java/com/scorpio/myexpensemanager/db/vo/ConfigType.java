@@ -5,5 +5,5 @@ package com.scorpio.myexpensemanager.db.vo;
  */
 
 public enum ConfigType {
-    SMS_CONFIG, SMS_DATA;
+    SMS_CONFIG, SMS_DATA
 }

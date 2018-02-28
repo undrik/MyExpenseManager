@@ -5,5 +5,5 @@ package com.scorpio.myexpensemanager.db.listeners;
  */
 
 public interface OnResultListener {
-    public void onResult(Long... results);
+    void onResult(Long... results);
 }

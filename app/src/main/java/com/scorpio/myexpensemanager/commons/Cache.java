@@ -28,7 +28,7 @@ public class Cache {
         companyObj = company;
     }
 
-    public static final Company getCompany() {
+    public static Company getCompany() {
         return companyObj;
     }
 }

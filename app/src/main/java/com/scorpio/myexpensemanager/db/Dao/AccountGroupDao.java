@@ -31,7 +31,7 @@ public interface AccountGroupDao {
     List<Long> save(@NonNull final AccountGroup... groups);
 
     @Insert
-    long save(@NonNull final AccountGroup company);
+    Long save(@NonNull final AccountGroup company);
 
     @Update
     int update(@NonNull final AccountGroup company);

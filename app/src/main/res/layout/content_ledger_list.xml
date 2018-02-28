@@ -5,11 +5,10 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     app:layout_behavior="@string/appbar_scrolling_view_behavior"
-    tools:context="com.scorpio.myexpensemanager.MyExpenseManager"
-    tools:showIn="@layout/activity_my_expense_manager">
-
+    tools:context="com.scorpio.myexpensemanager.activity.LedgerList"
+    tools:showIn="@layout/activity_ledger_list">
     <android.support.v7.widget.RecyclerView
-        android:id="@+id/companyRv"
+        android:id="@+id/ledgerRv"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:layout_marginBottom="8dp"
@@ -20,6 +19,5 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
-
 
 </android.support.constraint.ConstraintLayout>

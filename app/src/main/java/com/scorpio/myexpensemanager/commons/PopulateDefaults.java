@@ -1,17 +1,20 @@
 package com.scorpio.myexpensemanager.commons;
 
 import com.scorpio.myexpensemanager.db.vo.AccountGroup;
+import com.scorpio.myexpensemanager.db.vo.Ledger;
 import com.scorpio.myexpensemanager.db.vo.NatureOfGroup;
 
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.List;
 
 /**
+ * This class contains all the default groups and ledgers
  * Created by User on 24-02-2018.
  */
 
 public class PopulateDefaults {
-    public final static List<AccountGroup> predefinedGroups() {
+    public static List<AccountGroup> predefinedGroups() {
         List<AccountGroup> predefinedGroups = new ArrayList<>();
 
         //String id = UUID.randomUUID().toString();
@@ -98,5 +101,12 @@ public class PopulateDefaults {
                 .ISDEEMEDPOSITIVE_FALSE));
 
         return predefinedGroups;
+    }
+
+    public static List<Ledger> predefiniedLedgers() {
+        List<Ledger> ledgers = new ArrayList<>();
+        ledgers.add(new Ledger(Constants.CASH_IN_WALLET, Constants.CASH_IN_HAND, 0.0, Calendar
+                .getInstance().getTimeInMillis()));
+        return ledgers;
     }
 }

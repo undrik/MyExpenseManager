@@ -27,8 +27,10 @@ import com.scorpio.myexpensemanager.db.AppDatabase;
 import com.scorpio.myexpensemanager.db.CompanyDb;
 import com.scorpio.myexpensemanager.db.vo.AccountGroup;
 import com.scorpio.myexpensemanager.db.vo.Company;
+import com.scorpio.myexpensemanager.db.vo.Ledger;
 import com.scorpio.myexpensemanager.viewmodels.AccountGroupViewModel;
 import com.scorpio.myexpensemanager.viewmodels.CompanyViewModel;
+import com.scorpio.myexpensemanager.viewmodels.LedgerViewModel;
 
 import java.util.Calendar;
 import java.util.List;
@@ -271,13 +273,17 @@ public class CreateUpdateCompany extends AppCompatActivity {
         @Override
         protected Long doInBackground(Company... companies) {
             if (null == updateCompany) {
-                Long result = appDb.companyDao().save(companies[0]);
+                Company company = companies[0];
+                Long result = appDb.companyDao().save(company);
 //                CompanyDb companyDb = CompanyDb.getDatabase(getApplication(), companies[0]
 //                        .getDbName());
                 AccountGroupViewModel groupViewModel = new AccountGroupViewModel(getApplication()
                         , companies[0]);
                 List<AccountGroup> groups = PopulateDefaults.predefinedGroups();
                 groupViewModel.addAccountGroups(groups.toArray(new AccountGroup[groups.size()]));
+                LedgerViewModel ledgerViewModel = new LedgerViewModel(getApplication(), company);
+                List<Ledger> ledgers = PopulateDefaults.predefiniedLedgers();
+                ledgerViewModel.addLedgers(ledgers.toArray(new Ledger[ledgers.size()]));
                 return result;
             } else {
                 return Long.valueOf(appDb.companyDao().update(companies[0]));

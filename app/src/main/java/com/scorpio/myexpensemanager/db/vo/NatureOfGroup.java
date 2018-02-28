@@ -7,5 +7,5 @@ package com.scorpio.myexpensemanager.db.vo;
  * @generated
  */
 public enum NatureOfGroup {
-    ASSETS, LIABILITIES, INCOME, EXPENSES;
+    ASSETS, LIABILITIES, INCOME, EXPENSES
 }

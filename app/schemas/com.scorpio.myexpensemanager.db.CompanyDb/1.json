@@ -2,7 +2,7 @@
   "formatVersion": 1,
   "database": {
     "version": 1,
-    "identityHash": "e79a6ec8578e8ade26099af8a7eb4685",
+    "identityHash": "e325ec6057b21ca312c4608cc33c423d",
     "entities": [
       {
         "tableName": "AccountGroup",
@@ -62,7 +62,7 @@
       },
       {
         "tableName": "Ledger",
-        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`id` INTEGER PRIMARY KEY AUTOINCREMENT, `name` TEXT, `groupName` TEXT, `groupType` INTEGER, `barcode` TEXT, `openingBalance` REAL, `openingBalanceAsOn` INTEGER, `currentBalance` REAL, `currentBalanceAsOn` INTEGER, `active` INTEGER, `attachmentId` INTEGER, `addressId` INTEGER, `bankAccountId` INTEGER, `taxId` INTEGER)",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`id` INTEGER PRIMARY KEY AUTOINCREMENT, `name` TEXT, `groupName` TEXT, `barcode` TEXT, `openingBalance` REAL, `openingBalanceAsOn` INTEGER, `currentBalance` REAL, `currentBalanceAsOn` INTEGER, `active` INTEGER, `attachmentId` INTEGER, `addressId` INTEGER, `bankAccountId` INTEGER, `taxId` INTEGER)",
         "fields": [
           {
             "fieldPath": "id",
@@ -80,12 +80,6 @@
             "fieldPath": "groupName",
             "columnName": "groupName",
             "affinity": "TEXT",
-            "notNull": false
-          },
-          {
-            "fieldPath": "groupType",
-            "columnName": "groupType",
-            "affinity": "INTEGER",
             "notNull": false
           },
           {
@@ -313,7 +307,7 @@
     ],
     "setupQueries": [
       "CREATE TABLE IF NOT EXISTS room_master_table (id INTEGER PRIMARY KEY,identity_hash TEXT)",
-      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, \"e79a6ec8578e8ade26099af8a7eb4685\")"
+      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, \"e325ec6057b21ca312c4608cc33c423d\")"
     ]
   }
 }

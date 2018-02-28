@@ -14,13 +14,13 @@ import com.scorpio.myexpensemanager.db.vo.Company;
 
 @Database(entities = {Company.class}, version = 1)
 public abstract class AppDatabase extends RoomDatabase {
-    private static String DB_NAME = "myexpensemanager.db";
     private static AppDatabase EXPENSE_DB_INSTANCE;
 
     public abstract CompanyDao companyDao();
 
     public static AppDatabase getDatabase(Context context) {
         if (null == EXPENSE_DB_INSTANCE) {
+            String DB_NAME = "myexpensemanager.db";
             EXPENSE_DB_INSTANCE = Room.databaseBuilder(context.getApplicationContext(), AppDatabase.class, DB_NAME).build();
         }
         return EXPENSE_DB_INSTANCE;

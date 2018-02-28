@@ -20,21 +20,19 @@ import android.view.View;
 import com.scorpio.myexpensemanager.activity.CompanyMain;
 import com.scorpio.myexpensemanager.activity.CreateUpdateCompany;
 import com.scorpio.myexpensemanager.adapters.CompanyRvAdapter;
-import com.scorpio.myexpensemanager.adapters.CompanyRvTouchHelper;
+import com.scorpio.myexpensemanager.adapters.ItemRvTouchHelper;
 import com.scorpio.myexpensemanager.commons.Cache;
 import com.scorpio.myexpensemanager.commons.Constants;
+import com.scorpio.myexpensemanager.db.listeners.OnItemClickListner;
 import com.scorpio.myexpensemanager.db.vo.Company;
 import com.scorpio.myexpensemanager.viewmodels.CompanyViewModel;
 
 import java.util.ArrayList;
 
-public class MyExpenseManager extends AppCompatActivity implements CompanyRvTouchHelper
-        .CompanyRvItemSwipeListener, CompanyRvAdapter.OnItemClickListner {
+public class MyExpenseManager extends AppCompatActivity implements ItemRvTouchHelper.RvItemSwipeListener, OnItemClickListner {
 
-    private CompanyViewModel companyViewModel;
 
     private CoordinatorLayout expenseManagerLayout;
-    private RecyclerView companyRv;
     private CompanyRvAdapter companyRvAdapter;
 
     @Override
@@ -50,7 +48,7 @@ public class MyExpenseManager extends AppCompatActivity implements CompanyRvTouc
             startActivity(intent);
         });
         expenseManagerLayout = findViewById(R.id.expenseManagerLayout);
-        companyRv = findViewById(R.id.companyRv);
+        RecyclerView companyRv = findViewById(R.id.companyRv);
         companyRv.setLayoutManager(new LinearLayoutManager(this));
         companyRvAdapter = new CompanyRvAdapter(new ArrayList<>());
         companyRvAdapter.setItemClickListner(this);
@@ -59,11 +57,11 @@ public class MyExpenseManager extends AppCompatActivity implements CompanyRvTouc
 
         //Add the item touch helperr
         // Only ItemTouchHelper.LEFT added to detect Right to Left Swipe
-        ItemTouchHelper.SimpleCallback companySwiteCallback = new CompanyRvTouchHelper(0,
+        ItemTouchHelper.SimpleCallback companySwiteCallback = new ItemRvTouchHelper(0,
                 ItemTouchHelper.LEFT | ItemTouchHelper.RIGHT, this);
         new ItemTouchHelper(companySwiteCallback).attachToRecyclerView(companyRv);
 
-        companyViewModel = ViewModelProviders.of(this).get(CompanyViewModel.class);
+        CompanyViewModel companyViewModel = ViewModelProviders.of(this).get(CompanyViewModel.class);
         companyViewModel.fetchAllCompany().observe(MyExpenseManager.this, (companyList ->
                 companyRvAdapter.addItms(companyList)));
     }

@@ -32,6 +32,7 @@
     <string name="err_msg_email">Invalid email address</string>
 
 
+    <!-- Company Main -->
     <string name="title_activity_company_main">Dashboard</string>
     <string name="navigation_drawer_open">Open navigation drawer</string>
     <string name="navigation_drawer_close">Close navigation drawer</string>
@@ -47,5 +48,16 @@
     <string name="income_expense">Income &amp; Expense</string>
     <string name="imports">Imports</string>
     <string name="account_group">Account &amp; Group</string>
+
+    <!-- Create/Update Account -->
+    <string name="title_create_account">Create Account</string>
+    <string name="title_update_account">Update Account</string>
+    <string name="openning_balance">Openning balance</string>
+    <string name="debit_short">Dr</string>
+    <string name="credit_short">Cr</string>
+    <string name="balance_as_on">Balance as on :</string>
+    <string name="title_activity_ledger_list">Ledger List</string>
+
+    <string name="balance">Balance : </string>
 
 </resources>

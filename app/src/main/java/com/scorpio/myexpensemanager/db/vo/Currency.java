@@ -1,22 +1,16 @@
 package com.scorpio.myexpensemanager.db.vo;
 
 
-/**
- * <!-- begin-user-doc -->
- * <!--  end-user-doc  -->
- * @generated
- */
-
-public class Currency
-{
-	private String id;
-	private String symbol;
-	private String name;
+public class Currency {
+    private String id;
+    private String symbol;
+    private String name;
     private String shortName;
-	private int decimalPlace;
-	public Currency(){
-		super();
-	}
+    private int decimalPlace;
+
+    public Currency() {
+        super();
+    }
 
     public String getId() {
         return id;

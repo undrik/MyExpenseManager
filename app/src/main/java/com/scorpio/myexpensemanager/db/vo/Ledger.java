@@ -4,6 +4,7 @@ package com.scorpio.myexpensemanager.db.vo;
 import android.arch.persistence.room.Entity;
 import android.arch.persistence.room.PrimaryKey;
 import android.arch.persistence.room.TypeConverters;
+import android.support.annotation.NonNull;
 
 import com.scorpio.myexpensemanager.db.converters.NatureOfGroupEnumConverter;
 
@@ -17,8 +18,8 @@ public class Ledger implements Serializable {
     private String name = null;
     //    private Long groupId = null;
     private String groupName = null;
-    @TypeConverters(NatureOfGroupEnumConverter.class)
-    private NatureOfGroup groupType = null;
+    //    @TypeConverters(NatureOfGroupEnumConverter.class)
+//    private NatureOfGroup groupType = null;
     private String barcode = null;
     private Double openingBalance = null;
     private Long openingBalanceAsOn = null;
@@ -33,6 +34,16 @@ public class Ledger implements Serializable {
 
     public Ledger() {
         super();
+    }
+
+    public Ledger(@NonNull final String name, @NonNull final String gName, @NonNull final Double
+            OpenBalance, @NonNull final Long openningBalanceAsOn) {
+        this.name = name;
+        this.groupName = gName;
+        this.openingBalance = OpenBalance;
+        this.openingBalanceAsOn = openningBalanceAsOn;
+        this.currentBalance = OpenBalance;
+        this.currentBalanceAsOn = openningBalanceAsOn;
     }
 
     public Long getId() {
@@ -104,13 +115,13 @@ public class Ledger implements Serializable {
         this.groupName = groupName;
     }
 
-    public NatureOfGroup getGroupType() {
-        return groupType;
-    }
-
-    public void setGroupType(NatureOfGroup groupType) {
-        this.groupType = groupType;
-    }
+//    public NatureOfGroup getGroupType() {
+//        return groupType;
+//    }
+//
+//    public void setGroupType(NatureOfGroup groupType) {
+//        this.groupType = groupType;
+//    }
 
     public void setOpeningBalance(Double openingBalance) {
         this.openingBalance = openingBalance;

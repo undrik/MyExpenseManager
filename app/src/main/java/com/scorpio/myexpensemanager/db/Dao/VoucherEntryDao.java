@@ -24,10 +24,13 @@ public interface VoucherEntryDao {
     LiveData<List<VoucherEntry>> findAll();
 
     @Insert
-    void save(@NonNull final List<VoucherEntry> voucherEntries);
+    List<Long> save(@NonNull final List<VoucherEntry> voucherEntries);
 
     @Insert
-    long save(@NonNull final VoucherEntry voucherEntry);
+    List<Long> save(@NonNull final VoucherEntry... voucherEntries);
+
+    @Insert
+    Long save(@NonNull final VoucherEntry voucherEntry);
 
     @Update
     int update(@NonNull final VoucherEntry voucherEntry);
