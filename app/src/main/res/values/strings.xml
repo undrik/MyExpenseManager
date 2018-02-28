@@ -52,7 +52,7 @@
     <!-- Create/Update Account -->
     <string name="title_create_account">Create Account</string>
     <string name="title_update_account">Update Account</string>
-    <string name="openning_balance">Openning balance</string>
+    <string name="open_balance">Openning balance</string>
     <string name="debit_short">Dr</string>
     <string name="credit_short">Cr</string>
     <string name="balance_as_on">Balance as on :</string>

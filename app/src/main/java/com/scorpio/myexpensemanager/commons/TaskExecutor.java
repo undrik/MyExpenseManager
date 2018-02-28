@@ -11,10 +11,9 @@ import java.util.concurrent.Executors;
  */
 
 public class TaskExecutor implements Executor {
-    private final Executor executor;
 
     public TaskExecutor() {
-        this.executor = Executors.newSingleThreadExecutor();
+        Executor executor = Executors.newSingleThreadExecutor();
     }
 
     @Override

@@ -1,5 +1,6 @@
 package com.scorpio.myexpensemanager.adapters;
 
+import android.support.annotation.NonNull;
 import android.support.constraint.ConstraintLayout;
 import android.support.v7.widget.CardView;
 import android.support.v7.widget.RecyclerView;
@@ -10,12 +11,12 @@ import android.widget.TextView;
 
 import com.scorpio.myexpensemanager.R;
 import com.scorpio.myexpensemanager.db.listeners.OnItemClickListner;
-import com.scorpio.myexpensemanager.db.vo.Company;
 import com.scorpio.myexpensemanager.db.vo.Ledger;
 
 import java.util.List;
 
 /**
+ * Recycler view adapter for Ledger List
  * Created by hkundu on 16-02-2018.
  */
 
@@ -32,14 +33,15 @@ public class LedgerRvAdapter extends RecyclerView.Adapter<LedgerRvAdapter.Ledger
         this.itemClickListner = listner;
     }
 
+    @NonNull
     @Override
-    public LedgerViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
+    public LedgerViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
         return new LedgerViewHolder(LayoutInflater.from(parent.getContext()).inflate(R.layout
                 .ledger_rv_item, parent, false));
     }
 
     @Override
-    public void onBindViewHolder(final LedgerViewHolder holder, int position) {
+    public void onBindViewHolder(@NonNull final LedgerViewHolder holder, int position) {
         if (ledgerList.size() > 0) {
             Ledger ledger = ledgerList.get(position);
             holder.ledgerNameTv.setText(ledger.getName());
@@ -85,11 +87,11 @@ public class LedgerRvAdapter extends RecyclerView.Adapter<LedgerRvAdapter.Ledger
 
     public static class LedgerViewHolder extends RecyclerView.ViewHolder {
         private TextView ledgerNameTv, ledgerGroupTv, ledgerCurrentBalanceTv, debitCreditTv;
-        public CardView commonCv;
-        public ConstraintLayout editBackgroud, deleteBackground;
+        CardView commonCv;
+        ConstraintLayout editBackgroud, deleteBackground;
 
 
-        public LedgerViewHolder(View itemView) {
+        LedgerViewHolder(View itemView) {
             super(itemView);
             ledgerNameTv = itemView.findViewById(R.id.ledgerNameTv);
             ledgerGroupTv = itemView.findViewById(R.id.ledgerGroupTv);

@@ -6,18 +6,17 @@ import android.arch.persistence.room.RoomDatabase;
 import android.content.Context;
 
 import com.scorpio.myexpensemanager.db.Dao.AccountGroupDao;
-import com.scorpio.myexpensemanager.db.Dao.CompanyDao;
 import com.scorpio.myexpensemanager.db.Dao.LedgerDao;
 import com.scorpio.myexpensemanager.db.Dao.VoucherDao;
 import com.scorpio.myexpensemanager.db.Dao.VoucherEntryDao;
 import com.scorpio.myexpensemanager.db.Dao.VoucherWithEntriesDao;
 import com.scorpio.myexpensemanager.db.vo.AccountGroup;
-import com.scorpio.myexpensemanager.db.vo.Company;
 import com.scorpio.myexpensemanager.db.vo.Ledger;
 import com.scorpio.myexpensemanager.db.vo.Voucher;
 import com.scorpio.myexpensemanager.db.vo.VoucherEntry;
 
 /**
+ * Database to handle company specific tables
  * Created by User on 06-02-2018.
  */
 

@@ -21,7 +21,7 @@ public class AccountGroup implements Serializable {
     //    private Long parentId = null;
     private String parentName = null;
     private NatureOfGroup type = null;
-    private Boolean predefinied = null;
+    private Boolean predefined = null;
     private Boolean revenue = null;
     private Boolean deemedPositive = null;
 
@@ -31,22 +31,22 @@ public class AccountGroup implements Serializable {
 
     @Ignore
     public AccountGroup(Long id, String name, String parentName, NatureOfGroup type, Boolean
-            predefinied, Boolean deemedPositive) {
+            predefined, Boolean deemedPositive) {
         this.id = id;
         this.name = name;
         this.parentName = parentName;
         this.type = type;
-        this.predefinied = predefinied;
+        this.predefined = predefined;
         this.deemedPositive = deemedPositive;
     }
 
     @Ignore
-    public AccountGroup(String name, String parentName, NatureOfGroup type, Boolean predefinied,
+    public AccountGroup(String name, String parentName, NatureOfGroup type, Boolean predefined,
                         Boolean deemedPositive) {
         this.name = name;
         this.parentName = parentName;
         this.type = type;
-        this.predefinied = predefinied;
+        this.predefined = predefined;
         this.deemedPositive = deemedPositive;
     }
 
@@ -75,11 +75,11 @@ public class AccountGroup implements Serializable {
     }
 
     public Boolean isPredefinied() {
-        return predefinied;
+        return predefined;
     }
 
-    public void setPredefinied(boolean predefinied) {
-        this.predefinied = predefinied;
+    public void setPredefined(boolean predefined) {
+        this.predefined = predefined;
     }
 
     public String getParentName() {

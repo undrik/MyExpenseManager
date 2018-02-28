@@ -6,15 +6,6 @@ import android.arch.persistence.room.PrimaryKey;
 import android.os.Parcel;
 import android.os.Parcelable;
 
-import java.util.ArrayList;
-
-/**
- * <!-- begin-user-doc -->
- * <!--  end-user-doc  -->
- *
- * @generated
- */
-
 @Entity
 public class Voucher implements Parcelable {
     @PrimaryKey(autoGenerate = true)

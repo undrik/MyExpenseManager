@@ -9,7 +9,6 @@ import android.support.annotation.NonNull;
 import com.scorpio.myexpensemanager.commons.TaskExecutor;
 import com.scorpio.myexpensemanager.db.CompanyDb;
 import com.scorpio.myexpensemanager.db.listeners.OnResultListener;
-import com.scorpio.myexpensemanager.db.vo.AccountGroup;
 import com.scorpio.myexpensemanager.db.vo.Company;
 import com.scorpio.myexpensemanager.db.vo.Ledger;
 
@@ -17,19 +16,19 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
+ * View model for Ledger
  * Created by User on 24-02-2018.
  */
 
 public class LedgerViewModel extends AndroidViewModel {
     private CompanyDb companyDb;
     private LiveData<List<Ledger>> ledgerLiveData;
-    private OnResultListener onResultListener;
+    private static OnResultListener onResultListener;
 
     public LedgerViewModel(@NonNull Application application, @NonNull final Company company) {
         super(application);
-        Company company1 = company;
-        if (null != company1.getDbName()) {
-            companyDb = CompanyDb.getDatabase(this.getApplication(), company1.getDbName());
+        if (null != company.getDbName()) {
+            companyDb = CompanyDb.getDatabase(this.getApplication(), company.getDbName());
             ledgerLiveData = companyDb.ledgerDao().findAll();
         }
     }
@@ -65,7 +64,7 @@ public class LedgerViewModel extends AndroidViewModel {
     private static class AddLedgerTask extends AsyncTask<Ledger, Void, List<Long>> {
         private CompanyDb companyDb;
 
-        public AddLedgerTask(@NonNull final CompanyDb companyDb) {
+        AddLedgerTask(@NonNull final CompanyDb companyDb) {
             this.companyDb = companyDb;
         }
 

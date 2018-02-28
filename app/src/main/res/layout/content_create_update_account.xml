@@ -51,7 +51,6 @@
         android:layout_marginEnd="8dp"
         android:layout_marginStart="8dp"
         android:layout_marginTop="8dp"
-        android:hint="@string/openning_balance"
         app:layout_constraintEnd_toStartOf="@+id/inputDebitCredit"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/autoCompleteTextView">
@@ -60,7 +59,7 @@
             android:id="@+id/inputOpenningBalance"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:hint="hint"
+            android:hint="@string/open_balance"
             android:inputType="numberSigned" />
     </android.support.design.widget.TextInputLayout>
 

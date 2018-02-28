@@ -24,7 +24,6 @@ import com.scorpio.myexpensemanager.commons.Constants;
 import com.scorpio.myexpensemanager.commons.PopulateDefaults;
 import com.scorpio.myexpensemanager.commons.Util;
 import com.scorpio.myexpensemanager.db.AppDatabase;
-import com.scorpio.myexpensemanager.db.CompanyDb;
 import com.scorpio.myexpensemanager.db.vo.AccountGroup;
 import com.scorpio.myexpensemanager.db.vo.Company;
 import com.scorpio.myexpensemanager.db.vo.Ledger;
@@ -36,6 +35,8 @@ import java.util.Calendar;
 import java.util.List;
 import java.util.stream.Collectors;
 
+import static java.lang.Long.valueOf;
+
 public class CreateUpdateCompany extends AppCompatActivity {
 
     Toolbar toolbar;
@@ -46,8 +47,6 @@ public class CreateUpdateCompany extends AppCompatActivity {
     Company updateCompany = null;
     int currentAction = Constants.CREATE_ACTION;
 
-    private AppDatabase appDb;
-    private CompanyViewModel companyViewModel;
     private List<Company> companyList;
 
     @SuppressLint("NewApi")
@@ -72,9 +71,9 @@ public class CreateUpdateCompany extends AppCompatActivity {
 
         initialize();
 
-        appDb = AppDatabase.getDatabase(this.getApplication());
+        AppDatabase appDb = AppDatabase.getDatabase(this.getApplication());
 
-        companyViewModel = ViewModelProviders.of(this).get(CompanyViewModel.class);
+        CompanyViewModel companyViewModel = ViewModelProviders.of(this).get(CompanyViewModel.class);
         companyViewModel.fetchAllCompany().observe(CreateUpdateCompany.this, (companies -> {
             this.companyList = companies;
             if (null != updateCompany && null != companyList && companyList.size() > 0) {
@@ -171,7 +170,7 @@ public class CreateUpdateCompany extends AppCompatActivity {
                         ().toString().trim()));
                 company.setBookStart(Util.convertToDateFromDDMMYYYY(inputBookStart.getText()
                         .toString().trim()));
-                company.setDbName(Long.valueOf(Calendar.getInstance().getTimeInMillis()).toString
+                company.setDbName(valueOf(Calendar.getInstance().getTimeInMillis()).toString
                         () + Constants.DB_EXTENSION);
                 new CompanyTask(AppDatabase.getDatabase(this.getApplication())).execute(company);
 //                companyViewModel.addCompany(company);
@@ -286,7 +285,7 @@ public class CreateUpdateCompany extends AppCompatActivity {
                 ledgerViewModel.addLedgers(ledgers.toArray(new Ledger[ledgers.size()]));
                 return result;
             } else {
-                return Long.valueOf(appDb.companyDao().update(companies[0]));
+                return (long) appDb.companyDao().update(companies[0]);
             }
         }
 

@@ -8,6 +8,7 @@ import android.arch.persistence.room.Transaction;
 import com.scorpio.myexpensemanager.db.vo.VoucherWithEntries;
 
 /**
+ * Dao to handle VoucherWithEntries entity
  * Created by User on 24-02-2018.
  */
 

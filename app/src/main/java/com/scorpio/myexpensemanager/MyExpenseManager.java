@@ -39,10 +39,10 @@ public class MyExpenseManager extends AppCompatActivity implements ItemRvTouchHe
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_my_expense_manager);
-        Toolbar toolbar = (Toolbar) findViewById(R.id.main_toolbar);
+        Toolbar toolbar = findViewById(R.id.main_toolbar);
         setSupportActionBar(toolbar);
 
-        FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
+        FloatingActionButton fab = findViewById(R.id.fab);
         fab.setOnClickListener((view) -> {
             Intent intent = new Intent(this, CreateUpdateCompany.class);
             startActivity(intent);
@@ -118,7 +118,8 @@ public class MyExpenseManager extends AppCompatActivity implements ItemRvTouchHe
     public void onItemClick(View view) {
         Company company = (Company) view.getTag();
         Log.v(Constants.APP_NAME, company.getName());
-        Cache.getInstance().setCompany(company);
+//        Cache.getInstance();
+        Cache.setCompany(company);
         Intent intent = new Intent(this, CompanyMain.class);
         startActivity(intent);
     }

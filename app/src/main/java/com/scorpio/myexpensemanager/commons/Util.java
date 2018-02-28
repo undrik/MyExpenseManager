@@ -1,7 +1,6 @@
 package com.scorpio.myexpensemanager.commons;
 
 import java.text.DecimalFormat;
-import java.text.MessageFormat;
 import java.text.NumberFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -10,6 +9,7 @@ import java.util.Date;
 import java.util.Locale;
 
 /**
+ * My Expense Manager Util class
  * Created by hkundu on 2/14/2015.
  */
 public class Util {
@@ -26,7 +26,7 @@ public class Util {
     }
 
     public static String convertAmountWithSign(Double amount) {
-        String pattern = null;
+        String pattern;
         Locale locale = new Locale("en", "IN");
         NumberFormat nf = NumberFormat.getCurrencyInstance(locale);
         if (amount < 0) {
@@ -45,8 +45,8 @@ public class Util {
         return dateFormat.format(new Date(timeInMils));
     }
 
-    public static Date convertToDateFromDDMMYYYY(String strDate){
-        SimpleDateFormat format = new SimpleDateFormat(Constants.DATE_FORMAT_D_MMM_YYYY);
+    public static Date convertToDateFromDDMMYYYY(String strDate) {
+        SimpleDateFormat format = new SimpleDateFormat(Constants.DATE_FORMAT_D_MMM_YYYY, Locale.ENGLISH);
 
         try {
             return format.parse(strDate);
@@ -58,8 +58,8 @@ public class Util {
         return new Date();
     }
 
-    public  static long convertToTimeFromddMMMyyyy(String date){
-        SimpleDateFormat format = new SimpleDateFormat(Constants.DATE_FORMAT_D_MMM_YYYY);
+    public static long convertToTimeFromddMMMyyyy(String date) {
+        SimpleDateFormat format = new SimpleDateFormat(Constants.DATE_FORMAT_D_MMM_YYYY, Locale.ENGLISH);
         try {
             return format.parse(date).getTime();
         } catch (ParseException e) {
@@ -77,8 +77,8 @@ public class Util {
 //        return MessageFormat.format(format, new Date[]{new Date(starDate), new Date(endDate)});
 //    }
 
-    public  static long convertToTimeFromddMMMyy(String date){
-        SimpleDateFormat format = new SimpleDateFormat(Constants.DATE_FORMAT_D_MMM_YY);
+    public static long convertToTimeFromddMMMyy(String date) {
+        SimpleDateFormat format = new SimpleDateFormat(Constants.DATE_FORMAT_D_MMM_YY, Locale.ENGLISH);
         try {
             return format.parse(date).getTime();
         } catch (ParseException e) {

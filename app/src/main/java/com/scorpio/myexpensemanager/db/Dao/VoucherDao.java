@@ -6,7 +6,6 @@ import android.arch.persistence.room.Delete;
 import android.arch.persistence.room.Insert;
 import android.arch.persistence.room.Query;
 import android.arch.persistence.room.Update;
-import android.support.annotation.NonNull;
 
 import com.scorpio.myexpensemanager.db.vo.Voucher;
 
@@ -26,17 +25,17 @@ public interface VoucherDao {
     LiveData<List<Voucher>> findAll();
 
     @Insert
-    List<Long> save(@NonNull final List<Voucher> vouchers);
+    List<Long> save(final List<Voucher> vouchers);
 
     @Insert
-    List<Long> save(@NonNull final Voucher... vouchers);
+    List<Long> save(final Voucher... vouchers);
 
     @Insert
-    Long save(@NonNull final Voucher voucher);
+    Long save(final Voucher voucher);
 
     @Update
-    int update(@NonNull final Voucher voucher);
+    int update(final Voucher voucher);
 
     @Delete
-    int delete(@NonNull final Voucher voucher);
+    int delete(final Voucher voucher);
 }

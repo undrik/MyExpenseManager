@@ -34,12 +34,12 @@ public class LedgerList extends AppCompatActivity implements ItemRvTouchHelper.R
         setContentView(R.layout.activity_ledger_list);
         ledgerListLayout = findViewById(R.id.ledgerListLayout);
 
-        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
+        Toolbar toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         getSupportActionBar().setHomeButtonEnabled(true);
 
-        FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
+        FloatingActionButton fab = findViewById(R.id.fab);
         fab.setOnClickListener((view) -> {
             Intent intent = new Intent(this, CreateUpdateAccount.class);
             startActivity(intent);

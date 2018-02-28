@@ -15,20 +15,19 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
+ * View model for AccountGroup
  * Created by User on 24-02-2018.
  */
 
 public class AccountGroupViewModel extends AndroidViewModel {
-    private Company company;
     private CompanyDb companyDb;
     private LiveData<List<AccountGroup>> groupLiveData;
     private OnResultListener onResultListener;
 
     public AccountGroupViewModel(@NonNull Application application, @NonNull final Company company) {
         super(application);
-        this.company = company;
-        if (null != this.company.getDbName()) {
-            companyDb = CompanyDb.getDatabase(this.getApplication(), this.company.getDbName());
+        if (null != company.getDbName()) {
+            companyDb = CompanyDb.getDatabase(getApplication(), company.getDbName());
             groupLiveData = companyDb.accountGroupDao().findAll();
         }
     }
@@ -56,7 +55,7 @@ public class AccountGroupViewModel extends AndroidViewModel {
     private class AccountGroupTask extends AsyncTask<AccountGroup, Void, List<Long>> {
         private CompanyDb companyDb;
 
-        public AccountGroupTask(@NonNull final CompanyDb companyDb) {
+        AccountGroupTask(@NonNull final CompanyDb companyDb) {
             this.companyDb = companyDb;
         }
 
