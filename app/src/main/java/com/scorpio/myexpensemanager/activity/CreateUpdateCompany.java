@@ -95,7 +95,7 @@ public class CreateUpdateCompany extends AppCompatActivity {
         Calendar calendar = Calendar.getInstance();
         inputFinYearStart = findViewById(R.id.inputFinYearStart);
         inputBookStart = findViewById(R.id.inputBookStart);
-        //set the Financial Year start and Book start date as 1-Apr of financial year
+        //set the Financial Year start and Book start localDate as 1-Apr of financial year
         Calendar calendar1April = Calendar.getInstance();
         calendar1April.set(calendar.get(Calendar.YEAR), Calendar.APRIL, 1);
         String firstAprilStr;

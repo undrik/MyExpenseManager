@@ -2,11 +2,11 @@
   "formatVersion": 1,
   "database": {
     "version": 1,
-    "identityHash": "214107486383cf8586500c450d025e55",
+    "identityHash": "3ed90c4215ff690182e60a7b5fe05135",
     "entities": [
       {
         "tableName": "Company",
-        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`id` INTEGER PRIMARY KEY AUTOINCREMENT, `name` TEXT NOT NULL, `address1` TEXT, `address2` TEXT, `state` TEXT, `country` TEXT, `pincode` TEXT, `email` TEXT, `phone` TEXT, `tan` TEXT, `pan` TEXT, `aadhar` TEXT, `finYearStart` INTEGER, `finYearEnd` INTEGER, `bookStart` INTEGER, `currencyId` TEXT, `isPasswordProtected` INTEGER NOT NULL, `password` TEXT, `dbName` TEXT, `modifiedDate` INTEGER)",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`id` INTEGER PRIMARY KEY AUTOINCREMENT, `name` TEXT, `address1` TEXT, `address2` TEXT, `state` TEXT, `country` TEXT, `pincode` TEXT, `email` TEXT, `phone` TEXT, `tan` TEXT, `pan` TEXT, `aadhar` TEXT, `finYearStart` INTEGER, `finYearEnd` INTEGER, `bookStart` INTEGER, `currencyId` TEXT, `isPasswordProtected` INTEGER NOT NULL, `password` TEXT, `dbName` TEXT, `modifiedDate` INTEGER)",
         "fields": [
           {
             "fieldPath": "id",
@@ -18,7 +18,7 @@
             "fieldPath": "name",
             "columnName": "name",
             "affinity": "TEXT",
-            "notNull": true
+            "notNull": false
           },
           {
             "fieldPath": "address1",
@@ -150,7 +150,7 @@
     ],
     "setupQueries": [
       "CREATE TABLE IF NOT EXISTS room_master_table (id INTEGER PRIMARY KEY,identity_hash TEXT)",
-      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, \"214107486383cf8586500c450d025e55\")"
+      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, \"3ed90c4215ff690182e60a7b5fe05135\")"
     ]
   }
 }

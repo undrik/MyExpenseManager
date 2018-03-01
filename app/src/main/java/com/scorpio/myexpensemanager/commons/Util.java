@@ -54,7 +54,7 @@ public class Util {
             e.printStackTrace();
         }
 
-        //if the parsing fail in that case return the current date
+        //if the parsing fail in that case return the current epochDay
         return new Date();
     }
 

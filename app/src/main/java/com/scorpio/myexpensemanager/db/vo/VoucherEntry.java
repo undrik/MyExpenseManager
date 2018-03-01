@@ -5,8 +5,12 @@ import android.arch.persistence.room.Entity;
 import android.arch.persistence.room.ForeignKey;
 import android.arch.persistence.room.Index;
 import android.arch.persistence.room.PrimaryKey;
+import android.arch.persistence.room.TypeConverters;
 import android.os.Parcel;
-import android.os.Parcelable;
+
+import com.scorpio.myexpensemanager.db.converters.LocalDateEpochConverter;
+
+import java.time.LocalDate;
 
 /**
  * <!-- begin-user-doc -->
@@ -28,7 +32,7 @@ import android.os.Parcelable;
         indices = {@Index("ledgerId"), @Index("voucherId")
         }
 )
-public class VoucherEntry extends BaseVO implements Parcelable {
+public class VoucherEntry {
     @PrimaryKey(autoGenerate = true)
     public Long id;
     public Long ledgerId;
@@ -36,7 +40,8 @@ public class VoucherEntry extends BaseVO implements Parcelable {
     public Integer debitOrCredit;
     public Double amount;
     private String narration;
-    public Long date;
+    @TypeConverters(LocalDateEpochConverter.class)
+    public LocalDate localDate;
 
 
     public VoucherEntry() {
@@ -83,12 +88,12 @@ public class VoucherEntry extends BaseVO implements Parcelable {
         this.amount = amount;
     }
 
-    public Long getDate() {
-        return date;
+    public LocalDate getLocalDate() {
+        return localDate;
     }
 
-    public void setDate(Long date) {
-        this.date = date;
+    public void setLocalDate(LocalDate localDate) {
+        this.localDate = localDate;
     }
 
     @Override
@@ -104,46 +109,46 @@ public class VoucherEntry extends BaseVO implements Parcelable {
         return false;
     }
 
-    @Override
-    public int describeContents() {
-        return 0;
-    }
-
-    @Override
-    public void writeToParcel(Parcel dest, int flags) {
-        if (ledgerId != null) {
-            dest.writeLong(ledgerId);
-        }
-        if (voucherId != null) {
-            dest.writeLong(voucherId);
-        }
-        if (debitOrCredit != null) {
-            dest.writeInt(debitOrCredit);
-        }
-        if (amount != null) {
-            dest.writeDouble(amount);
-        }
-    }
-
-    public static final Creator<VoucherEntry> CREATOR
-            = new Creator<VoucherEntry>() {
-        public VoucherEntry createFromParcel(Parcel in) {
-            return new VoucherEntry(in);
-        }
-
-        public VoucherEntry[] newArray(int size) {
-            return new VoucherEntry[size];
-        }
-
-    };
-
-    private VoucherEntry(Parcel in) {
-        ledgerId = in.readLong();
-        voucherId = in.readLong();
-        debitOrCredit = in.readInt();
-        amount = in.readDouble();
-
-    }
+//    @Override
+//    public int describeContents() {
+//        return 0;
+//    }
+//
+//    @Override
+//    public void writeToParcel(Parcel dest, int flags) {
+//        if (ledgerId != null) {
+//            dest.writeLong(ledgerId);
+//        }
+//        if (voucherId != null) {
+//            dest.writeLong(voucherId);
+//        }
+//        if (debitOrCredit != null) {
+//            dest.writeInt(debitOrCredit);
+//        }
+//        if (amount != null) {
+//            dest.writeDouble(amount);
+//        }
+//    }
+//
+//    public static final Creator<VoucherEntry> CREATOR
+//            = new Creator<VoucherEntry>() {
+//        public VoucherEntry createFromParcel(Parcel in) {
+//            return new VoucherEntry(in);
+//        }
+//
+//        public VoucherEntry[] newArray(int size) {
+//            return new VoucherEntry[size];
+//        }
+//
+//    };
+//
+//    private VoucherEntry(Parcel in) {
+//        ledgerId = in.readLong();
+//        voucherId = in.readLong();
+//        debitOrCredit = in.readInt();
+//        amount = in.readDouble();
+//
+//    }
 
     public String getNarration() {
         return narration;
@@ -151,6 +156,16 @@ public class VoucherEntry extends BaseVO implements Parcelable {
 
     public void setNarration(String narration) {
         this.narration = narration;
+    }
+
+    @Override
+    public String toString() {
+        return "{'id':" + id.toString() +
+                ",'ledgerId':" + ledgerId.toString() +
+                ",'voucherId':" + voucherId.toString() +
+                ",'amount':" + amount.toString() +
+                ",'localdate':" + localDate.toString() +
+                "}";
     }
 }
 

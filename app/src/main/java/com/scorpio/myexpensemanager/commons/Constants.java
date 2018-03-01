@@ -48,7 +48,7 @@ public interface Constants {
     int CREDIT = 1;
     String SINGLE_SPACE = " ";
     String FORMAT_ASON = "(As on {0,date,d-MMM})";
-    String DATE_FORMAT_RANGE = "({0,date,d-MMM-yyyy} to {1,date,d-MMM-yyyy})";
+    String DATE_FORMAT_RANGE = "({0,localDate,d-MMM-yyyy} to {1,localDate,d-MMM-yyyy})";
     String FORMAT_BALANCE_SHEET = "(As on {0,date,d-MMM-yyyy})";
     String DATE_FORMAT_D_MMM_YYYY = "d-MMM-yyyy";
     String DATE_FORMAT_D_MMM_YY = "d-MMM-yy";

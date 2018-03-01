@@ -9,9 +9,7 @@ import java.util.List;
  * Created by User on 24-02-2018.
  */
 
-public class VoucherWithEntries {
-    @Embedded
-    public Voucher voucher;
+public class VoucherWithEntries extends Voucher {
     @Relation(parentColumn = "id", entityColumn = "voucherId", entity = VoucherEntry.class)
     public List<VoucherEntry> voucherEntries;
 }

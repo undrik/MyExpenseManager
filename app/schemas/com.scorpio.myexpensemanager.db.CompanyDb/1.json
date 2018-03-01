@@ -2,11 +2,11 @@
   "formatVersion": 1,
   "database": {
     "version": 1,
-    "identityHash": "e325ec6057b21ca312c4608cc33c423d",
+    "identityHash": "a20caf12874d4773f9bf4b0fbdbe50fd",
     "entities": [
       {
         "tableName": "AccountGroup",
-        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`id` INTEGER PRIMARY KEY AUTOINCREMENT, `name` TEXT, `parentName` TEXT, `type` INTEGER, `predefinied` INTEGER, `revenue` INTEGER, `deemedPositive` INTEGER)",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`id` INTEGER PRIMARY KEY AUTOINCREMENT, `name` TEXT, `parentName` TEXT, `type` INTEGER, `predefined` INTEGER, `revenue` INTEGER, `deemedPositive` INTEGER)",
         "fields": [
           {
             "fieldPath": "id",
@@ -33,8 +33,8 @@
             "notNull": false
           },
           {
-            "fieldPath": "predefinied",
-            "columnName": "predefinied",
+            "fieldPath": "predefined",
+            "columnName": "predefined",
             "affinity": "INTEGER",
             "notNull": false
           },
@@ -154,7 +154,7 @@
       },
       {
         "tableName": "Voucher",
-        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`id` INTEGER PRIMARY KEY AUTOINCREMENT, `number` TEXT, `typeId` INTEGER, `dateLong` INTEGER, `narration` TEXT, `guid` TEXT)",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`id` INTEGER PRIMARY KEY AUTOINCREMENT, `number` TEXT, `typeId` INTEGER, `localDate` INTEGER, `narration` TEXT, `guid` TEXT)",
         "fields": [
           {
             "fieldPath": "id",
@@ -175,8 +175,8 @@
             "notNull": false
           },
           {
-            "fieldPath": "dateLong",
-            "columnName": "dateLong",
+            "fieldPath": "localDate",
+            "columnName": "localDate",
             "affinity": "INTEGER",
             "notNull": false
           },
@@ -204,7 +204,7 @@
       },
       {
         "tableName": "VoucherEntry",
-        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`id` INTEGER PRIMARY KEY AUTOINCREMENT, `ledgerId` INTEGER, `voucherId` INTEGER, `debitOrCredit` INTEGER, `amount` REAL, `narration` TEXT, `date` INTEGER, `dirty` INTEGER NOT NULL, FOREIGN KEY(`ledgerId`) REFERENCES `Ledger`(`id`) ON UPDATE NO ACTION ON DELETE NO ACTION , FOREIGN KEY(`voucherId`) REFERENCES `Voucher`(`id`) ON UPDATE NO ACTION ON DELETE CASCADE )",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`id` INTEGER PRIMARY KEY AUTOINCREMENT, `ledgerId` INTEGER, `voucherId` INTEGER, `debitOrCredit` INTEGER, `amount` REAL, `narration` TEXT, `localDate` INTEGER, FOREIGN KEY(`ledgerId`) REFERENCES `Ledger`(`id`) ON UPDATE NO ACTION ON DELETE NO ACTION , FOREIGN KEY(`voucherId`) REFERENCES `Voucher`(`id`) ON UPDATE NO ACTION ON DELETE CASCADE )",
         "fields": [
           {
             "fieldPath": "id",
@@ -243,16 +243,10 @@
             "notNull": false
           },
           {
-            "fieldPath": "date",
-            "columnName": "date",
+            "fieldPath": "localDate",
+            "columnName": "localDate",
             "affinity": "INTEGER",
             "notNull": false
-          },
-          {
-            "fieldPath": "dirty",
-            "columnName": "dirty",
-            "affinity": "INTEGER",
-            "notNull": true
           }
         ],
         "primaryKey": {
@@ -307,7 +301,7 @@
     ],
     "setupQueries": [
       "CREATE TABLE IF NOT EXISTS room_master_table (id INTEGER PRIMARY KEY,identity_hash TEXT)",
-      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, \"e325ec6057b21ca312c4608cc33c423d\")"
+      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, \"a20caf12874d4773f9bf4b0fbdbe50fd\")"
     ]
   }
 }
