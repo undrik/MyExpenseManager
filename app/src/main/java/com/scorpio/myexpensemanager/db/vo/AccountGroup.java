@@ -74,9 +74,10 @@ public class AccountGroup implements Serializable {
         this.type = type;
     }
 
-    public Boolean isPredefinied() {
+    public Boolean getPredefined() {
         return predefined;
     }
+
 
     public void setPredefined(boolean predefined) {
         this.predefined = predefined;
