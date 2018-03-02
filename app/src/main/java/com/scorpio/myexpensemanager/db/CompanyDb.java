@@ -21,7 +21,7 @@ import com.scorpio.myexpensemanager.db.vo.VoucherEntry;
  */
 
 @Database(entities = {AccountGroup.class, Ledger.class, Voucher.class, VoucherEntry.class},
-        version = 1)
+        version = 1, exportSchema = false)
 public abstract class CompanyDb extends RoomDatabase {
     private static CompanyDb COMPANY_DB_INSTANCE;
 

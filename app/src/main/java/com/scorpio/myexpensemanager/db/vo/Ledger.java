@@ -1,7 +1,9 @@
 package com.scorpio.myexpensemanager.db.vo;
 
 
+import android.arch.persistence.room.ColumnInfo;
 import android.arch.persistence.room.Entity;
+import android.arch.persistence.room.Index;
 import android.arch.persistence.room.PrimaryKey;
 import android.support.annotation.NonNull;
 
@@ -12,7 +14,9 @@ public class Ledger implements Serializable {
 
     @PrimaryKey(autoGenerate = true)
     private Long id = null;
-    private String name = null;
+    @NonNull
+    @ColumnInfo(index = true)
+    String name;
     //    private Long groupId = null;
     private String groupName = null;
     //    @TypeConverters(NatureOfGroupEnumConverter.class)

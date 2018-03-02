@@ -1,5 +1,6 @@
 package com.scorpio.myexpensemanager.viewmodels;
 
+import android.annotation.SuppressLint;
 import android.app.Application;
 import android.arch.lifecycle.AndroidViewModel;
 import android.arch.lifecycle.LiveData;
@@ -13,7 +14,9 @@ import com.scorpio.myexpensemanager.db.vo.Company;
 import com.scorpio.myexpensemanager.db.vo.Ledger;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
+import java.util.stream.Collectors;
 
 /**
  * View model for Ledger
@@ -41,8 +44,17 @@ public class LedgerViewModel extends AndroidViewModel {
         return ledgerLiveData;
     }
 
+    @SuppressLint("NewApi")
     public void addLedgers(@NonNull Ledger... ledgers) {
         if (null != companyDb) {
+            List<Ledger> ledgerList = Arrays.stream(ledgers).map(ledger -> {
+                if (null == ledger.getCurrentBalance()) {
+                    ledger.setCurrentBalance(ledger.getOpeningBalance());
+
+                }
+                return ledger;
+            }).collect(Collectors.toList());
+            ledgers = ledgerList.toArray(new Ledger[ledgerList.size()]);
             new AddLedgerTask(companyDb).execute(ledgers);
         }
     }
@@ -52,6 +64,9 @@ public class LedgerViewModel extends AndroidViewModel {
 //            new AddLedgerTask(companyDb).execute(ledger);
 //        }
         if (null != companyDb) {
+            if (null == ledger.getCurrentBalance()) {
+                ledger.setCurrentBalance(ledger.getOpeningBalance());
+            }
             new TaskExecutor().execute(() -> {
                 Long result = companyDb.ledgerDao().save(ledger);
                 if (result > 0 && null != onResultListener) {

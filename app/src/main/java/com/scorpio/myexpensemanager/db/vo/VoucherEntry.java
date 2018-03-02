@@ -7,6 +7,8 @@ import android.arch.persistence.room.Index;
 import android.arch.persistence.room.PrimaryKey;
 import android.arch.persistence.room.TypeConverters;
 import android.os.Parcel;
+import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
 
 import com.scorpio.myexpensemanager.db.converters.LocalDateEpochConverter;
 
@@ -20,22 +22,22 @@ import java.time.LocalDate;
  */
 
 @Entity(foreignKeys = {
-        @ForeignKey(entity = Ledger.class,
-                parentColumns = "id",
-                childColumns = "ledgerId"
-        ),
+//        @ForeignKey(entity = Ledger.class,
+//                parentColumns = "id",
+//                childColumns = "ledgerId"
+//        ),
         @ForeignKey(entity = Voucher.class,
                 parentColumns = "id",
                 childColumns = "voucherId",
                 onDelete = ForeignKey.CASCADE)
 },
-        indices = {@Index("ledgerId"), @Index("voucherId")
-        }
+        indices = {@Index("voucherId")}
 )
 public class VoucherEntry {
     @PrimaryKey(autoGenerate = true)
     public Long id;
-    public Long ledgerId;
+    @NonNull
+    public String ledgerName;
     public Long voucherId;
     public Integer debitOrCredit;
     public Double amount;
@@ -45,7 +47,22 @@ public class VoucherEntry {
 
 
     public VoucherEntry() {
-        super();
+    }
+
+    public VoucherEntry(@NonNull String ledgerName, @NonNull Long voucherId, @NonNull Integer
+            debitOrCredit, @NonNull Double amount, LocalDate localDate) {
+        this.ledgerName = ledgerName;
+        this.voucherId = voucherId;
+        this.debitOrCredit = debitOrCredit;
+        this.amount = amount;
+        this.localDate = localDate;
+    }
+
+    public VoucherEntry(@NonNull String ledgerName, @NonNull Integer debitOrCredit, @NonNull
+            Double amount) {
+        this.ledgerName = ledgerName;
+        this.debitOrCredit = debitOrCredit;
+        this.amount = amount;
     }
 
     public Long getId() {
@@ -56,13 +73,22 @@ public class VoucherEntry {
         this.id = id;
     }
 
-    public Long getLedgerId() {
-        return ledgerId;
+    @NonNull
+    public String getLedgerName() {
+        return ledgerName;
     }
 
-    public void setLedgerId(Long ledgerId) {
-        this.ledgerId = ledgerId;
+    public void setLedgerName(@NonNull String ledgerName) {
+        this.ledgerName = ledgerName;
     }
+    //
+//    public Long getLedgerId() {
+//        return ledgerId;
+//    }
+//
+//    public void setLedgerId(Long ledgerId) {
+//        this.ledgerId = ledgerId;
+//    }
 
     public Long getVoucherId() {
         return voucherId;
@@ -101,8 +127,8 @@ public class VoucherEntry {
 
         if (o != null && o instanceof VoucherEntry) {
             VoucherEntry ve = (VoucherEntry) o;
-            if (this.ledgerId == ve.ledgerId && this.voucherId == ve.voucherId && this.amount ==
-                    ve.amount) {
+            if (this.ledgerName == ve.ledgerName && this.voucherId == ve.voucherId && this.amount
+                    == ve.amount) {
                 return true;
             }
         }
@@ -161,7 +187,7 @@ public class VoucherEntry {
     @Override
     public String toString() {
         return "{'id':" + id.toString() +
-                ",'ledgerId':" + ledgerId.toString() +
+                ",'ledgerName':" + ledgerName +
                 ",'voucherId':" + voucherId.toString() +
                 ",'amount':" + amount.toString() +
                 ",'localdate':" + localDate.toString() +

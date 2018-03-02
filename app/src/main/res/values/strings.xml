@@ -27,9 +27,17 @@
     <string name="aadhar">Aadhar</string>
     <string name="pan">Pan</string>
     <string name="tan">Tan</string>
+
+    <!-- Messages -->
     <string name="err_msg_name">Name cannot be empty</string>
     <string name="err_msg_name_exists">Company name already exist</string>
     <string name="err_msg_email">Invalid email address</string>
+    <string name="err_msg_file_permission">Read permission required to import</string>
+    <string name="err_msg_wrong_file">Could not process the file</string>
+    <string name="msg_parsing">Parsing ...</string>
+    <string name="msg_importing">Importing ...</string>
+    <string name="msg_success_import">Successfully imported</string>
+    <string name="err_msg_failed_import">Failed to import</string>
 
 
     <!-- Company Main -->

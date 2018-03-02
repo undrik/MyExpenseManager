@@ -12,7 +12,7 @@ import com.scorpio.myexpensemanager.db.vo.Company;
  * Created by User on 06-02-2018.
  */
 
-@Database(entities = {Company.class}, version = 1)
+@Database(entities = {Company.class}, version = 1, exportSchema = false)
 public abstract class AppDatabase extends RoomDatabase {
     private static AppDatabase EXPENSE_DB_INSTANCE;
 
