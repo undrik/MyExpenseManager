@@ -16,6 +16,7 @@ import android.support.design.widget.Snackbar;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
+import android.support.v4.widget.ListViewAutoScrollHelper;
 import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
@@ -28,6 +29,7 @@ import com.scorpio.myexpensemanager.R;
 import com.scorpio.myexpensemanager.commons.Cache;
 import com.scorpio.myexpensemanager.commons.Constants;
 import com.scorpio.myexpensemanager.commons.FileSelector;
+import com.scorpio.myexpensemanager.commons.TaskExecutor;
 import com.scorpio.myexpensemanager.commons.tally.TallyFileHandler;
 import com.scorpio.myexpensemanager.db.CompanyDb;
 import com.scorpio.myexpensemanager.db.vo.AccountGroup;
@@ -37,6 +39,8 @@ import com.scorpio.myexpensemanager.viewmodels.LedgerViewModel;
 
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 import java.util.stream.Collectors;
 
 public class CompanyMain extends AppCompatActivity
@@ -202,6 +206,7 @@ public class CompanyMain extends AppCompatActivity
                     String fileName = FileSelector.getFilePath(fileUri);
                     if (null != fileName) {
                         new TallyImportTask(CompanyMain.this).execute(fileName);
+//                        importTallyFile(fileName);
                     } else {
                         Snackbar.make(companyMainLayout, getString(R.string.err_msg_wrong_file),
                                 Snackbar.LENGTH_LONG).show();
@@ -213,6 +218,74 @@ public class CompanyMain extends AppCompatActivity
 
     private void showSnackbarMessage(@NonNull String message) {
         Snackbar.make(companyMainLayout, message, Snackbar.LENGTH_LONG).show();
+    }
+
+    @SuppressLint("NewApi")
+    private void importTallyFile(final String fileName) {
+//        TaskExecutor taskExecutor = new TaskExecutor();
+        ExecutorService taskExecutor = Executors.newSingleThreadExecutor();
+        taskExecutor.execute(() -> {
+            TallyFileHandler tallyFileHandler = new TallyFileHandler(fileName);
+            try {
+                tallyFileHandler.parse();
+//                    progressDialog.setMessage(companyMain.getString(R.string.msg_importing));
+//                publishProgress(companyMain.getString(R.string.msg_importing));
+//                AccountGroupViewModel groupViewModel = new AccountGroupViewModel(companyMain
+//                        .getApplication(), Cache.getCompany());
+
+                CompanyDb companyDb = CompanyDb.getDatabase(getApplication(),
+                        Cache.getCompany().getDbName());
+//                companyDb.accountGroupDao().findAll().observeForever(accountGroups -> {
+                List<AccountGroup> accountGroups = companyDb.accountGroupDao().findAllGroups();
+                Map<String, AccountGroup> groupMap = accountGroups.stream()
+                        .collect(Collectors.toMap(AccountGroup::getName, group -> group));
+                List<AccountGroup> groups = tallyFileHandler.getAccountGroups();
+                groups = groups.stream().filter(accountGroup -> null == groupMap
+                        .get(accountGroup.getName())).collect(Collectors.toList());
+//                        List<Long> results = companyDb.accountGroupDao().save(groups);
+                groups.forEach((group) -> {
+                    Long result = companyDb.accountGroupDao().save(group);
+                    if (result > 0) {
+                        //Insert the ledgers for this group
+                        final List<Ledger> ledgers = tallyFileHandler.getGroupLedgerMap()
+                                .get(group);
+                        if (null != ledgers) {
+                            List<Ledger> ledgersInDb = companyDb.ledgerDao().findAllLedgers();
+//                                    List<Ledger> ledgers = tallyFileHandler.getLedgers();
+                            List<Ledger> ledgerList = ledgers;
+                            if (null != ledgersInDb) {
+                                Map<String, Ledger> ledgerMap = ledgersInDb.stream().collect
+                                        (Collectors.toMap(Ledger::getName, ledger -> ledger));
+                                ledgerList = ledgers.stream().filter(ledger ->
+                                        null == ledgerMap.get(ledger.getName())).collect
+                                        (Collectors.toList());
+                            }
+//                                    LedgerViewModel ledgerViewModel = new LedgerViewModel
+//                                            (companyMain
+//                                                    .getApplication(), Cache.getCompany());
+                            companyDb.ledgerDao().save(ledgerList);
+                        }
+//                                    ledgerViewModel.addLedgers(ledgers.toArray(new Ledger[ledgers
+//                                            .size()]));
+
+
+//                        });
+//                        groupViewModel.addAccountGroups(groups.toArray(new AccountGroup[groups
+//                                .size()]));
+
+//                            snackBarMsg = companyMain.getString(R.string.msg_success_import);
+                    }
+                });
+
+            } catch (Exception e) {
+                Log.e(Constants.APP_NAME, e.getMessage());
+//                snackBarMsg = companyMain.getString(R.string.err_msg_failed_import);
+            }
+        });
+        taskExecutor.shutdown();
+        while (!taskExecutor.isTerminated()) {
+
+        }
     }
 
     private static class TallyImportTask extends AsyncTask<String, String, Void> {
@@ -235,6 +308,12 @@ public class CompanyMain extends AppCompatActivity
             progressDialog.show();
         }
 
+        @Override
+        protected void onProgressUpdate(String... values) {
+//            super.onProgressUpdate(values);
+            progressDialog.setMessage(values[0]);
+        }
+
         @SuppressLint("NewApi")
         @Override
         protected Void doInBackground(String... fileName) {
@@ -242,39 +321,52 @@ public class CompanyMain extends AppCompatActivity
                 TallyFileHandler tallyFileHandler = new TallyFileHandler(fileName[0]);
                 try {
                     tallyFileHandler.parse();
-                    progressDialog.setMessage(companyMain.getString(R.string.msg_importing));
-                    AccountGroupViewModel groupViewModel = new AccountGroupViewModel(companyMain
-                            .getApplication(), Cache.getCompany());
-
+                    publishProgress(companyMain.getString(R.string.msg_importing));
                     CompanyDb companyDb = CompanyDb.getDatabase(companyMain.getApplication(),
                             Cache.getCompany().getDbName());
-                    companyDb.accountGroupDao().findAll().observeForever(accountGroups -> {
-                        Map<String, AccountGroup> groupMap = accountGroups.parallelStream()
-                                .collect(Collectors.toMap(AccountGroup::getName, group -> group));
-                        List<AccountGroup> groups = tallyFileHandler.getAccountGroups();
-                        groups = groups.stream().filter(accountGroup -> null == groupMap
+                    List<AccountGroup> accountGroupsInDb = companyDb.accountGroupDao()
+                            .findAllGroups();
+                    Map<String, AccountGroup> groupMapInDb = accountGroupsInDb.stream()
+                            .collect(Collectors.toMap(group -> group.getName(), group ->
+                                    group));
+                    List<AccountGroup> groups = tallyFileHandler.getAccountGroups();
+                    if (null != groups) {
+
+                        groups = groups.stream().filter(accountGroup -> null == groupMapInDb
                                 .get(accountGroup.getName())).collect(Collectors.toList());
-//                        List<Long> results = companyDb.accountGroupDao().save(groups);
-                        groupViewModel.addAccountGroups(groups.toArray(new AccountGroup[groups
-                                .size()]));
-                        companyDb.ledgerDao().findAll().observeForever(ledgersInDb -> {
-                            List<Ledger> ledgers = tallyFileHandler.getLedgers();
-                            Map<String, Ledger> ledgerMap = ledgersInDb.stream().collect
-                                    (Collectors.toMap(Ledger::getName, ledger -> ledger));
-                            ledgers = ledgers.parallelStream().filter(ledger -> null == ledgerMap
-                                    .get(ledger.getName())).collect(Collectors.toList());
-                            LedgerViewModel ledgerViewModel = new LedgerViewModel(companyMain
-                                    .getApplication(), Cache.getCompany());
-//                            companyDb.ledgerDao().save(ledgers);
-                            ledgerViewModel.addLedgers(ledgers.toArray(new Ledger[ledgers.size()]));
-                            snackBarMsg = companyMain.getString(R.string.msg_success_import);
+                        groups.forEach((group) -> {
+                            Long result = companyDb.accountGroupDao().save(group);
+                            if (result > 0) {
+                                publishProgress("Imported group : " + group.getName());
+                                group.setId(result);
+                                groupMapInDb.put(group.getName(), null);
+                            }
                         });
-                    });
+                    }
 
+                    List<Ledger> ledgers = tallyFileHandler.getLedgers();
+                    if (null != ledgers) {
+                        List<Ledger> ledgersInDb = companyDb.ledgerDao().findAllLedgers();
+                        Map<String, Ledger> ledgersMapInDb = ledgersInDb.stream().collect
+                                (Collectors.toMap(ledger -> ledger.getName(), ledger -> ledger));
+                        ledgers = ledgers.stream().filter(ledger -> null == ledgersMapInDb.get
+                                (ledger.getName())).collect(Collectors.toList());
+                        ledgers.forEach((ledger) -> {
+                            if (null != groupMapInDb.get(ledger.getGroupName())) {
+                                Long result = companyDb.ledgerDao().save(ledger);
+                                if (result > 0) {
+                                    publishProgress("Imported ledger : " + ledger.getName());
+                                }
+                            }
+                        });
 
+                    }
+                    snackBarMsg = companyMain.getString(R.string.msg_success_import) + " " +
+                            fileName[0];
                 } catch (Exception e) {
                     Log.e(Constants.APP_NAME, e.getMessage());
-                    snackBarMsg = companyMain.getString(R.string.err_msg_failed_import);
+                    snackBarMsg = companyMain.getString(R.string.err_msg_failed_import) + " " +
+                            fileName[0];
                 }
             }
             return null;

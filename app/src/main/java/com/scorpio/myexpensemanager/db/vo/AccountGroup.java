@@ -1,6 +1,7 @@
 package com.scorpio.myexpensemanager.db.vo;
 
 
+import android.arch.persistence.room.ColumnInfo;
 import android.arch.persistence.room.Entity;
 import android.arch.persistence.room.Ignore;
 import android.arch.persistence.room.PrimaryKey;
@@ -17,6 +18,7 @@ public class AccountGroup implements Serializable {
 
     @PrimaryKey(autoGenerate = true)
     private Long id = null;
+    @ColumnInfo(index = true)
     private String name = null;
     //    private Long parentId = null;
     private String parentName = null;
@@ -108,6 +110,19 @@ public class AccountGroup implements Serializable {
 
     public boolean isPrimary() {
         return parentName.equalsIgnoreCase(Constants.PRIMARY);
+    }
+
+    @Override
+    public String toString() {
+        return "AccountGroup{" +
+                "id=" + id +
+                ", name='" + name + '\'' +
+                ", parentName='" + parentName + '\'' +
+                ", type=" + type +
+                ", predefined=" + predefined +
+                ", revenue=" + revenue +
+                ", deemedPositive=" + deemedPositive +
+                '}';
     }
 }
 

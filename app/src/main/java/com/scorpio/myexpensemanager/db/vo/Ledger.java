@@ -9,13 +9,12 @@ import android.support.annotation.NonNull;
 
 import java.io.Serializable;
 
-@Entity
+@Entity(indices = {@Index("name"), @Index(value = {"name", "groupName"})})
 public class Ledger implements Serializable {
 
     @PrimaryKey(autoGenerate = true)
     private Long id = null;
     @NonNull
-    @ColumnInfo(index = true)
     String name;
     //    private Long groupId = null;
     private String groupName = null;
@@ -45,6 +44,7 @@ public class Ledger implements Serializable {
         this.openingBalanceAsOn = openningBalanceAsOn;
         this.currentBalance = OpenBalance;
         this.currentBalanceAsOn = openningBalanceAsOn;
+        this.active = true;
     }
 
     public Long getId() {
@@ -88,7 +88,7 @@ public class Ledger implements Serializable {
         return currentBalance;
     }
 
-    public void setCurrentBalance(double currentBalance) {
+    public void setCurrentBalance(Double currentBalance) {
         this.currentBalance = currentBalance;
     }
 

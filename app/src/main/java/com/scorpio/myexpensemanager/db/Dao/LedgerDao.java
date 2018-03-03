@@ -25,6 +25,12 @@ public interface LedgerDao {
     LiveData<Ledger> findLedgerById(final Integer id);
 
     @Query("SELECT * FROM Ledger")
+    List<Ledger> findAllLedgers();
+
+    @Query("SELECT name FROM Ledger")
+    List<String> findAllLedgerNames();
+
+    @Query("SELECT * FROM Ledger")
     LiveData<List<Ledger>> findAll();
 
     @Insert

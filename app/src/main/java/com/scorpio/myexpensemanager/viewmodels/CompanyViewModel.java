@@ -3,12 +3,15 @@ package com.scorpio.myexpensemanager.viewmodels;
 import android.app.Application;
 import android.arch.lifecycle.AndroidViewModel;
 import android.arch.lifecycle.LiveData;
+import android.database.sqlite.SQLiteDatabase;
 import android.os.AsyncTask;
 import android.support.annotation.NonNull;
 
 import com.scorpio.myexpensemanager.db.AppDatabase;
+import com.scorpio.myexpensemanager.db.CompanyDb;
 import com.scorpio.myexpensemanager.db.vo.Company;
 
+import java.io.File;
 import java.util.List;
 
 /**
@@ -41,6 +44,12 @@ public class CompanyViewModel extends AndroidViewModel {
         }
     }
 
+    public void deleteCompany(@NonNull final Company company) {
+        if (null != company) {
+            new DeleteCompanyTask(appDb, getApplication()).execute(company);
+        }
+    }
+
     public boolean isCompanyExists(@NonNull final String name) {
 //        Company company = appDb.companyDao().findCompanyByName(name);
         return false;
@@ -63,14 +72,23 @@ public class CompanyViewModel extends AndroidViewModel {
     private static class DeleteCompanyTask extends AsyncTask<Company, Void, Integer> {
 
         private AppDatabase appDb;
+        private Application application;
 
-        public DeleteCompanyTask(final AppDatabase appDb) {
+        public DeleteCompanyTask(final AppDatabase appDb, Application application) {
             this.appDb = appDb;
+            this.application = application;
         }
 
         @Override
         protected Integer doInBackground(@NonNull Company... companies) {
-            return appDb.companyDao().delete(companies[0]);
+            int result = -1;
+            CompanyDb companyDb = CompanyDb.getDatabase(application, companies[0].getDbName());
+            String dbPath = companyDb.getOpenHelper().getWritableDatabase().getPath();
+            if (SQLiteDatabase.deleteDatabase(new File(dbPath))) {
+                result = appDb.companyDao().delete(companies[0]);
+            }
+
+            return result;
         }
     }
 }

@@ -24,7 +24,9 @@ import java.io.InputStream;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 /**
  * This class contains the code to handle the Tally file
@@ -37,6 +39,7 @@ public class TallyFileHandler {
     private File file;
     private List<AccountGroup> accountGroups = new ArrayList<>();
     private List<Ledger> ledgers = new ArrayList<>();
+    private Map<String, List<Ledger>> groupLedgerMap = new HashMap<>();
 
     private List<Voucher> vouchers = new ArrayList<>();
     private InputStream in = null;
@@ -83,10 +86,13 @@ public class TallyFileHandler {
         return accountGroups;
     }
 
+    public Map<String, List<Ledger>> getGroupLedgerMap() {
+        return groupLedgerMap;
+    }
+
     public List<Ledger> getLedgers() {
         return ledgers;
     }
-
 
     private void readMessages(XmlPullParser parser) throws IOException, XmlPullParserException {
         parser.require(XmlPullParser.START_TAG, ns, "ENVELOPE");
@@ -193,7 +199,11 @@ public class TallyFileHandler {
         if (null != groupName) {
             group = new AccountGroup();
             group.setName(groupName);
-            group.setParentName(groupParent);
+            if (null == groupParent) {
+                group.setParentName(Constants.PRIMARY);
+            } else {
+                group.setParentName(groupParent);
+            }
             if (isRevenue) {
                 if (isDeemedPositive) {
                     group.setType(NatureOfGroup.EXPENSES);
@@ -251,13 +261,19 @@ public class TallyFileHandler {
             parser.next();
         }
 
-        if (null != ledgerName) {
+        if (null != ledgerName && null != ledgerParent) {
             ledger = new Ledger();
             ledger.setName(ledgerName);
-            if (null != ledgerParent) {
-                ledger.setGroupName(ledgerParent);
-                ledger.setOpeningBalance(openingBalance);
+            ledger.setGroupName(ledgerParent);
+            ledger.setOpeningBalance(openingBalance);
+            ledger.setCurrentBalance(openingBalance);
+            ledger.setActive(true);
+
+            if (null == groupLedgerMap.get(ledgerParent)) {
+                groupLedgerMap.put(ledgerParent, new ArrayList<>());
             }
+            groupLedgerMap.get(ledgerParent).add(ledger);
+
             return ledger;
         }
         return ledger;
@@ -421,138 +437,4 @@ public class TallyFileHandler {
             }
         }
     }
-
-//    private Tree<Node> getGroupNodeByName(Tree<Node> tree, String name) {
-//        if (null == tree || null == name) {
-//            return null;
-//        } else if (tree.getSubTrees().size() > 0) {
-//            // int i=0;
-//            for (Tree<Node> node : tree.getSubTrees()) {
-//                // for(int i=0; i<tree.getLeafs().size();i++)
-//                // i++;
-//                // Tree<Node> node = tree.getLeafs().get;
-//                if (null != node.getValue() && node.getValue().getGroup().getName().equals
-// (name)) {
-//                    return node;
-//                } else {
-//                    Tree<Node> foundNode = getGroupNodeByName(node, name);
-//                    if (null != foundNode) {
-//                        return foundNode;
-//                    }
-//                }
-//            }
-//
-//        }
-//        return null;
-//    }
-//
-//    private void updateAccountTree(AccountGroup group) {
-//        Node grpNode = new Node();
-//        grpNode.setName(group.getName());
-//        grpNode.setGroup(group);
-//        grpNode.setType(NodeType.GROUP);
-//        AccountTree pNode = accountTree.getTreeByKey(group.getParentName());
-//        if (null != pNode) {
-//            pNode.addLeaf(grpNode);
-//        } else {
-//            accountTree.addLeaf(grpNode);
-//        }
-//    }
-
-//    private void updateAccountTree(Ledger ledger) {
-//        String groupName = ledger.getGroupName();
-//        if (null != groupName && null != accountTree.getTreeByKey(groupName)) {
-//            Node node = new Node();
-//            node.setName(ledger.getName());
-//            node.setType(NodeType.LEDGER);
-//            node.setLedger(ledger);
-//            AccountTree pNode = accountTree.getTreeByKey(groupName);
-//            if (null != pNode) {
-//                pNode.addLeaf(node);
-//            } else {
-//                accountTree.addLeaf(node);
-//            }
-////            accountTree.getTreeByKey(groupName).getValue().addLedger(ledger);
-//        }
-//    }
-//
-//    public void createDbEntry() {
-//        AccountGroupDao gDao = new AccountGroupDaoImpl(DbHelper
-//                .getCurComWriteDbHandle());
-//        LedgerDao lDao = new LedgerDaoImpl(DbHelper.getCurComWriteDbHandle());
-//
-//        traverseTree(accountTree, gDao, lDao);
-//    }
-//
-//    public void createVouchers() {
-//        VoucherDaoImpl vDao = new VoucherDaoImpl(DbHelper.getCurComWriteDbHandle());
-//        for (Voucher voucher : vouchers) {
-//            Log.v(Constants.APP_NAME, "Prcessing Voucher : " + voucher.getGuid());
-//            if (!vDao.isVoucherExitsByGuid(voucher.getGuid())) {
-//                Long r = vDao.createEntry(voucher);
-//                Log.v(Constants.APP_NAME, "Voucher created with id : " + r.toString());
-//            } else {
-//                Log.v(Constants.APP_NAME, "Voucher Already exists.");
-//            }
-//        }
-//    }
-//
-//    private void traverseTree(AccountTree tree, AccountGroupDao gDao, LedgerDao lDao) {
-//        for (AccountTree tNode : tree.getLeafs()) {
-//            if (null != tNode && null != tNode.getValue()) {
-//                Node gNode = tNode.getValue();
-//                if (null != gNode.getGroup() && null != gNode.getGroup().getName()) {
-//                    Log.v(Constants.APP_NAME, "Procesing group -> " + gNode.getGroup().getName());
-//                    Long gRowId = createGroupEntry(gDao, gNode.getGroup());
-//                    if (-1 != gRowId) {
-//                        Log.v(Constants.APP_NAME, "Group created with id -> " + gRowId);
-//                        for (AccountTree lTree : tNode.getLeafs()) {
-//                            if (null != lTree && null != lTree.getValue()) {
-//                                Node lnode = lTree.getValue();
-//                                if (lnode.getType() == NodeType.LEDGER) {
-//                                    Ledger ledger = lnode.getLedger();
-//                                    if (null != ledger) {
-//                                        Log.v(Constants.APP_NAME, "Creating Ledger --> " + ledger
-//                                                .getName());
-//                                        Long lId = createLedgerEntry(gDao, lDao, ledger);
-//                                        if (-1 != lId) {
-//                                            Log.v(Constants.APP_NAME, "Ledger create with id
-// --> " +
-//                                                    "" + lId);
-//                                        }
-//                                    }
-//                                }
-//                            }
-//                        }
-//                    }
-//                }
-//                traverseTree(tNode, gDao, lDao);
-//            }
-//        }
-//    }
-//
-//    private long createGroupEntry(AccountGroupDao gDao, AccountGroup grp) {
-//        Long grpId = new Long(-1);
-//        if (null != grp && null != grp.getName()) {
-//            if (null != grp.getParentName()) {
-//                AccountGroup pGroup = gDao.getAccountGroupByName(grp.getParentName());
-//                if (null != pGroup) {
-//                    grp.setType(pGroup.getType());
-//                    grp.setDeemedPositive(pGroup.isDeemedPositive());
-//                    grpId = gDao.createEntry(grp);
-//                }
-//            } else {
-//                grpId = gDao.createEntry(grp);
-//            }
-//        }
-//        return grpId;
-//    }
-
-//    private long createLedgerEntry(AccountGroupDao gDao, LedgerDao lDao, Ledger ledger) {
-//        if (null != ledger) {
-//            if (gDao.isGroupPresent(ledger.getGroupName()))
-//                return lDao.createEntry(ledger);
-//        }
-//        return -1;
-//    }
 }

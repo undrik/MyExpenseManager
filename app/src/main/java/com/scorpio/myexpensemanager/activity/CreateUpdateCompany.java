@@ -3,6 +3,7 @@ package com.scorpio.myexpensemanager.activity;
 import android.annotation.SuppressLint;
 import android.app.DatePickerDialog;
 import android.arch.lifecycle.ViewModelProviders;
+import android.content.Intent;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.constraint.ConstraintLayout;
@@ -13,6 +14,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.text.Editable;
 import android.text.TextWatcher;
+import android.util.Log;
 import android.util.Patterns;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -22,8 +24,10 @@ import android.view.WindowManager;
 import com.scorpio.myexpensemanager.R;
 import com.scorpio.myexpensemanager.commons.Constants;
 import com.scorpio.myexpensemanager.commons.PopulateDefaults;
+import com.scorpio.myexpensemanager.commons.TaskExecutor;
 import com.scorpio.myexpensemanager.commons.Util;
 import com.scorpio.myexpensemanager.db.AppDatabase;
+import com.scorpio.myexpensemanager.db.CompanyDb;
 import com.scorpio.myexpensemanager.db.vo.AccountGroup;
 import com.scorpio.myexpensemanager.db.vo.Company;
 import com.scorpio.myexpensemanager.db.vo.Ledger;
@@ -31,8 +35,14 @@ import com.scorpio.myexpensemanager.viewmodels.AccountGroupViewModel;
 import com.scorpio.myexpensemanager.viewmodels.CompanyViewModel;
 import com.scorpio.myexpensemanager.viewmodels.LedgerViewModel;
 
+import java.time.LocalDate;
 import java.util.Calendar;
+import java.util.Date;
 import java.util.List;
+import java.util.concurrent.ExecutionException;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.concurrent.Future;
 import java.util.stream.Collectors;
 
 import static java.lang.Long.valueOf;
@@ -164,17 +174,40 @@ public class CreateUpdateCompany extends AppCompatActivity {
 //            Snackbar.make(view, "Your code on action goes here", Snackbar.LENGTH_LONG).show();
             if (validateName()) {
                 //This code should be changed later TODO
-                Company company = new Company();
+                final Company company = new Company();
                 company.setName(inputName.getText().toString());
                 company.setFinYearStart(Util.convertToDateFromDDMMYYYY(inputFinYearStart.getText
                         ().toString().trim()));
                 company.setBookStart(Util.convertToDateFromDDMMYYYY(inputBookStart.getText()
                         .toString().trim()));
-                company.setDbName(valueOf(Calendar.getInstance().getTimeInMillis()).toString
-                        () + Constants.DB_EXTENSION);
-                new CompanyTask(AppDatabase.getDatabase(this.getApplication())).execute(company);
-//                companyViewModel.addCompany(company);
-//                this.finish();
+                String dbName = Long.valueOf(new Date().getTime()).toString() + Constants
+                        .DB_EXTENSION;
+                company.setDbName(dbName);
+                ExecutorService executor = Executors.newSingleThreadExecutor();
+//                executor.execute(() -> {
+//                    saveCompany(company);
+//                });
+                Future<Company> taskSaveCompany = executor.submit(() -> {
+                    return saveCompany(company);
+                });
+                executor.shutdown();
+//                while (!executor.isTerminated()) {
+//
+//                }
+                try {
+                    Company result = taskSaveCompany.get();
+                    Intent ouput = new Intent();
+                    ouput.putExtra(Constants.COMANY_OBJ, taskSaveCompany.get());
+                    setResult(RESULT_OK, ouput);
+                } catch (InterruptedException e) {
+                    Log.v(Constants.APP_NAME, e.getMessage());
+                    setResult(RESULT_CANCELED);
+                } catch (ExecutionException e) {
+                    Log.v(Constants.APP_NAME, e.getMessage());
+                    setResult(RESULT_CANCELED);
+                }
+
+                this.finish();
                 return true;
             }
         }
@@ -262,6 +295,26 @@ public class CreateUpdateCompany extends AppCompatActivity {
         }
     }
 
+    @SuppressLint("NewApi")
+    private synchronized Company saveCompany(Company company) {
+        Log.v(Constants.APP_NAME, company.toString());
+        AppDatabase appDb = AppDatabase.getDatabase(getApplication());
+
+        CompanyDb companyDb = CompanyDb.getDatabase(getApplication(), company.getDbName());
+        Log.v(Constants.APP_NAME, companyDb.getOpenHelper().getDatabaseName() + " : " + companyDb
+                .getOpenHelper().getWritableDatabase().getPath());
+        List<AccountGroup> groups = PopulateDefaults.predefinedGroups();
+        companyDb.accountGroupDao().save(groups);
+        List<Ledger> ledgers = PopulateDefaults.predefiniedLedgers();
+        companyDb.ledgerDao().save(ledgers);
+        Long result = appDb.companyDao().save(company);
+        companyDb.close();
+        if (result > 0) {
+            company.setId(result);
+        }
+        return company;
+    }
+
     private class CompanyTask extends AsyncTask<Company, Void, Long> {
         private AppDatabase appDb;
 
@@ -273,16 +326,19 @@ public class CreateUpdateCompany extends AppCompatActivity {
         protected Long doInBackground(Company... companies) {
             if (null == updateCompany) {
                 Company company = companies[0];
-                Long result = appDb.companyDao().save(company);
-//                CompanyDb companyDb = CompanyDb.getDatabase(getApplication(), companies[0]
-//                        .getDbName());
+
+                CompanyDb companyDb = CompanyDb.getDatabase(getApplication(), companies[0]
+                        .getDbName());
                 AccountGroupViewModel groupViewModel = new AccountGroupViewModel(getApplication()
                         , companies[0]);
                 List<AccountGroup> groups = PopulateDefaults.predefinedGroups();
-                groupViewModel.addAccountGroups(groups.toArray(new AccountGroup[groups.size()]));
+//                groupViewModel.addAccountGroups(groups.toArray(new AccountGroup[groups.size()]));
+                companyDb.accountGroupDao().save(groups);
                 LedgerViewModel ledgerViewModel = new LedgerViewModel(getApplication(), company);
                 List<Ledger> ledgers = PopulateDefaults.predefiniedLedgers();
-                ledgerViewModel.addLedgers(ledgers.toArray(new Ledger[ledgers.size()]));
+//                ledgerViewModel.addLedgers(ledgers.toArray(new Ledger[ledgers.size()]));
+                companyDb.ledgerDao().save(ledgers);
+                Long result = appDb.companyDao().save(company);
                 return result;
             } else {
                 return (long) appDb.companyDao().update(companies[0]);

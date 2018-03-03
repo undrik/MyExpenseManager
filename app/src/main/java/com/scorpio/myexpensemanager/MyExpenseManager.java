@@ -7,6 +7,7 @@ import android.os.Bundle;
 import android.support.design.widget.CoordinatorLayout;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -29,8 +30,9 @@ import com.scorpio.myexpensemanager.viewmodels.CompanyViewModel;
 
 import java.util.ArrayList;
 
-public class MyExpenseManager extends AppCompatActivity implements ItemRvTouchHelper.RvItemSwipeListener, OnItemClickListner {
-
+public class MyExpenseManager extends AppCompatActivity implements ItemRvTouchHelper
+        .RvItemSwipeListener, OnItemClickListner {
+    private static final int CREATE_COMPANY = 10;
 
     private CoordinatorLayout expenseManagerLayout;
     private CompanyRvAdapter companyRvAdapter;
@@ -45,7 +47,7 @@ public class MyExpenseManager extends AppCompatActivity implements ItemRvTouchHe
         FloatingActionButton fab = findViewById(R.id.fab);
         fab.setOnClickListener((view) -> {
             Intent intent = new Intent(this, CreateUpdateCompany.class);
-            startActivity(intent);
+            startActivityForResult(intent, CREATE_COMPANY);
         });
         expenseManagerLayout = findViewById(R.id.expenseManagerLayout);
         RecyclerView companyRv = findViewById(R.id.companyRv);
@@ -89,6 +91,24 @@ public class MyExpenseManager extends AppCompatActivity implements ItemRvTouchHe
     }
 
     @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+//        super.onActivityResult(requestCode, resultCode, data);
+        if (requestCode == CREATE_COMPANY) {
+            String message = new String();
+            if (resultCode == RESULT_OK) {
+                Company company = (Company) data.getSerializableExtra(Constants.COMANY_OBJ);
+                if (null != company.getId()) {
+                    message = getString(R.string.msg_success_company_create) + " " + company
+                            .getName();
+                }
+            } else {
+                message = getString(R.string.msg_failed_company_create);
+            }
+            Snackbar.make(expenseManagerLayout, message, Snackbar.LENGTH_LONG).show();
+        }
+    }
+
+    @Override
     public void onSwiped(RecyclerView.ViewHolder viewHolder, int direction, int position) {
         if (viewHolder instanceof CompanyRvAdapter.CompanyViewHolder) {
             final String companyName = companyRvAdapter.getItems().get(position).getName();
@@ -97,15 +117,31 @@ public class MyExpenseManager extends AppCompatActivity implements ItemRvTouchHe
                 //remove the item from the recycler view
                 companyRvAdapter.removeItem(position);
 
-                // showing Snackbar with UNDO option
-                Snackbar snackbar = Snackbar.make(expenseManagerLayout, companyName + " deleted " +
-                        "from " +
+                AlertDialog.Builder alBuilder = new AlertDialog.Builder(this);
+                alBuilder.setTitle(Constants.WARNING_TITLE);
+                alBuilder.setMessage(getString(R.string.msg_sure_delete) + companyName);
+                alBuilder.setCancelable(false);
+                alBuilder.setPositiveButton(Constants.YES, (dialog, which) -> {
+                    CompanyViewModel companyViewModel = new CompanyViewModel(getApplication());
+                    companyViewModel.deleteCompany(company);
+                }).setNegativeButton(Constants.NO, (dialog, which) -> {
+                    dialog.cancel();
+                    companyRvAdapter.restoreItem(company, position);
+                });
+                AlertDialog alertDialog = alBuilder.create();
+                alBuilder.show();
 
-                        "list!", Snackbar.LENGTH_LONG);
-                snackbar.setAction("UNDO", (view) -> companyRvAdapter.restoreItem(company,
-                        position));
-                snackbar.setActionTextColor(Color.YELLOW);
-                snackbar.show();
+
+//                // showing Snackbar with UNDO option
+//                Snackbar snackbar = Snackbar.make(expenseManagerLayout, companyName + " deleted
+// " +
+//                        "from " +
+//
+//                        "list!", Snackbar.LENGTH_LONG);
+//                snackbar.setAction("UNDO", (view) -> companyRvAdapter.restoreItem(company,
+//                        position));
+//                snackbar.setActionTextColor(Color.YELLOW);
+//                snackbar.show();
             } else {
                 Intent intent = new Intent(this, CreateUpdateCompany.class);
                 intent.putExtra(Constants.COMANY_OBJ, company);

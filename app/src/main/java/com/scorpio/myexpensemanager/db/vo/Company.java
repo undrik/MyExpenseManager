@@ -202,5 +202,31 @@ public class Company implements Serializable {
     public void setModifiedDate(Date modifiedDate) {
         this.modifiedDate = modifiedDate;
     }
+
+    @Override
+    public String toString() {
+        return "Company{" +
+                "id=" + id +
+                ", name='" + name + '\'' +
+                ", address1='" + address1 + '\'' +
+                ", address2='" + address2 + '\'' +
+                ", state='" + state + '\'' +
+                ", country='" + country + '\'' +
+                ", pincode='" + pincode + '\'' +
+                ", email='" + email + '\'' +
+                ", phone='" + phone + '\'' +
+                ", tan='" + tan + '\'' +
+                ", pan='" + pan + '\'' +
+                ", aadhar='" + aadhar + '\'' +
+                ", finYearStart=" + finYearStart +
+                ", finYearEnd=" + finYearEnd +
+                ", bookStart=" + bookStart +
+                ", currencyId='" + currencyId + '\'' +
+                ", isPasswordProtected=" + isPasswordProtected +
+                ", password='" + password + '\'' +
+                ", dbName='" + dbName + '\'' +
+                ", modifiedDate=" + modifiedDate +
+                '}';
+    }
 }
 

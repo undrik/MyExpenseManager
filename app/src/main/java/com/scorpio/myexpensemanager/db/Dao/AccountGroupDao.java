@@ -24,6 +24,12 @@ public interface AccountGroupDao {
     @Query("SELECT * FROM AccountGroup")
     LiveData<List<AccountGroup>> findAll();
 
+    @Query("SELECT * FROM AccountGroup")
+    List<AccountGroup> findAllGroups();
+
+    @Query("SELECT name FROM AccountGroup")
+    List<String> findAllGroupNames();
+
     @Insert
     List<Long> save(final List<AccountGroup> groups);
 
