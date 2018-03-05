@@ -1,9 +1,13 @@
 package com.scorpio.myexpensemanager.commons;
 
+import android.annotation.SuppressLint;
+
 import java.text.DecimalFormat;
 import java.text.NumberFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.Locale;
@@ -12,6 +16,7 @@ import java.util.Locale;
  * My Expense Manager Util class
  * Created by hkundu on 2/14/2015.
  */
+@SuppressLint("NewApi")
 public class Util {
     public static String convertAmount(Double amount) {
         Locale locale = new Locale("en", "IN");
@@ -39,6 +44,18 @@ public class Util {
         return decimalFormat.format(amount);
     }
 
+    public static String getToday() {
+        DateTimeFormatter pattern = DateTimeFormatter.ofPattern(Constants.DATE_FORMAT_D_MMM_YYYY);
+
+        return LocalDate.now().format(pattern);
+    }
+
+    public static String getTodayWithDay() {
+        DateTimeFormatter pattern = DateTimeFormatter.ofPattern(Constants
+                .DATE_FORMAT_WITH_SHORT_WEEK);
+        return LocalDate.now().format(pattern);
+    }
+
     public static String convertToDDMMMYYYY(long timeInMils) {
         SimpleDateFormat dateFormat = new SimpleDateFormat(Constants.DATE_FORMAT_D_MMM_YYYY,
                 Locale.ENGLISH);
@@ -46,7 +63,8 @@ public class Util {
     }
 
     public static Date convertToDateFromDDMMYYYY(String strDate) {
-        SimpleDateFormat format = new SimpleDateFormat(Constants.DATE_FORMAT_D_MMM_YYYY, Locale.ENGLISH);
+        SimpleDateFormat format = new SimpleDateFormat(Constants.DATE_FORMAT_D_MMM_YYYY, Locale
+                .ENGLISH);
 
         try {
             return format.parse(strDate);
@@ -59,7 +77,8 @@ public class Util {
     }
 
     public static long convertToTimeFromddMMMyyyy(String date) {
-        SimpleDateFormat format = new SimpleDateFormat(Constants.DATE_FORMAT_D_MMM_YYYY, Locale.ENGLISH);
+        SimpleDateFormat format = new SimpleDateFormat(Constants.DATE_FORMAT_D_MMM_YYYY, Locale
+                .ENGLISH);
         try {
             return format.parse(date).getTime();
         } catch (ParseException e) {
@@ -78,7 +97,8 @@ public class Util {
 //    }
 
     public static long convertToTimeFromddMMMyy(String date) {
-        SimpleDateFormat format = new SimpleDateFormat(Constants.DATE_FORMAT_D_MMM_YY, Locale.ENGLISH);
+        SimpleDateFormat format = new SimpleDateFormat(Constants.DATE_FORMAT_D_MMM_YY, Locale
+                .ENGLISH);
         try {
             return format.parse(date).getTime();
         } catch (ParseException e) {

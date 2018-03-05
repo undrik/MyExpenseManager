@@ -118,6 +118,8 @@ public class CompanyMain extends AppCompatActivity
         } else if (id == R.id.nav_group) {
 
         } else if (id == R.id.nav_voucher) {
+            Intent intent = new Intent(this, VoucherList.class);
+            startActivity(intent);
 
         } else if (id == R.id.nav_balance_sheet) {
 

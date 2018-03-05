@@ -38,6 +38,11 @@
             android:name=".activity.LedgerList"
             android:label="@string/title_activity_ledger_list"
             android:theme="@style/AppTheme.NoActionBar" />
+        <activity android:name=".activity.CreateUpdateVoucher" />
+        <activity
+            android:name=".activity.VoucherList"
+            android:label="@string/title_activity_voucher_list"
+            android:theme="@style/AppTheme.NoActionBar"></activity>
     </application>
 
 </manifest>
