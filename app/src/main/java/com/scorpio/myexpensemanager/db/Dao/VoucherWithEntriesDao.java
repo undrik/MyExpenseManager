@@ -12,6 +12,7 @@ import com.scorpio.myexpensemanager.db.vo.VoucherEntry;
 import com.scorpio.myexpensemanager.db.vo.VoucherWithEntries;
 
 import java.util.List;
+import java.util.UUID;
 import java.util.stream.Collectors;
 
 /**
@@ -36,6 +37,7 @@ public abstract class VoucherWithEntriesDao {
     @SuppressLint("NewApi")
     @Transaction
     public void saveWithEntries(Voucher voucher) {
+        voucher.setGuid(UUID.randomUUID().toString());
         Long voucherId = save(voucher);
         List<VoucherEntry> voucherEntries = voucher.getVoucherEntryList().stream().map
                 (voucherEntry -> {

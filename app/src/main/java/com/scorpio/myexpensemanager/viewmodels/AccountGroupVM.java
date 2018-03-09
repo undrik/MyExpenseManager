@@ -19,12 +19,12 @@ import java.util.List;
  * Created by User on 24-02-2018.
  */
 
-public class AccountGroupViewModel extends AndroidViewModel {
+public class AccountGroupVM extends AndroidViewModel {
     private CompanyDb companyDb;
     private LiveData<List<AccountGroup>> groupLiveData;
     private OnResultListener onResultListener;
 
-    public AccountGroupViewModel(@NonNull Application application, @NonNull final Company company) {
+    public AccountGroupVM(@NonNull Application application, @NonNull final Company company) {
         super(application);
         if (null != company.getDbName()) {
             companyDb = CompanyDb.getDatabase(getApplication(), company.getDbName());
@@ -38,6 +38,10 @@ public class AccountGroupViewModel extends AndroidViewModel {
 
     public LiveData<List<AccountGroup>> fetchAllAccountGroup() {
         return groupLiveData;
+    }
+
+    public List<AccountGroup> fetchAllAccountGroups() {
+        return companyDb.accountGroupDao().findAllGroups();
     }
 
     public void addAccountGroups(@NonNull AccountGroup... groups) {

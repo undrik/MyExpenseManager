@@ -21,7 +21,8 @@ public abstract class AppDatabase extends RoomDatabase {
     public static AppDatabase getDatabase(Context context) {
         if (null == EXPENSE_DB_INSTANCE) {
             String DB_NAME = "myexpensemanager.db";
-            EXPENSE_DB_INSTANCE = Room.databaseBuilder(context.getApplicationContext(), AppDatabase.class, DB_NAME).build();
+            EXPENSE_DB_INSTANCE = Room.databaseBuilder(context.getApplicationContext(),
+                    AppDatabase.class, DB_NAME).build();
         }
         return EXPENSE_DB_INSTANCE;
     }

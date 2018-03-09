@@ -14,12 +14,6 @@ import com.scorpio.myexpensemanager.db.converters.LocalDateEpochConverter;
 
 import java.time.LocalDate;
 
-/**
- * <!-- begin-user-doc -->
- * <!--  end-user-doc  -->
- *
- * @generated
- */
 
 @Entity(foreignKeys = {
 //        @ForeignKey(entity = Ledger.class,

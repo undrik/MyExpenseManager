@@ -1,6 +1,8 @@
 package com.scorpio.myexpensemanager.commons;
 
 import android.annotation.SuppressLint;
+import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
 
 import java.text.DecimalFormat;
 import java.text.NumberFormat;
@@ -10,6 +12,7 @@ import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.List;
 import java.util.Locale;
 
 /**
@@ -54,6 +57,20 @@ public class Util {
         DateTimeFormatter pattern = DateTimeFormatter.ofPattern(Constants
                 .DATE_FORMAT_WITH_SHORT_WEEK);
         return LocalDate.now().format(pattern);
+    }
+
+    public static String convertToDDMMYYYEEE(LocalDate localDate) {
+        DateTimeFormatter pattern = DateTimeFormatter.ofPattern(Constants
+                .DATE_FORMAT_WITH_SHORT_WEEK);
+
+        return localDate.format(pattern);
+    }
+
+    public static String convertToDDMMYYY(LocalDate localDate) {
+        DateTimeFormatter pattern = DateTimeFormatter.ofPattern(Constants
+                .DATE_FORMAT_D_MMM_YYYY);
+
+        return localDate.format(pattern);
     }
 
     public static String convertToDDMMMYYYY(long timeInMils) {
@@ -137,5 +154,21 @@ public class Util {
         calendar.set(Calendar.MILLISECOND, 0);
 
         return calendar.getTimeInMillis() / 1000;
+    }
+
+    public static int validateName(@NonNull String name) {
+        if (name.trim().isEmpty()) {
+            return Constants.ERROR_CODE_EMPTY;
+        }
+        return Constants.SUCCESS_CODE;
+    }
+
+    public static int validateName(@NonNull String name, List<String> names) {
+        if (name.trim().isEmpty()) {
+            return Constants.ERROR_CODE_EMPTY;
+        } else if (null != names && names.contains(name)) {
+            return Constants.ERROR_CODE_EXISTS;
+        }
+        return Constants.SUCCESS_CODE;
     }
 }

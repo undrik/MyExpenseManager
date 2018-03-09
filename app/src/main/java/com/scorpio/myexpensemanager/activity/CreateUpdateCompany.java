@@ -24,18 +24,16 @@ import android.view.WindowManager;
 import com.scorpio.myexpensemanager.R;
 import com.scorpio.myexpensemanager.commons.Constants;
 import com.scorpio.myexpensemanager.commons.PopulateDefaults;
-import com.scorpio.myexpensemanager.commons.TaskExecutor;
 import com.scorpio.myexpensemanager.commons.Util;
 import com.scorpio.myexpensemanager.db.AppDatabase;
 import com.scorpio.myexpensemanager.db.CompanyDb;
 import com.scorpio.myexpensemanager.db.vo.AccountGroup;
 import com.scorpio.myexpensemanager.db.vo.Company;
 import com.scorpio.myexpensemanager.db.vo.Ledger;
-import com.scorpio.myexpensemanager.viewmodels.AccountGroupViewModel;
+import com.scorpio.myexpensemanager.viewmodels.AccountGroupVM;
 import com.scorpio.myexpensemanager.viewmodels.CompanyViewModel;
 import com.scorpio.myexpensemanager.viewmodels.LedgerViewModel;
 
-import java.time.LocalDate;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
@@ -307,6 +305,8 @@ public class CreateUpdateCompany extends AppCompatActivity {
         companyDb.accountGroupDao().save(groups);
         List<Ledger> ledgers = PopulateDefaults.predefiniedLedgers();
         companyDb.ledgerDao().save(ledgers);
+        List<Long> voucherTypeEntry = companyDb.voucherTypeDao().save(PopulateDefaults
+                .predefiniedVoucherTypes());
         Long result = appDb.companyDao().save(company);
         companyDb.close();
         if (result > 0) {
@@ -329,7 +329,7 @@ public class CreateUpdateCompany extends AppCompatActivity {
 
                 CompanyDb companyDb = CompanyDb.getDatabase(getApplication(), companies[0]
                         .getDbName());
-                AccountGroupViewModel groupViewModel = new AccountGroupViewModel(getApplication()
+                AccountGroupVM groupViewModel = new AccountGroupVM(getApplication()
                         , companies[0]);
                 List<AccountGroup> groups = PopulateDefaults.predefinedGroups();
 //                groupViewModel.addAccountGroups(groups.toArray(new AccountGroup[groups.size()]));
@@ -338,6 +338,8 @@ public class CreateUpdateCompany extends AppCompatActivity {
                 List<Ledger> ledgers = PopulateDefaults.predefiniedLedgers();
 //                ledgerViewModel.addLedgers(ledgers.toArray(new Ledger[ledgers.size()]));
                 companyDb.ledgerDao().save(ledgers);
+                List<Long> voucherTypeEntry = companyDb.voucherTypeDao().save(PopulateDefaults
+                        .predefiniedVoucherTypes());
                 Long result = appDb.companyDao().save(company);
                 return result;
             } else {

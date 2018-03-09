@@ -3,6 +3,7 @@ package com.scorpio.myexpensemanager.commons;
 import com.scorpio.myexpensemanager.db.vo.AccountGroup;
 import com.scorpio.myexpensemanager.db.vo.Ledger;
 import com.scorpio.myexpensemanager.db.vo.NatureOfGroup;
+import com.scorpio.myexpensemanager.db.vo.VoucherType;
 
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -108,5 +109,18 @@ public class PopulateDefaults {
         ledgers.add(new Ledger(Constants.CASH_IN_WALLET, Constants.CASH_IN_HAND, 0.0, Calendar
                 .getInstance().getTimeInMillis()));
         return ledgers;
+    }
+
+    public static List<VoucherType> predefiniedVoucherTypes() {
+        List<VoucherType> voucherTypes = new ArrayList<>();
+
+        voucherTypes.add(new VoucherType(Constants.PAYMENT, 1L));
+        voucherTypes.add(new VoucherType(Constants.RECEIPT, 1L));
+        voucherTypes.add(new VoucherType(Constants.CONTRA, 1L));
+        voucherTypes.add(new VoucherType(Constants.JOURNAL, 1L));
+        voucherTypes.add(new VoucherType(Constants.PURCHASE, 1L));
+        voucherTypes.add(new VoucherType(Constants.SALES, 1L));
+
+        return voucherTypes;
     }
 }

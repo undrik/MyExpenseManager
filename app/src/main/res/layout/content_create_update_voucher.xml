@@ -3,7 +3,8 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
-    android:layout_height="match_parent">
+    android:layout_height="match_parent"
+   >
 
     <TextView
         android:id="@+id/textView"
@@ -11,7 +12,8 @@
         android:layout_height="wrap_content"
         android:layout_marginStart="8dp"
         android:layout_marginTop="8dp"
-        android:text="TextView"
+        android:text="@string/no"
+        android:textAppearance="@android:style/TextAppearance.Material.Small"
         android:textStyle="bold"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
@@ -20,10 +22,13 @@
         android:id="@+id/voucherNo"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_marginStart="8dp"
         android:layout_marginTop="8dp"
+        android:focusable="false"
+        android:textAppearance="@android:style/TextAppearance.Material.Small.Inverse"
         app:layout_constraintBottom_toBottomOf="@+id/textView"
-        app:layout_constraintTop_toTopOf="parent"
-        tools:layout_editor_absoluteX="92dp" />
+        app:layout_constraintStart_toEndOf="@+id/textView"
+        app:layout_constraintTop_toTopOf="parent" />
 
     <android.support.design.widget.TextInputEditText
         android:id="@+id/voucherDate"
@@ -31,8 +36,19 @@
         android:layout_height="wrap_content"
         android:layout_marginEnd="8dp"
         android:layout_marginTop="8dp"
+        android:focusable="false"
+        android:textAppearance="@android:style/TextAppearance.Material.Small.Inverse"
+        app:layout_constraintBottom_toBottomOf="@+id/textView"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
+
+    <View
+        android:id="@+id/spaceView1"
+        android:layout_width="match_parent"
+        android:layout_height="2dip"
+        android:layout_marginTop="8dp"
+        android:background="#FFEE58"
+        app:layout_constraintTop_toBottomOf="@+id/textView" />
 
     <android.support.constraint.Guideline
         android:id="@+id/guideline2"
@@ -40,4 +56,57 @@
         android:layout_height="wrap_content"
         android:orientation="vertical"
         app:layout_constraintGuide_percent=".5" />
+
+    <android.support.constraint.Guideline
+        android:id="@+id/guideline3"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        app:layout_constraintGuide_percent=".75" />
+
+    <TextView
+        android:id="@+id/textView8"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginEnd="8dp"
+        android:layout_marginStart="8dp"
+        android:text="@string/debit"
+        android:textAppearance="@android:style/TextAppearance.Material.Small"
+        android:textStyle="bold"
+        app:layout_constraintEnd_toStartOf="@+id/guideline3"
+        app:layout_constraintStart_toStartOf="@+id/guideline2"
+        app:layout_constraintTop_toTopOf="@+id/spaceView1" />
+
+    <TextView
+        android:id="@+id/textView9"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginEnd="8dp"
+        android:layout_marginStart="8dp"
+        android:text="@string/credit"
+        android:textAppearance="@android:style/TextAppearance.Material.Small"
+        android:textStyle="bold"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="@+id/guideline3"
+        app:layout_constraintTop_toTopOf="@+id/spaceView1" />
+
+    <TextView
+        android:id="@+id/textView6"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginEnd="8dp"
+        android:layout_marginStart="8dp"
+        android:text="TextView"
+        android:textStyle="bold"
+        app:layout_constraintEnd_toStartOf="@+id/guideline2"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="@+id/spaceView1" />
+
+    <View
+        android:id="@+id/spaceView2"
+        android:layout_width="match_parent"
+        android:layout_height="2dip"
+        android:background="#FFEE58"
+        app:layout_constraintTop_toBottomOf="@+id/textView6" />
+
 </android.support.constraint.ConstraintLayout>

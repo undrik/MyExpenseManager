@@ -16,6 +16,9 @@ public interface Constants {
     int REPORT_BALANCE_SHEET = 40;
     String REPORT_INCOME_EXPENSE_STR = "incomeExpense";
     int REPORT_INCOME_EXPENSE = 50;
+    int SUCCESS_CODE = 600;
+    int ERROR_CODE_EMPTY = 610;
+    int ERROR_CODE_EXISTS = 620;
     String VOUCHER_START_DATE = "vchStartDate";
     String VOUCHER_END_DATE = "vchEndDate";
     String VOUCHER_LEDGER = "vchLedger";
@@ -198,6 +201,14 @@ public interface Constants {
 
     //Default Ledger
     String CASH_IN_WALLET = "Cash-in-Wallet";
+
+    //Voucher type
+    String PAYMENT = "Payment";
+    String RECEIPT = "Receipt";
+    String CONTRA = "Contra";
+    String JOURNAL = "Journal";
+    String PURCHASE = "Purchase";
+    String SALES = "Sales";
 
 
     //Tally voucher xml tag constants

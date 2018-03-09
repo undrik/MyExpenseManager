@@ -16,7 +16,6 @@ import android.support.design.widget.Snackbar;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
-import android.support.v4.widget.ListViewAutoScrollHelper;
 import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
@@ -29,13 +28,10 @@ import com.scorpio.myexpensemanager.R;
 import com.scorpio.myexpensemanager.commons.Cache;
 import com.scorpio.myexpensemanager.commons.Constants;
 import com.scorpio.myexpensemanager.commons.FileSelector;
-import com.scorpio.myexpensemanager.commons.TaskExecutor;
 import com.scorpio.myexpensemanager.commons.tally.TallyFileHandler;
 import com.scorpio.myexpensemanager.db.CompanyDb;
 import com.scorpio.myexpensemanager.db.vo.AccountGroup;
 import com.scorpio.myexpensemanager.db.vo.Ledger;
-import com.scorpio.myexpensemanager.viewmodels.AccountGroupViewModel;
-import com.scorpio.myexpensemanager.viewmodels.LedgerViewModel;
 
 import java.util.List;
 import java.util.Map;
@@ -232,7 +228,7 @@ public class CompanyMain extends AppCompatActivity
                 tallyFileHandler.parse();
 //                    progressDialog.setMessage(companyMain.getString(R.string.msg_importing));
 //                publishProgress(companyMain.getString(R.string.msg_importing));
-//                AccountGroupViewModel groupViewModel = new AccountGroupViewModel(companyMain
+//                AccountGroupVM groupViewModel = new AccountGroupVM(companyMain
 //                        .getApplication(), Cache.getCompany());
 
                 CompanyDb companyDb = CompanyDb.getDatabase(getApplication(),

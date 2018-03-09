@@ -1,24 +1,27 @@
 package com.scorpio.myexpensemanager.db.vo;
 
 
-/**
- * <!-- begin-user-doc -->
- * <!--  end-user-doc  -->
- * @generated
- */
+import android.arch.persistence.room.Entity;
+import android.arch.persistence.room.PrimaryKey;
 
-public class VoucherType
-{
-	public Long id;
-	public String name;
-	public Long currentVoucherNo;
+@Entity
+public class VoucherType {
+    @PrimaryKey(autoGenerate = true)
+    public Long id;
+    public String name;
+    public Long currentVoucherNo;
     public String prefix;
     public String postfix;
-    private VoucherTypeEnum type;
+    private String type;
 
-	public VoucherType(){
-		super();
-	}
+    public VoucherType() {
+        super();
+    }
+
+    public VoucherType(String name, Long currentVoucherNo) {
+        this.name = name;
+        this.currentVoucherNo = currentVoucherNo;
+    }
 
     public Long getId() {
         return id;
@@ -60,12 +63,24 @@ public class VoucherType
         this.postfix = postfix;
     }
 
-    public VoucherTypeEnum getType() {
+    public String getType() {
         return type;
     }
 
-    public void setType(VoucherTypeEnum type) {
+    public void setType(String type) {
         this.type = type;
+    }
+
+    @Override
+    public String toString() {
+        return "VoucherType{" +
+                "id=" + id +
+                ", name='" + name + '\'' +
+                ", currentVoucherNo=" + currentVoucherNo +
+                ", prefix='" + prefix + '\'' +
+                ", postfix='" + postfix + '\'' +
+                ", type='" + type + '\'' +
+                '}';
     }
 }
 

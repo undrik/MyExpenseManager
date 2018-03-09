@@ -23,4 +23,10 @@
 
     <style name="AppTheme.NoActionBar.PopupOverlay" parent="ThemeOverlay.AppCompat.Light" />
 
+    <style name="text_12_bold" parent="@android:style/TextAppearance" >
+        <item name="android:fontFamily">@font/notoserifdisplay_bold</item>
+        <item name="android:textSize">14sp</item>
+        <item name="android:textStyle">bold</item>
+    </style>
+
 </resources>

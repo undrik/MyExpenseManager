@@ -3,6 +3,7 @@
     <string name="action_settings">Settings</string>
 
     <string name="placeholder">Placeholder</string>
+    <string name="initializing">Initializing...</string>
 
     <!-- actions -->
     <string name="edit">EDIT</string>
@@ -76,6 +77,11 @@
     <string name="payment">Payment</string>
 
     <string name="entry">entry</string>
+    <string name="debit">DEBIT</string>
+    <string name="credit">CREDIT</string>
+    <string name="dr">Dr</string>
+    <string name="cr">Cr</string>
+    <string name="no">No.</string>
 
     <string name="title_activity_voucher_list">Voucher List</string>
 
