@@ -8,6 +8,7 @@ import android.arch.persistence.room.Query;
 import android.arch.persistence.room.Update;
 
 import com.scorpio.myexpensemanager.db.vo.AccountGroup;
+import com.scorpio.myexpensemanager.db.vo.Name;
 
 import java.util.List;
 
@@ -28,7 +29,7 @@ public interface AccountGroupDao {
     List<AccountGroup> findAllGroups();
 
     @Query("SELECT name FROM AccountGroup")
-    List<String> findAllGroupNames();
+    List<Name> findAllGroupNames();
 
     @Insert
     List<Long> save(final List<AccountGroup> groups);

@@ -15,7 +15,7 @@ public class Ledger implements Serializable {
     @PrimaryKey(autoGenerate = true)
     private Long id = null;
     @NonNull
-    String name;
+    private String name;
     //    private Long groupId = null;
     private String groupName = null;
     //    @TypeConverters(NatureOfGroupEnumConverter.class)

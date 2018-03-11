@@ -9,6 +9,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.text.Editable;
 import android.text.TextWatcher;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -20,7 +21,9 @@ import android.widget.ProgressBar;
 
 import com.scorpio.myexpensemanager.R;
 import com.scorpio.myexpensemanager.commons.Cache;
+import com.scorpio.myexpensemanager.commons.TaskExecutor;
 import com.scorpio.myexpensemanager.commons.Util;
+import com.scorpio.myexpensemanager.db.CompanyDb;
 import com.scorpio.myexpensemanager.viewmodels.AccountGroupVM;
 import com.scorpio.myexpensemanager.commons.Constants;
 import com.scorpio.myexpensemanager.viewmodels.LedgerViewModel;
@@ -28,6 +31,8 @@ import com.scorpio.myexpensemanager.viewmodels.LedgerViewModel;
 import java.time.LocalDate;
 import java.util.Calendar;
 import java.util.List;
+import java.util.concurrent.ExecutionException;
+import java.util.concurrent.Future;
 import java.util.stream.Collectors;
 
 @SuppressLint("NewApi")
@@ -56,30 +61,48 @@ public class CreateUpdateAccount extends AppCompatActivity {
 //        accountProgressBar = findViewById(R.id.accountProgressBar);
 //        accountProgressBar.setIndeterminate(true);
         initialize();
+    }
 
-        AccountGroupVM accountGroupVM = new AccountGroupVM(getApplication(), Cache.getCompany());
-        accountGroupVM.fetchAllAccountGroup().observe(this, groups -> {
-            accountGroups = groups.stream().map(group -> group.getName()).collect(Collectors
-                    .toList());
-            ArrayAdapter<String> adapter = new ArrayAdapter<String>(this, android.R.layout
-                    .simple_dropdown_item_1line, accountGroups);
-            groupNameAcTv = findViewById(R.id.groupNameAcTv);
-            groupNameAcTv.setAdapter(adapter);
-            ImageButton dropDownImgBtn = findViewById(R.id.dropDownImgBtn);
-            dropDownImgBtn.setOnClickListener((view) -> {
-                groupNameAcTv.showDropDown();
-            });
+    @Override
+    protected void onResume() {
+        super.onResume();
 
-        });
-        LedgerViewModel ledgerViewModel = new LedgerViewModel(getApplication(), Cache.getCompany());
-        ledgerViewModel.fetchAllLedgers().observe(this, ledgers -> {
-            ledgersInDb = ledgers.stream().map(ledger -> ledger.getName()).collect(Collectors
-                    .toList());
-            inputAccountName.addTextChangedListener(new AccountTextWatcher(inputAccountName,
-                    ledgersInDb));
+        TaskExecutor taskExecutor = new TaskExecutor();
+        Future future = taskExecutor.submit(() -> {
+            initializeLedgersGroups();
         });
 
-
+        try {
+            future.get();
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+            Log.v(Constants.APP_NAME, e.getMessage());
+        } catch (ExecutionException e) {
+            e.printStackTrace();
+            Log.v(Constants.APP_NAME, e.getMessage());
+        }
+//        AccountGroupVM accountGroupVM = new AccountGroupVM(getApplication(), Cache.getCompany());
+//        accountGroupVM.fetchAllAccountGroup().observe(this, groups -> {
+//            accountGroups = groups.stream().map(group -> group.getName()).collect(Collectors
+//                    .toList());
+//            ArrayAdapter<String> adapter = new ArrayAdapter<String>(this, android.R.layout
+//                    .simple_dropdown_item_1line, accountGroups);
+//            groupNameAcTv = findViewById(R.id.groupNameAcTv);
+//            groupNameAcTv.setAdapter(adapter);
+//            ImageButton dropDownImgBtn = findViewById(R.id.dropDownImgBtn);
+//            dropDownImgBtn.setOnClickListener((view) -> {
+//                groupNameAcTv.showDropDown();
+//            });
+//
+//        });
+//        LedgerViewModel ledgerViewModel = new LedgerViewModel(getApplication(), Cache
+// .getCompany());
+//        ledgerViewModel.fetchAllLedgers().observe(this, ledgers -> {
+//            ledgersInDb = ledgers.stream().map(ledger -> ledger.getName()).collect(Collectors
+//                    .toList());
+//            inputAccountName.addTextChangedListener(new AccountTextWatcher(inputAccountName,
+//                    ledgersInDb));
+//        });
     }
 
     private void initialize() {
@@ -101,6 +124,15 @@ public class CreateUpdateAccount extends AppCompatActivity {
 
             datePickerDialog.show();
         });
+    }
+
+    private synchronized void initializeLedgersGroups() {
+        CompanyDb companyDb = CompanyDb.getDatabase(getApplication(), Cache.getCompany()
+                .getDbName());
+        if (null != companyDb) {
+            accountGroups = companyDb.accountGroupDao().findAllGroupNames().stream().map(name ->
+                    name.getName()).collect(Collectors.toList());
+        }
     }
 
     @Override
