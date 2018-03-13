@@ -8,6 +8,8 @@
     <!-- actions -->
     <string name="edit">EDIT</string>
     <string name="delete">DELETE</string>
+    <string name="ok">Ok</string>
+    <string name="cancel">Cancel</string>
 
     <!-- Messages -->
 
@@ -83,8 +85,11 @@
     <string name="dr">Dr</string>
     <string name="cr">Cr</string>
     <string name="no">No.</string>
+    <string name="total">Total</string>
 
     <string name="title_activity_voucher_list">Voucher List</string>
+    <string name="current_balance">Current Balance</string>
+    <string name="amount">Amount</string>
 
     <!-- Text -->
     <string name="space">\u0020</string>
