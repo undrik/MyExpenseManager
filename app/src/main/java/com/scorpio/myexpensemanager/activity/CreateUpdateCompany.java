@@ -32,7 +32,7 @@ import com.scorpio.myexpensemanager.db.vo.Company;
 import com.scorpio.myexpensemanager.db.vo.Ledger;
 import com.scorpio.myexpensemanager.viewmodels.AccountGroupVM;
 import com.scorpio.myexpensemanager.viewmodels.CompanyViewModel;
-import com.scorpio.myexpensemanager.viewmodels.LedgerViewModel;
+import com.scorpio.myexpensemanager.viewmodels.LedgerVM;
 
 import java.util.Calendar;
 import java.util.Date;
@@ -334,7 +334,7 @@ public class CreateUpdateCompany extends AppCompatActivity {
                 List<AccountGroup> groups = PopulateDefaults.predefinedGroups();
 //                groupViewModel.addAccountGroups(groups.toArray(new AccountGroup[groups.size()]));
                 companyDb.accountGroupDao().save(groups);
-                LedgerViewModel ledgerViewModel = new LedgerViewModel(getApplication(), company);
+                LedgerVM ledgerViewModel = new LedgerVM(getApplication(), company);
                 List<Ledger> ledgers = PopulateDefaults.predefiniedLedgers();
 //                ledgerViewModel.addLedgers(ledgers.toArray(new Ledger[ledgers.size()]));
                 companyDb.ledgerDao().save(ledgers);

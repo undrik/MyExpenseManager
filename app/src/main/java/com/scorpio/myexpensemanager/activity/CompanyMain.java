@@ -62,8 +62,8 @@ public class CompanyMain extends AppCompatActivity
 
         FloatingActionButton fab = findViewById(R.id.fab);
         fab.setOnClickListener((view) -> {
-            Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
-                    .setAction("Action", null).show();
+            Intent intent = new Intent(this, CreateUpdateVoucher.class);
+            startActivity(intent);
         });
 
         DrawerLayout drawer = findViewById(R.id.drawer_layout);
@@ -258,7 +258,7 @@ public class CompanyMain extends AppCompatActivity
                                         null == ledgerMap.get(ledger.getName())).collect
                                         (Collectors.toList());
                             }
-//                                    LedgerViewModel ledgerViewModel = new LedgerViewModel
+//                                    LedgerVM ledgerViewModel = new LedgerVM
 //                                            (companyMain
 //                                                    .getApplication(), Cache.getCompany());
                             companyDb.ledgerDao().save(ledgerList);

@@ -6,6 +6,7 @@ import android.arch.persistence.room.Dao;
 import android.arch.persistence.room.Insert;
 import android.arch.persistence.room.Query;
 import android.arch.persistence.room.Transaction;
+import android.database.Cursor;
 
 import com.scorpio.myexpensemanager.db.vo.Voucher;
 import com.scorpio.myexpensemanager.db.vo.VoucherEntry;
@@ -36,7 +37,7 @@ public abstract class VoucherWithEntriesDao {
 
     @SuppressLint("NewApi")
     @Transaction
-    public void saveWithEntries(Voucher voucher) {
+    public Long saveWithEntries(Voucher voucher) {
         voucher.setGuid(UUID.randomUUID().toString());
         Long voucherId = save(voucher);
         List<VoucherEntry> voucherEntries = voucher.getVoucherEntryList().stream().map
@@ -45,9 +46,22 @@ public abstract class VoucherWithEntriesDao {
                     return voucherEntry;
                 }).collect(Collectors.toList());
         save(voucherEntries);
+        return voucherId;
     }
 
     @Transaction
     @Query("SELECT * FROM Voucher")
     public abstract LiveData<List<VoucherWithEntries>> findVoucherWithEntries();
+
+    @Query("SELECT seq FROM sqlite_sequence WHERE name = 'Voucher'")
+    public abstract Cursor findVoucherSequence();
+
+    public int fetchNextVoucherSequence() {
+        int result = 1;
+        Cursor cursor = findVoucherSequence();
+        if (null != cursor && cursor.moveToFirst()) {
+            result = cursor.getInt(cursor.getColumnIndex("sequence"));
+        }
+        return result;
+    }
 }

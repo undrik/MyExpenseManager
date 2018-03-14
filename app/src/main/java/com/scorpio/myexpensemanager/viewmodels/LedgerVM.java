@@ -6,7 +6,9 @@ import android.arch.lifecycle.AndroidViewModel;
 import android.arch.lifecycle.LiveData;
 import android.os.AsyncTask;
 import android.support.annotation.NonNull;
+import android.util.Log;
 
+import com.scorpio.myexpensemanager.commons.Constants;
 import com.scorpio.myexpensemanager.commons.TaskExecutor;
 import com.scorpio.myexpensemanager.db.CompanyDb;
 import com.scorpio.myexpensemanager.db.listeners.OnResultListener;
@@ -16,6 +18,8 @@ import com.scorpio.myexpensemanager.db.vo.Ledger;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.concurrent.ExecutionException;
+import java.util.concurrent.Future;
 import java.util.stream.Collectors;
 
 /**
@@ -23,12 +27,12 @@ import java.util.stream.Collectors;
  * Created by User on 24-02-2018.
  */
 
-public class LedgerViewModel extends AndroidViewModel {
+public class LedgerVM extends AndroidViewModel {
     private CompanyDb companyDb;
     private LiveData<List<Ledger>> ledgerLiveData;
     private static OnResultListener onResultListener;
 
-    public LedgerViewModel(@NonNull Application application, @NonNull final Company company) {
+    public LedgerVM(@NonNull Application application, @NonNull final Company company) {
         super(application);
         if (null != company.getDbName()) {
             companyDb = CompanyDb.getDatabase(this.getApplication(), company.getDbName());
@@ -59,21 +63,31 @@ public class LedgerViewModel extends AndroidViewModel {
         }
     }
 
-    public void addLedger(@NonNull Ledger ledger) {
+    public Long addLedger(@NonNull Ledger ledger) {
 //        if (null != companyDb) {
 //            new AddLedgerTask(companyDb).execute(ledger);
 //        }
+        Long result = -1L;
         if (null != companyDb) {
             if (null == ledger.getCurrentBalance()) {
                 ledger.setCurrentBalance(ledger.getOpeningBalance());
             }
-            new TaskExecutor().execute(() -> {
-                Long result = companyDb.ledgerDao().save(ledger);
-                if (result > 0 && null != onResultListener) {
-                    onResultListener.onResult(result);
-                }
+            TaskExecutor taskExecutor = new TaskExecutor();
+
+            Future<Long> future = taskExecutor.submit(() -> {
+                return companyDb.ledgerDao().save(ledger);
             });
+            try {
+                result = future.get();
+            } catch (InterruptedException e) {
+                Log.v(Constants.APP_NAME, e.getMessage());
+            } catch (ExecutionException e) {
+                Log.v(Constants.APP_NAME, e.getMessage());
+            } finally {
+                taskExecutor.shutdown();
+            }
         }
+        return result;
     }
 
     private static class AddLedgerTask extends AsyncTask<Ledger, Void, List<Long>> {

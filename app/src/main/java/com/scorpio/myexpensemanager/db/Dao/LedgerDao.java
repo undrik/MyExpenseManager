@@ -8,6 +8,7 @@ import android.arch.persistence.room.Query;
 import android.arch.persistence.room.Update;
 
 import com.scorpio.myexpensemanager.db.vo.Ledger;
+import com.scorpio.myexpensemanager.db.vo.Name;
 
 import java.util.List;
 
@@ -28,7 +29,7 @@ public interface LedgerDao {
     List<Ledger> findAllLedgers();
 
     @Query("SELECT name FROM Ledger")
-    List<String> findAllLedgerNames();
+    List<Name> findAllLedgerNames();
 
     @Query("SELECT * FROM Ledger")
     LiveData<List<Ledger>> findAll();

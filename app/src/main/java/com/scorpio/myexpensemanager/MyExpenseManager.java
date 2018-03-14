@@ -2,7 +2,6 @@ package com.scorpio.myexpensemanager;
 
 import android.arch.lifecycle.ViewModelProviders;
 import android.content.Intent;
-import android.graphics.Color;
 import android.os.Bundle;
 import android.support.design.widget.CoordinatorLayout;
 import android.support.design.widget.FloatingActionButton;
@@ -98,11 +97,11 @@ public class MyExpenseManager extends AppCompatActivity implements ItemRvTouchHe
             if (resultCode == RESULT_OK) {
                 Company company = (Company) data.getSerializableExtra(Constants.COMANY_OBJ);
                 if (null != company.getId()) {
-                    message = getString(R.string.msg_success_company_create) + " " + company
+                    message = getString(R.string.msg_success_create) + " " + company
                             .getName();
                 }
             } else {
-                message = getString(R.string.msg_failed_company_create);
+                message = getString(R.string.msg_failed_create);
             }
             Snackbar.make(expenseManagerLayout, message, Snackbar.LENGTH_LONG).show();
         }

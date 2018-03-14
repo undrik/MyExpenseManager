@@ -18,6 +18,7 @@ import java.util.List;
 
 @Dao
 public interface VoucherDao {
+
     @Query("SELECT * FROM Voucher WHERE id = :id")
     LiveData<Voucher> findVoucherById(final Integer id);
 

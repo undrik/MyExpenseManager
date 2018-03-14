@@ -18,19 +18,23 @@ import android.widget.ArrayAdapter;
 import android.widget.AutoCompleteTextView;
 import android.widget.ImageButton;
 import android.widget.ProgressBar;
+import android.widget.Switch;
+import android.widget.Toast;
 
 import com.scorpio.myexpensemanager.R;
 import com.scorpio.myexpensemanager.commons.Cache;
 import com.scorpio.myexpensemanager.commons.TaskExecutor;
 import com.scorpio.myexpensemanager.commons.Util;
 import com.scorpio.myexpensemanager.db.CompanyDb;
-import com.scorpio.myexpensemanager.viewmodels.AccountGroupVM;
 import com.scorpio.myexpensemanager.commons.Constants;
-import com.scorpio.myexpensemanager.viewmodels.LedgerViewModel;
+import com.scorpio.myexpensemanager.db.vo.AccountGroup;
+import com.scorpio.myexpensemanager.db.vo.Ledger;
+import com.scorpio.myexpensemanager.viewmodels.LedgerVM;
 
 import java.time.LocalDate;
 import java.util.Calendar;
 import java.util.List;
+import java.util.Map;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.Future;
 import java.util.stream.Collectors;
@@ -38,11 +42,14 @@ import java.util.stream.Collectors;
 @SuppressLint("NewApi")
 public class CreateUpdateAccount extends AppCompatActivity {
     private TextInputLayout textInputAccountName;
-    private TextInputEditText inputbalanceAsOn, inputAccountName;
+    private TextInputEditText inputbalanceAsOn, inputAccountName, inputOpenningBalance;
+    private Switch inputDebitCredit;
     private List<String> accountGroups;
+    private Map<String, AccountGroup> groupMap;
     private AutoCompleteTextView groupNameAcTv;
     private List<String> ledgersInDb;
     private ProgressBar accountProgressBar;
+    private String ledgerName, groupName;
 
 
     @Override
@@ -58,9 +65,9 @@ public class CreateUpdateAccount extends AppCompatActivity {
         getSupportActionBar().setHomeButtonEnabled(true);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
-//        accountProgressBar = findViewById(R.id.accountProgressBar);
-//        accountProgressBar.setIndeterminate(true);
-        initialize();
+        accountProgressBar = findViewById(R.id.accountProgressBar);
+        accountProgressBar.setIndeterminate(true);
+
     }
 
     @Override
@@ -74,12 +81,16 @@ public class CreateUpdateAccount extends AppCompatActivity {
 
         try {
             future.get();
+            initialize();
+            accountProgressBar.setVisibility(View.INVISIBLE);
         } catch (InterruptedException e) {
             e.printStackTrace();
             Log.v(Constants.APP_NAME, e.getMessage());
+            finish();
         } catch (ExecutionException e) {
             e.printStackTrace();
             Log.v(Constants.APP_NAME, e.getMessage());
+            finish();
         }
 //        AccountGroupVM accountGroupVM = new AccountGroupVM(getApplication(), Cache.getCompany());
 //        accountGroupVM.fetchAllAccountGroup().observe(this, groups -> {
@@ -95,7 +106,7 @@ public class CreateUpdateAccount extends AppCompatActivity {
 //            });
 //
 //        });
-//        LedgerViewModel ledgerViewModel = new LedgerViewModel(getApplication(), Cache
+//        LedgerVM ledgerViewModel = new LedgerVM(getApplication(), Cache
 // .getCompany());
 //        ledgerViewModel.fetchAllLedgers().observe(this, ledgers -> {
 //            ledgersInDb = ledgers.stream().map(ledger -> ledger.getName()).collect(Collectors
@@ -108,6 +119,8 @@ public class CreateUpdateAccount extends AppCompatActivity {
     private void initialize() {
         textInputAccountName = findViewById(R.id.textInputAccountName);
         inputAccountName = findViewById(R.id.inputAccountName);
+        inputAccountName.addTextChangedListener(new AccountTextWatcher(inputAccountName,
+                ledgersInDb));
 
         inputbalanceAsOn = findViewById(R.id.inputBalanceAsOn);
         inputbalanceAsOn.setText(Util.getToday());
@@ -124,14 +137,30 @@ public class CreateUpdateAccount extends AppCompatActivity {
 
             datePickerDialog.show();
         });
+        ArrayAdapter<String> adapter = new ArrayAdapter<String>(this, android.R.layout
+                .simple_dropdown_item_1line, accountGroups);
+        groupNameAcTv = findViewById(R.id.groupNameAcTv);
+        groupNameAcTv.setAdapter(adapter);
+        groupNameAcTv.addTextChangedListener(new AccountTextWatcher(groupNameAcTv));
+        ImageButton dropDownImgBtn = findViewById(R.id.dropDownImgBtn);
+        dropDownImgBtn.setOnClickListener((view) -> groupNameAcTv.showDropDown());
+
+        inputOpenningBalance = findViewById(R.id.inputOpenningBalance);
+        inputOpenningBalance.setText("0.0");
+        inputDebitCredit = findViewById(R.id.inputDebitCredit);
     }
 
     private synchronized void initializeLedgersGroups() {
         CompanyDb companyDb = CompanyDb.getDatabase(getApplication(), Cache.getCompany()
                 .getDbName());
         if (null != companyDb) {
+            List<AccountGroup> groups = companyDb.accountGroupDao().findAllGroups();
+            groupMap = groups.stream().collect(Collectors.toMap(group -> group.getName(), group
+                    -> group));
             accountGroups = companyDb.accountGroupDao().findAllGroupNames().stream().map(name ->
                     name.getName()).collect(Collectors.toList());
+            ledgersInDb = companyDb.ledgerDao().findAllLedgerNames().stream().map(name -> name
+                    .getName()).collect(Collectors.toList());
         }
     }
 
@@ -148,9 +177,43 @@ public class CreateUpdateAccount extends AppCompatActivity {
                 onBackPressed();
                 return true;
             case R.id.actionCheck:
+                saveLedger();
         }
 
         return super.onOptionsItemSelected(item);
+    }
+
+    private void saveLedger() {
+        if (null != ledgerName || null != groupName) {
+            Ledger ledger = new Ledger();
+            ledger.setActive(true);
+            ledger.setName(ledgerName);
+            ledger.setGroupName(groupName);
+            String balanceText = inputOpenningBalance.getText().toString().trim();
+            if (null != balanceText && !balanceText.isEmpty()) {
+                ledger.setOpeningBalance(Double.valueOf(balanceText));
+            }
+            AccountGroup group = groupMap.get(groupName);
+            if (group.isDeemedPositive() && !inputDebitCredit.isChecked()) {
+                ledger.setOpeningBalance(-1 * ledger.getOpeningBalance());
+            }
+            ledger.setCurrentBalance(ledger.getOpeningBalance());
+            ledger.setOpeningBalanceAsOn(Util.convertToTimeFromddMMMyyyy(inputOpenningBalance
+                    .getText().toString().trim()));
+
+            LedgerVM ledgerVM = new LedgerVM(getApplication(), Cache.getCompany());
+            Long result = ledgerVM.addLedger(ledger);
+            if (result > 0) {
+                Toast.makeText(getApplicationContext(), getString(R.string
+                        .msg_success_create) + " " + ledger.getName(), Toast.LENGTH_LONG)
+                        .show();
+                finish();
+            } else {
+                Toast.makeText(getApplicationContext(), getString(R.string
+                        .msg_failed_create) + " " + ledger.getName(), Toast.LENGTH_LONG)
+                        .show();
+            }
+        }
     }
 
     private void requestFocus(View view) {
@@ -199,6 +262,7 @@ public class CreateUpdateAccount extends AppCompatActivity {
                             requestFocus(view);
                             break;
                         case Constants.SUCCESS_CODE:
+                            ledgerName = inputAccountName.getText().toString().trim();
                             textInputAccountName.setErrorEnabled(false);
                     }
                     break;
@@ -208,6 +272,7 @@ public class CreateUpdateAccount extends AppCompatActivity {
                         groupNameAcTv.setError(getString(R.string.err_msg_name));
                         requestFocus(view);
                     } else {
+                        groupName = groupNameAcTv.getText().toString().trim();
                         groupNameAcTv.setError(null);
                     }
                     break;

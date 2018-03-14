@@ -42,12 +42,14 @@ public class CompanyDbTest {
     }
 
     @Test
-    public void saveWithVoucherEntryTest() throws Exception {
+    public void getNextVoucherSequenceTest() {
         Ledger ledger = new Ledger();
         ledger.setId(1L);
+        ledger.setName("cash");
         companyDb.ledgerDao().save(ledger);
 
         ledger = new Ledger();
+        ledger.setName("bank");
         ledger.setId(2L);
         companyDb.ledgerDao().save(ledger);
 
@@ -60,7 +62,8 @@ public class CompanyDbTest {
 
         VoucherEntry voucherEntry = new VoucherEntry();
 //        voucherEntry.setVoucherId(voucherId);
-        voucherEntry.setLedgerId(1L);
+//        voucherEntry.setLedgerId(1L);
+        voucherEntry.setLedgerName("cash");
         voucherEntry.setDebitOrCredit(0);
         voucherEntry.setAmount(-1000D);
         voucherEntry.setLocalDate(LocalDate.now());
@@ -68,7 +71,49 @@ public class CompanyDbTest {
 
         voucherEntry = new VoucherEntry();
 //        voucherEntry.setVoucherId(voucherId);
-        voucherEntry.setLedgerId(2L);
+//        voucherEntry.setLedgerId(2L);
+        voucherEntry.setLedgerName("bank");
+        voucherEntry.setDebitOrCredit(1);
+        voucherEntry.setAmount(1000D);
+        voucherEntry.setLocalDate(LocalDate.now());
+        voucher.getVoucherEntryList().add(voucherEntry);
+        companyDb.voucherWithEntriesDao().saveWithEntries(voucher);
+        int result = companyDb.voucherWithEntriesDao().fetchNextVoucherSequence();
+        assertTrue(result > 0);
+    }
+
+    @Test
+    public void saveWithVoucherEntryTest() throws Exception {
+        Ledger ledger = new Ledger();
+        ledger.setId(1L);
+        ledger.setName("cash");
+        companyDb.ledgerDao().save(ledger);
+
+        ledger = new Ledger();
+        ledger.setName("bank");
+        ledger.setId(2L);
+        companyDb.ledgerDao().save(ledger);
+
+        Voucher voucher = new Voucher();
+        voucher.setNumber("1");
+        voucher.setNarration("Test");
+        voucher.setLocalDate(LocalDate.now());
+        Long voucherId = 1L;
+//        companyDb.voucherWithEntriesDao().save(voucher);
+
+        VoucherEntry voucherEntry = new VoucherEntry();
+//        voucherEntry.setVoucherId(voucherId);
+//        voucherEntry.setLedgerId(1L);
+        voucherEntry.setLedgerName("cash");
+        voucherEntry.setDebitOrCredit(0);
+        voucherEntry.setAmount(-1000D);
+        voucherEntry.setLocalDate(LocalDate.now());
+        voucher.getVoucherEntryList().add(voucherEntry);
+
+        voucherEntry = new VoucherEntry();
+//        voucherEntry.setVoucherId(voucherId);
+//        voucherEntry.setLedgerId(2L);
+        voucherEntry.setLedgerName("bank");
         voucherEntry.setDebitOrCredit(1);
         voucherEntry.setAmount(1000D);
         voucherEntry.setLocalDate(LocalDate.now());
@@ -83,5 +128,7 @@ public class CompanyDbTest {
                     });
                 }
         );
+        int result = companyDb.voucherWithEntriesDao().fetchNextVoucherSequence();
+        System.out.println("Voucher Sequence : " + result);
     }
 }

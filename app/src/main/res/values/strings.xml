@@ -31,7 +31,7 @@
 
     <!-- Messages -->
     <string name="err_msg_name">Name cannot be empty</string>
-    <string name="err_msg_name_exists">Company name already exist</string>
+    <string name="err_msg_name_exists">Name already exists</string>
     <string name="err_msg_email">Invalid email address</string>
     <string name="err_msg_file_permission">Read permission required to import</string>
     <string name="err_msg_wrong_file">Could not process the file</string>
@@ -40,8 +40,8 @@
     <string name="msg_success_import">Successfully imported</string>
     <string name="err_msg_failed_import">Failed to import</string>
     <string name="msg_sure_delete">Are you sure to delete : </string>
-    <string name="msg_success_company_create">Successfully created : </string>
-    <string name="msg_failed_company_create">Failed to create</string>
+    <string name="msg_success_create">Successfully created</string>
+    <string name="msg_failed_create">Failed to create</string>
     <string name="success">Successful</string>
     <string name="failed">Failed</string>
 

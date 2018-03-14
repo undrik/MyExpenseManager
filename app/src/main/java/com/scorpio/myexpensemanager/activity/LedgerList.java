@@ -20,7 +20,7 @@ import com.scorpio.myexpensemanager.adapters.LedgerRvAdapter;
 import com.scorpio.myexpensemanager.commons.Cache;
 import com.scorpio.myexpensemanager.commons.Constants;
 import com.scorpio.myexpensemanager.db.vo.Ledger;
-import com.scorpio.myexpensemanager.viewmodels.LedgerViewModel;
+import com.scorpio.myexpensemanager.viewmodels.LedgerVM;
 
 import java.util.ArrayList;
 
@@ -60,7 +60,7 @@ public class LedgerList extends AppCompatActivity implements ItemRvTouchHelper.R
         progressDialog.setMessage("Loading Ledgers...");
         progressDialog.show();
 
-        LedgerViewModel ledgerViewModel = new LedgerViewModel(this.getApplication(), Cache
+        LedgerVM ledgerViewModel = new LedgerVM(this.getApplication(), Cache
                 .getCompany());
         ledgerViewModel.fetchAllLedgers().observe(this, (ledgers -> {
             progressDialog.dismiss();

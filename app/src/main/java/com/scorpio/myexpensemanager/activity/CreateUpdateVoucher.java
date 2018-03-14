@@ -2,6 +2,9 @@ package com.scorpio.myexpensemanager.activity;
 
 import android.annotation.SuppressLint;
 import android.app.DatePickerDialog;
+import android.app.DialogFragment;
+import android.app.Fragment;
+import android.app.FragmentTransaction;
 import android.arch.lifecycle.ViewModelProviders;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
@@ -16,6 +19,7 @@ import com.scorpio.myexpensemanager.commons.Cache;
 import com.scorpio.myexpensemanager.commons.Constants;
 import com.scorpio.myexpensemanager.commons.Util;
 import com.scorpio.myexpensemanager.db.vo.VoucherType;
+import com.scorpio.myexpensemanager.fragments.VoucherDialog;
 import com.scorpio.myexpensemanager.viewmodels.VoucherTypeVM;
 
 import java.time.LocalDate;
@@ -44,8 +48,11 @@ public class CreateUpdateVoucher extends AppCompatActivity {
 
         getSupportActionBar().setHomeButtonEnabled(true);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+    }
 
-
+    @Override
+    protected void onResume() {
+        super.onResume();
         VoucherTypeVM voucherTypeVM = ViewModelProviders.of(this).get(VoucherTypeVM.class);
 
         voucherTypeVM.fetchAllVoucherType().observe(this, (voucherTypes) -> {
@@ -55,11 +62,6 @@ public class CreateUpdateVoucher extends AppCompatActivity {
 //            refreshMenu();
 //            onResume();
         });
-    }
-
-    @Override
-    protected void onResume() {
-        super.onResume();
 //        refreshMenu();
     }
 
@@ -122,6 +124,14 @@ public class CreateUpdateVoucher extends AppCompatActivity {
             case android.R.id.home:
                 onBackPressed();
                 return true;
+            case R.id.actionDr:
+                handleClickDR();
+                return true;
+            case R.id.actionCr:
+                handleClickCR();
+                return true;
+            case R.id.actionCheck:
+                return true;
             default:
                 if (id <= voucherTypeMap.size()) {
                     voucherType = voucherTypeMap.get(item.getTitle());
@@ -131,5 +141,32 @@ public class CreateUpdateVoucher extends AppCompatActivity {
                 }
         }
         return super.onOptionsItemSelected(item);
+    }
+
+    private void handleClickDR() {
+        showVoucherDialog(Constants.DEBIT);
+    }
+
+    private void handleClickCR() {
+        showVoucherDialog(Constants.CREDIT);
+    }
+
+    void showVoucherDialog(int debitOrCredit) {
+//        mStackLevel++;
+
+        // DialogFragment.show() will take care of adding the fragment
+        // in a transaction.  We also want to remove any currently showing
+        // dialog, so make our own transaction and take care of that here.
+        FragmentTransaction ft = getFragmentManager().beginTransaction();
+        Fragment prev = getFragmentManager().findFragmentByTag("dialog");
+        if (prev != null) {
+            ft.remove(prev);
+        }
+        ft.addToBackStack(null);
+
+        // Create and show the dialog.
+        DialogFragment newFragment = VoucherDialog.newInstance(Constants.PAYMENT,
+                debitOrCredit);
+        newFragment.show(ft, "dialog");
     }
 }

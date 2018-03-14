@@ -10,6 +10,15 @@ import java.util.List;
  */
 
 public class VoucherWithEntries extends Voucher {
+
     @Relation(parentColumn = "id", entityColumn = "voucherId", entity = VoucherEntry.class)
     public List<VoucherEntry> voucherEntries;
+
+    public List<VoucherEntry> getVoucherEntries() {
+        return voucherEntries;
+    }
+
+    public void setVoucherEntries(List<VoucherEntry> voucherEntries) {
+        this.voucherEntries = voucherEntries;
+    }
 }
