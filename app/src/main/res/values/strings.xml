@@ -39,7 +39,7 @@
     <string name="msg_importing">Importing ...</string>
     <string name="msg_success_import">Successfully imported</string>
     <string name="err_msg_failed_import">Failed to import</string>
-    <string name="msg_sure_delete">Are you sure to delete : </string>
+    <string name="msg_sure_delete">Are you sure to delete</string>
     <string name="msg_success_create">Successfully created</string>
     <string name="msg_failed_create">Failed to create</string>
     <string name="success">Successful</string>

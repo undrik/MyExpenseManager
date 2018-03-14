@@ -65,7 +65,8 @@ public class ItemRvTouchHelper extends ItemTouchHelper.SimpleCallback {
         }
 //        final View companyCv = ((CompanyRvAdapter.CompanyViewHolder) viewHolder).commonCv;
 
-        getDefaultUIUtil().onDraw(c, recyclerView, getCommonCardView(viewHolder), dX, dY, actionState,
+        getDefaultUIUtil().onDraw(c, recyclerView, getCommonCardView(viewHolder), dX, dY,
+                actionState,
                 isCurrentlyActive);
     }
 
@@ -91,6 +92,8 @@ public class ItemRvTouchHelper extends ItemTouchHelper.SimpleCallback {
             commonCv = ((CompanyRvAdapter.CompanyViewHolder) viewHolder).commonCv;
         } else if (viewHolder instanceof LedgerRvAdapter.LedgerViewHolder) {
             commonCv = ((LedgerRvAdapter.LedgerViewHolder) viewHolder).commonCv;
+        } else if (viewHolder instanceof VoucherEntryRvAdapter.VoucherEntryViewHolder) {
+            commonCv = ((VoucherEntryRvAdapter.VoucherEntryViewHolder) viewHolder).commonCv;
         }
         return commonCv;
     }
@@ -101,6 +104,9 @@ public class ItemRvTouchHelper extends ItemTouchHelper.SimpleCallback {
             deleteBackgroud = ((CompanyRvAdapter.CompanyViewHolder) viewHolder).deleteBackground;
         } else if (viewHolder instanceof LedgerRvAdapter.LedgerViewHolder) {
             deleteBackgroud = ((LedgerRvAdapter.LedgerViewHolder) viewHolder).deleteBackground;
+        } else if (viewHolder instanceof VoucherEntryRvAdapter.VoucherEntryViewHolder) {
+            deleteBackgroud = ((VoucherEntryRvAdapter.VoucherEntryViewHolder) viewHolder)
+                    .deleteBackground;
         }
         return deleteBackgroud;
     }
@@ -111,6 +117,9 @@ public class ItemRvTouchHelper extends ItemTouchHelper.SimpleCallback {
             editBackground = ((CompanyRvAdapter.CompanyViewHolder) viewHolder).editBackgroud;
         } else if (viewHolder instanceof LedgerRvAdapter.LedgerViewHolder) {
             editBackground = ((LedgerRvAdapter.LedgerViewHolder) viewHolder).editBackgroud;
+        } else if (viewHolder instanceof VoucherEntryRvAdapter.VoucherEntryViewHolder) {
+            editBackground = ((VoucherEntryRvAdapter.VoucherEntryViewHolder) viewHolder)
+                    .editBackgroud;
         }
         return editBackground;
     }

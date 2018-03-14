@@ -157,6 +157,11 @@ public class VoucherDialog extends DialogFragment {
         String narration = inputNarration.getText().toString().trim();
 
         VoucherEntry voucherEntry = new VoucherEntry();
+        if (debitOrCredit == Constants.DEBIT) {
+            voucherEntry.setDebitOrCredit(Constants.DEBIT);
+        } else {
+            voucherEntry.setDebitOrCredit(Constants.CREDIT);
+        }
         voucherEntry.setLedgerName(ledgerName);
         voucherEntry.setAmount(0.0);
         if (null != amountText && !amountText.isEmpty()) {

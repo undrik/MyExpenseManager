@@ -18,33 +18,31 @@
         app:layout_constraintTop_toTopOf="parent" />
 
     <android.support.design.widget.TextInputEditText
-        android:id="@+id/voucherNo"
+        android:id="@+id/inputVoucherNo"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginStart="8dp"
-        android:layout_marginTop="8dp"
         android:focusable="false"
         android:textAppearance="@android:style/TextAppearance.Material.Small.Inverse"
         app:layout_constraintBottom_toBottomOf="@+id/textView"
-        app:layout_constraintStart_toEndOf="@+id/textView"
-        app:layout_constraintTop_toTopOf="parent" />
+        app:layout_constraintStart_toEndOf="@+id/textView" />
 
     <android.support.design.widget.TextInputEditText
-        android:id="@+id/voucherDate"
+        android:id="@+id/inputVoucherDate"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginEnd="8dp"
-        android:layout_marginTop="8dp"
         android:focusable="false"
         android:textAppearance="@android:style/TextAppearance.Material.Small.Inverse"
-        app:layout_constraintBottom_toBottomOf="@+id/textView"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+        app:layout_constraintBottom_toBottomOf="@+id/inputVoucherNo"
+        app:layout_constraintEnd_toEndOf="parent" />
 
     <View
         android:id="@+id/spaceView1"
         android:layout_width="match_parent"
         android:layout_height="2dip"
+        android:layout_marginEnd="8dp"
+        android:layout_marginStart="8dp"
         android:layout_marginTop="8dp"
         android:background="#FFEE58"
         app:layout_constraintTop_toBottomOf="@+id/textView" />
@@ -106,10 +104,12 @@
         android:layout_width="match_parent"
         android:layout_height="2dip"
         android:background="#FFEE58"
+        android:layout_marginEnd="8dp"
+        android:layout_marginStart="8dp"
         app:layout_constraintTop_toBottomOf="@+id/textView6" />
 
     <android.support.v7.widget.RecyclerView
-        android:id="@+id/voucherRv"
+        android:id="@+id/voucherEntryRv"
         android:layout_width="0dp"
 
         android:layout_height="0dp"
@@ -131,6 +131,8 @@
         android:layout_width="match_parent"
         android:layout_height="2dip"
         android:background="#FFEE58"
+        android:layout_marginEnd="8dp"
+        android:layout_marginStart="8dp"
         app:layout_constraintBottom_toTopOf="@+id/totalDebitTv"
         tools:layout_editor_absoluteX="0dp" />
 
@@ -149,7 +151,7 @@
         app:layout_constraintStart_toStartOf="@+id/guideline2" />
 
     <TextView
-        android:id="@+id/textView13"
+        android:id="@+id/totalCreditTv"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginBottom="8dp"

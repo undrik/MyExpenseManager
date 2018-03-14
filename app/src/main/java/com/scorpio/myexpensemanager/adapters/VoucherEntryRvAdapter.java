@@ -12,6 +12,7 @@ import android.widget.TextView;
 import com.scorpio.myexpensemanager.R;
 import com.scorpio.myexpensemanager.commons.Constants;
 import com.scorpio.myexpensemanager.db.listeners.OnItemClickListner;
+import com.scorpio.myexpensemanager.db.vo.Voucher;
 import com.scorpio.myexpensemanager.db.vo.VoucherEntry;
 
 import java.util.List;
@@ -21,7 +22,7 @@ import java.util.List;
  */
 
 public class VoucherEntryRvAdapter extends RecyclerView.Adapter<VoucherEntryRvAdapter
-        .VoucherViewHolder> implements View.OnClickListener {
+        .VoucherEntryViewHolder> implements View.OnClickListener {
     private List<VoucherEntry> voucherEntries;
     private OnItemClickListner onItemClickListner;
 
@@ -35,13 +36,13 @@ public class VoucherEntryRvAdapter extends RecyclerView.Adapter<VoucherEntryRvAd
 
     @NonNull
     @Override
-    public VoucherViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-        return new VoucherViewHolder(LayoutInflater.from(parent.getContext()).inflate(R.layout
+    public VoucherEntryViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
+        return new VoucherEntryViewHolder(LayoutInflater.from(parent.getContext()).inflate(R.layout
                 .voucher_rv_item, parent, false));
     }
 
     @Override
-    public void onBindViewHolder(@NonNull VoucherViewHolder holder, int position) {
+    public void onBindViewHolder(@NonNull VoucherEntryViewHolder holder, int position) {
         VoucherEntry voucherEntry = voucherEntries.get(position);
         holder.veDrCrTv.setText(voucherEntry.getDebitOrCredit() == Constants.DEBIT ? Constants.DR
                 : Constants.CR);
@@ -66,6 +67,31 @@ public class VoucherEntryRvAdapter extends RecyclerView.Adapter<VoucherEntryRvAd
         return voucherEntries.size();
     }
 
+    public void addItems(@NonNull List<VoucherEntry> voucherEntryList) {
+        this.voucherEntries = voucherEntryList;
+        notifyDataSetChanged();
+    }
+
+    public List<VoucherEntry> getItems() {
+        return voucherEntries;
+    }
+
+    public void addItem(@NonNull VoucherEntry voucherEntry) {
+        int position = voucherEntries.size();
+        voucherEntries.add(voucherEntry);
+        notifyItemInserted(position);
+    }
+
+    public void removeItem(int position) {
+        voucherEntries.remove(position);
+        notifyItemRemoved(position);
+    }
+
+    public void restoreItem(int position, VoucherEntry voucherEntry) {
+        voucherEntries.add(position, voucherEntry);
+        notifyItemInserted(position);
+    }
+
     @Override
     public void onClick(View v) {
         if (null != onItemClickListner) {
@@ -73,12 +99,12 @@ public class VoucherEntryRvAdapter extends RecyclerView.Adapter<VoucherEntryRvAd
         }
     }
 
-    public static class VoucherViewHolder extends RecyclerView.ViewHolder {
+    public static class VoucherEntryViewHolder extends RecyclerView.ViewHolder {
         TextView veDrCrTv, veParticularTv, veDebitTv, veCreditTv;
         CardView commonCv;
         ConstraintLayout editBackgroud, deleteBackground;
 
-        public VoucherViewHolder(View itemView) {
+        public VoucherEntryViewHolder(View itemView) {
             super(itemView);
             editBackgroud = itemView.findViewById(R.id.editBackground);
             deleteBackground = itemView.findViewById(R.id.deleteBackground);
