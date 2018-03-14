@@ -6,6 +6,7 @@ import android.arch.persistence.room.Dao;
 import android.arch.persistence.room.Insert;
 import android.arch.persistence.room.Query;
 import android.arch.persistence.room.Transaction;
+import android.content.Intent;
 import android.database.Cursor;
 
 import com.scorpio.myexpensemanager.db.vo.Voucher;
@@ -56,8 +57,8 @@ public abstract class VoucherWithEntriesDao {
     @Query("SELECT seq FROM sqlite_sequence WHERE name = 'Voucher'")
     public abstract Cursor findVoucherSequence();
 
-    public int fetchNextVoucherSequence() {
-        int result = 1;
+    public Integer fetchNextVoucherSequence() {
+        Integer result = 1;
         Cursor cursor = findVoucherSequence();
         if (null != cursor && cursor.moveToFirst()) {
             result = cursor.getInt(cursor.getColumnIndex("sequence"));

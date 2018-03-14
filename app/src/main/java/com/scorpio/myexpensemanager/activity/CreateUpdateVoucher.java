@@ -18,6 +18,8 @@ import com.scorpio.myexpensemanager.R;
 import com.scorpio.myexpensemanager.commons.Cache;
 import com.scorpio.myexpensemanager.commons.Constants;
 import com.scorpio.myexpensemanager.commons.Util;
+import com.scorpio.myexpensemanager.db.vo.Voucher;
+import com.scorpio.myexpensemanager.db.vo.VoucherEntry;
 import com.scorpio.myexpensemanager.db.vo.VoucherType;
 import com.scorpio.myexpensemanager.fragments.VoucherDialog;
 import com.scorpio.myexpensemanager.viewmodels.VoucherTypeVM;
@@ -29,13 +31,15 @@ import java.util.Map;
 import java.util.stream.Collectors;
 
 @SuppressLint("NewApi")
-public class CreateUpdateVoucher extends AppCompatActivity {
+public class CreateUpdateVoucher extends AppCompatActivity implements VoucherDialog
+        .OnResultListner {
 
     Toolbar toolbar;
     private TextInputEditText voucherNo, voucherDate;
     private Map<String, VoucherType> voucherTypeMap = new HashMap<>();
     private VoucherType voucherType;
     private Menu voucherScreenMenu;
+    private Voucher voucher;
 
 
     @Override
@@ -168,5 +172,14 @@ public class CreateUpdateVoucher extends AppCompatActivity {
         DialogFragment newFragment = VoucherDialog.newInstance(Constants.PAYMENT,
                 debitOrCredit);
         newFragment.show(ft, "dialog");
+    }
+
+    //Handle the retrun value from the Voucher Dialog
+    @Override
+    public void onResult(VoucherEntry voucherEntry) {
+        if (null == voucher) {
+            voucher = new Voucher();
+        }
+        voucher.getVoucherEntryList().add(voucherEntry);
     }
 }

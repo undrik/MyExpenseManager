@@ -6,6 +6,7 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
+import android.support.design.widget.TextInputEditText;
 import android.support.design.widget.TextInputLayout;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -51,6 +52,7 @@ public class VoucherDialog extends DialogFragment {
     private Map<String, Ledger> ledgerMapInDb;
     private AutoCompleteTextView inputLedgerAcTv;
     private TextInputLayout textInputLedger;
+    private TextInputEditText inputAmount, inputNarration;
 
     private OnResultListner onResultListner;
 
@@ -137,17 +139,34 @@ public class VoucherDialog extends DialogFragment {
                     .class);
             startActivity(intent);
         });
-
+        inputAmount = view.findViewById(R.id.inputAmount);
+        inputNarration = view.findViewById(R.id.inputNarration);
         Button okBtn = view.findViewById(R.id.okBtn);
         okBtn.setOnClickListener((btnView) -> {
             handleOk();
         });
         Button cancelBtn = view.findViewById(R.id.cancelBtn);
         cancelBtn.setOnClickListener((cancelView) -> dismiss());
+
+
     }
 
     private void handleOk() {
+        String ledgerName = inputLedgerAcTv.getText().toString().trim();
+        String amountText = inputAmount.getText().toString().trim();
+        String narration = inputNarration.getText().toString().trim();
 
+        VoucherEntry voucherEntry = new VoucherEntry();
+        voucherEntry.setLedgerName(ledgerName);
+        voucherEntry.setAmount(0.0);
+        if (null != amountText && !amountText.isEmpty()) {
+            voucherEntry.setAmount(Double.valueOf(amountText));
+        }
+        voucherEntry.setNarration(narration);
+        if (null != onResultListner) {
+            onResultListner.onResult(voucherEntry);
+        }
+        dismiss();
     }
 
 

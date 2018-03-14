@@ -90,6 +90,7 @@
     <string name="title_activity_voucher_list">Voucher List</string>
     <string name="current_balance">Current Balance</string>
     <string name="amount">Amount</string>
+    <string name="narration">Narration</string>
 
     <!-- Text -->
     <string name="space">\u0020</string>
