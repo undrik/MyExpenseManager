@@ -11,6 +11,7 @@ import android.widget.TextView;
 
 import com.scorpio.myexpensemanager.R;
 import com.scorpio.myexpensemanager.commons.Constants;
+import com.scorpio.myexpensemanager.commons.Util;
 import com.scorpio.myexpensemanager.db.listeners.OnItemClickListner;
 import com.scorpio.myexpensemanager.db.vo.Voucher;
 import com.scorpio.myexpensemanager.db.vo.VoucherEntry;
@@ -50,11 +51,13 @@ public class VoucherEntryRvAdapter extends RecyclerView.Adapter<VoucherEntryRvAd
         if (voucherEntry.getDebitOrCredit() == Constants.DEBIT) {
             holder.veCreditTv.setVisibility(View.INVISIBLE);
             holder.veDebitTv.setVisibility(View.VISIBLE);
-            holder.veDebitTv.setText(voucherEntry.getAmount().toString());
+//            holder.veDebitTv.setText(voucherEntry.getAmount().toString());
+            holder.veDebitTv.setText(Util.convertAmount(voucherEntry.getAmount()));
         } else {
             holder.veDebitTv.setVisibility(View.INVISIBLE);
             holder.veCreditTv.setVisibility(View.VISIBLE);
-            holder.veCreditTv.setText(voucherEntry.getAmount().toString());
+//            holder.veCreditTv.setText(voucherEntry.getAmount().toString());
+            holder.veCreditTv.setText(Util.convertAmount(voucherEntry.getAmount()));
         }
         holder.commonCv.setTag(voucherEntry);
         if (null != onItemClickListner) {

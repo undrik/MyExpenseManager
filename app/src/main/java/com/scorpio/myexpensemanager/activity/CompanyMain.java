@@ -233,7 +233,7 @@ public class CompanyMain extends AppCompatActivity
 
                 CompanyDb companyDb = CompanyDb.getDatabase(getApplication(),
                         Cache.getCompany().getDbName());
-//                companyDb.accountGroupDao().findAll().observeForever(accountGroups -> {
+//                companyDb.accountGroupDao().findAllLd().observeForever(accountGroups -> {
                 List<AccountGroup> accountGroups = companyDb.accountGroupDao().findAllGroups();
                 Map<String, AccountGroup> groupMap = accountGroups.stream()
                         .collect(Collectors.toMap(AccountGroup::getName, group -> group));

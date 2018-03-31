@@ -76,7 +76,12 @@
     <!-- Voucher screen -->
     <string name="menu_dr">DR</string>
     <string name="menu_cr">CR</string>
-    <string name="payment">Payment</string>
+    <string name="menu_payment">Payment</string>
+    <string name="menu_receipt">Receipt</string>
+    <string name="menu_contra">Contra</string>
+    <string name="menu_journal">Journal</string>
+    <string name="menu_purchase">Purchase</string>
+    <string name="menu_sales">Sales</string>
 
     <string name="entry">entry</string>
     <string name="particular">Particular</string>

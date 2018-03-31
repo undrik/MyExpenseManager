@@ -17,6 +17,7 @@ import android.support.v7.widget.helper.ItemTouchHelper;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.TextView;
 
 import com.scorpio.myexpensemanager.R;
 import com.scorpio.myexpensemanager.adapters.ItemRvTouchHelper;
@@ -36,6 +37,7 @@ import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
@@ -45,14 +47,16 @@ public class CreateUpdateVoucher extends AppCompatActivity implements VoucherDia
 
     Toolbar toolbar;
     private TextInputEditText inputVoucherNo, voucherDate;
+    private TextView totalDebitTv, totalCreditTv;
     private Map<String, VoucherType> voucherTypeMap = new HashMap<>();
     private VoucherType voucherType;
-    private Menu voucherScreenMenu;
-    private Voucher voucher;
+    private Voucher voucher = new Voucher();
     private RecyclerView voucheEntryRv;
     private VoucherEntryRvAdapter veRvAdapter;
     private Integer voucherNo;
     VoucherVM voucherVM;
+    VoucherTypeVM voucherTypeVM;
+    private Double drTotal = 0.0, crTotal = 0.0;
 
 
     @Override
@@ -72,24 +76,26 @@ public class CreateUpdateVoucher extends AppCompatActivity implements VoucherDia
     @Override
     protected void onResume() {
         super.onResume();
-        VoucherTypeVM voucherTypeVM = ViewModelProviders.of(this).get(VoucherTypeVM.class);
+        voucherTypeVM = ViewModelProviders.of(this).get(VoucherTypeVM.class);
 
+        List<VoucherType> voucherTypes = voucherTypeVM.fetchAllVoucherType();
+        voucherTypeMap = voucherTypes.stream().collect(Collectors.toMap(VoucherType::getName,
+                voucherType -> voucherType));
 
-        voucherTypeVM.fetchAllVoucherType().observe(this, (voucherTypes) -> {
-            voucherTypeMap = voucherTypes.stream().collect(Collectors.toMap(VoucherType::getName,
-                    voucherType -> voucherType));
-
-//            refreshMenu();
-//            onResume();
-        });
+//        voucherTypeVM.fetchAllVoucherTypeLiveData().observe(this, (voucherTypes) -> {
+//            voucherTypeMap = voucherTypes.stream().collect(Collectors.toMap(VoucherType::getName,
+//                    voucherType -> voucherType));
+//
+////            refreshMenu();
+////            onResume();
+//        });
 //        refreshMenu();
     }
 
     private void initialize() {
         voucherNo = voucherVM.getVoucherSequence();
-        setToolbarTitle(getString(R.string.payment) + getString(R.string.space) +
-                getString(R
-                        .string.entry));
+//        setToolbarTitle(getString(R.string.menu_payment) + getString(R.string.space) +
+//                getString(R.string.entry));
         inputVoucherNo = findViewById(R.id.inputVoucherNo);
         inputVoucherNo.setText(voucherNo.toString());
         voucherDate = findViewById(R.id.inputVoucherDate);
@@ -118,38 +124,50 @@ public class CreateUpdateVoucher extends AppCompatActivity implements VoucherDia
         ItemTouchHelper.SimpleCallback switeCallback = new ItemRvTouchHelper(0,
                 ItemTouchHelper.LEFT | ItemTouchHelper.RIGHT, this);
         new ItemTouchHelper(switeCallback).attachToRecyclerView(voucheEntryRv);
+
+        totalDebitTv = findViewById(R.id.totalDebitTv);
+        totalCreditTv = findViewById(R.id.totalCreditTv);
+
+        updateTotalText();
     }
 
     private void setToolbarTitle(@NonNull String title) {
         toolbar.setTitle(title);
     }
 
-    private void setVoucherNo() {
-        inputVoucherNo.setText(voucherType.getCurrentVoucherNo().toString());
+    private void setVoucherNo(String name) {
+        voucherType = voucherTypeVM.fetchCurrentVoucherNo(name);
+        if (null != voucherType) {
+            inputVoucherNo.setText(voucherType.getCurrentVoucherNo().toString());
+            setToolbarTitle(voucherType.getName() + getString(R.string.space) +
+                    getString(R.string.entry));
+        }
     }
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         getMenuInflater().inflate(R.menu.menu_voucher_toolbar, menu);
-        this.voucherScreenMenu = menu;
+        MenuItem menuItem = menu.findItem(R.id.actionPayment);
+        onOptionsItemSelected(menuItem);
+//        this.voucherScreenMenu = menu;
 
         return true;
     }
 
-    private void refreshMenu() {
-        if (null == voucherScreenMenu) {
-            invalidateOptionsMenu();
-        }
-        voucherTypeMap.forEach((key, value) -> {
-            voucherScreenMenu.add(0, value.getId().intValue(), 0, key);
-        });
-
-        if (voucherType == null) {
-            MenuItem menuItem = voucherScreenMenu.findItem(voucherTypeMap.get(Constants.PAYMENT)
-                    .getId().intValue());
-            onOptionsItemSelected(menuItem);
-        }
-    }
+//    private void refreshMenu() {
+//        if (null == voucherScreenMenu) {
+//            invalidateOptionsMenu();
+//        }
+//        voucherTypeMap.forEach((key, value) -> {
+//            voucherScreenMenu.add(0, value.getId().intValue(), 0, key);
+//        });
+//
+//        if (voucherType == null) {
+//            MenuItem menuItem = voucherScreenMenu.findItem(voucherTypeMap.get(Constants.PAYMENT)
+//                    .getId().intValue());
+//            onOptionsItemSelected(menuItem);
+//        }
+//    }
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
@@ -165,14 +183,24 @@ public class CreateUpdateVoucher extends AppCompatActivity implements VoucherDia
                 handleClickCR();
                 return true;
             case R.id.actionCheck:
+
                 return true;
-            default:
-                if (id <= voucherTypeMap.size()) {
-                    voucherType = voucherTypeMap.get(item.getTitle());
-                    setToolbarTitle(voucherType.getName() + getString(R.string.space) + getString(R
-                            .string.entry));
-                    setVoucherNo();
-                }
+            case R.id.actionPayment:
+            case R.id.actionReceipt:
+            case R.id.actionContra:
+            case R.id.actionJournal:
+            case R.id.actionPurchase:
+            case R.id.actionSales:
+                setVoucherNo(item.getTitle().toString());
+
+//            default:
+//                if (id <= voucherTypeMap.size()) {
+//                    voucherType = voucherTypeMap.get(item.getTitle());
+//                    setToolbarTitle(voucherType.getName() + getString(R.string.space) +
+// getString(R
+//                            .string.entry));
+//                    setVoucherNo();
+//                }
         }
         return super.onOptionsItemSelected(item);
     }
@@ -213,6 +241,7 @@ public class CreateUpdateVoucher extends AppCompatActivity implements VoucherDia
         }
         voucher.getVoucherEntryList().add(voucherEntry);
         veRvAdapter.addItem(voucherEntry);
+        calculateTotal();
     }
 
     //handle the click on the card view of voucher entry
@@ -260,5 +289,24 @@ public class CreateUpdateVoucher extends AppCompatActivity implements VoucherDia
 //                startActivity(intent);
             }
         }
+    }
+
+    //Calculate the total of debit and credit voucher entry
+    private void calculateTotal() {
+        drTotal = crTotal = 0.0;
+        for (VoucherEntry entry : voucher.getVoucherEntryList()) {
+            if (entry.getDebitOrCredit() == Constants.DEBIT) {
+                drTotal += entry.getAmount();
+            } else {
+                crTotal += entry.getAmount();
+            }
+        }
+        updateTotalText();
+    }
+
+    //Update the Debit and Credit Total test field
+    private void updateTotalText() {
+        totalDebitTv.setText(Util.convertAmount(drTotal));
+        totalCreditTv.setText(Util.convertAmount(crTotal));
     }
 }

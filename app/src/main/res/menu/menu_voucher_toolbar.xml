@@ -15,4 +15,22 @@
         android:icon="@drawable/ic_action_done_while_48dp"
         android:title=""
         app:showAsAction="always" />
+    <item
+        android:id="@+id/actionPayment"
+        android:title="@string/menu_payment" />
+    <item
+        android:id="@+id/actionReceipt"
+        android:title="@string/menu_receipt" />
+    <item
+        android:id="@+id/actionContra"
+        android:title="@string/menu_contra" />
+    <item
+        android:id="@+id/actionJournal"
+        android:title="@string/menu_journal" />
+    <item
+        android:id="@+id/actionPurchase"
+        android:title="@string/menu_purchase" />
+    <item
+        android:id="@+id/actionSales"
+        android:title="@string/menu_sales" />
 </menu>

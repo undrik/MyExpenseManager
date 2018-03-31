@@ -6,6 +6,7 @@ import android.arch.persistence.room.Delete;
 import android.arch.persistence.room.Insert;
 import android.arch.persistence.room.Query;
 import android.arch.persistence.room.Update;
+import android.support.annotation.NonNull;
 
 import com.scorpio.myexpensemanager.db.vo.VoucherType;
 
@@ -31,5 +32,11 @@ public interface VoucherTypeDao {
     int delete(VoucherType voucherType);
 
     @Query("SELECT * FROM VoucherType")
-    LiveData<List<VoucherType>> findAll();
+    LiveData<List<VoucherType>> findAllLd();
+
+    @Query("SELECT * FROM VoucherType")
+    List<VoucherType> findAll();
+
+    @Query("SELECT * from VoucherType where name = :name")
+    VoucherType getCurrentVoucherNo(@NonNull String name);
 }
