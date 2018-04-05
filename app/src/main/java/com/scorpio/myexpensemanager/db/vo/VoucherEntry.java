@@ -3,6 +3,7 @@ package com.scorpio.myexpensemanager.db.vo;
 
 import android.arch.persistence.room.Entity;
 import android.arch.persistence.room.ForeignKey;
+import android.arch.persistence.room.Ignore;
 import android.arch.persistence.room.Index;
 import android.arch.persistence.room.PrimaryKey;
 import android.arch.persistence.room.TypeConverters;
@@ -43,6 +44,7 @@ public class VoucherEntry {
     public VoucherEntry() {
     }
 
+    @Ignore
     public VoucherEntry(@NonNull String ledgerName, @NonNull Long voucherId, @NonNull Integer
             debitOrCredit, @NonNull Double amount, LocalDate localDate) {
         this.ledgerName = ledgerName;
@@ -52,6 +54,7 @@ public class VoucherEntry {
         this.localDate = localDate;
     }
 
+    @Ignore
     public VoucherEntry(@NonNull String ledgerName, @NonNull Integer debitOrCredit, @NonNull
             Double amount) {
         this.ledgerName = ledgerName;

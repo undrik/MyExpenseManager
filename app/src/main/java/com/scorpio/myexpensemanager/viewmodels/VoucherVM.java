@@ -55,13 +55,12 @@ public class VoucherVM extends AndroidViewModel {
         return result;
     }
 
-    public Long addVoucher(@NonNull Voucher voucher) {
+    public Long addVoucher(@NonNull VoucherWithEntries voucher) {
         Long result = -1L;
 
         TaskExecutor taskExecutor = new TaskExecutor();
-        Future<Long> future = taskExecutor.submit(() -> {
-            return companyDb.voucherWithEntriesDao().save(voucher);
-        });
+        Future<Long> future = taskExecutor.submit(() -> companyDb.voucherWithEntriesDao()
+                .saveWithEntries(voucher));
         try {
             result = future.get();
         } catch (InterruptedException e) {

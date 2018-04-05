@@ -2,6 +2,7 @@ package com.scorpio.myexpensemanager.db.vo;
 
 
 import android.arch.persistence.room.Entity;
+import android.arch.persistence.room.Ignore;
 import android.arch.persistence.room.PrimaryKey;
 
 @Entity
@@ -18,6 +19,7 @@ public class VoucherType {
         super();
     }
 
+    @Ignore
     public VoucherType(String name, Long currentVoucherNo) {
         this.name = name;
         this.currentVoucherNo = currentVoucherNo;

@@ -198,8 +198,8 @@ public class CreateUpdateAccount extends AppCompatActivity {
                 ledger.setOpeningBalance(-1 * ledger.getOpeningBalance());
             }
             ledger.setCurrentBalance(ledger.getOpeningBalance());
-            ledger.setOpeningBalanceAsOn(Util.convertToTimeFromddMMMyyyy(inputOpenningBalance
-                    .getText().toString().trim()));
+            ledger.setOpeningBalanceAsOn(Util.convertToTimeFromddMMMyyyy(inputbalanceAsOn.getText
+                    ().toString().trim()));
 
             LedgerVM ledgerVM = new LedgerVM(getApplication(), Cache.getCompany());
             Long result = ledgerVM.addLedger(ledger);

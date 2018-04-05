@@ -107,6 +107,8 @@ public class ItemRvTouchHelper extends ItemTouchHelper.SimpleCallback {
         } else if (viewHolder instanceof VoucherEntryRvAdapter.VoucherEntryViewHolder) {
             deleteBackgroud = ((VoucherEntryRvAdapter.VoucherEntryViewHolder) viewHolder)
                     .deleteBackground;
+        } else if (viewHolder instanceof VoucherRvAdapter.VoucherViewHolder) {
+            deleteBackgroud = ((VoucherRvAdapter.VoucherViewHolder) viewHolder).deleteBackground;
         }
         return deleteBackgroud;
     }
@@ -120,6 +122,8 @@ public class ItemRvTouchHelper extends ItemTouchHelper.SimpleCallback {
         } else if (viewHolder instanceof VoucherEntryRvAdapter.VoucherEntryViewHolder) {
             editBackground = ((VoucherEntryRvAdapter.VoucherEntryViewHolder) viewHolder)
                     .editBackgroud;
+        } else if (viewHolder instanceof VoucherRvAdapter.VoucherViewHolder) {
+            editBackground = ((VoucherRvAdapter.VoucherViewHolder) viewHolder).editBackgroud;
         }
         return editBackground;
     }

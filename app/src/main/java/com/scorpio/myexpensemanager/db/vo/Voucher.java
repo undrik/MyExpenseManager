@@ -18,13 +18,13 @@ public class Voucher {
     @PrimaryKey(autoGenerate = true)
     private Long id;
     private String number;
-    private Long typeId;
+    private String type;
     @TypeConverters(LocalDateEpochConverter.class)
     private LocalDate localDate;
     private String narration;
     private String guid;
     @Ignore
-    private List<VoucherEntry> voucherEntryList = new ArrayList<>();
+    private VoucherType voucherType;
 
     public Voucher() {
         super();
@@ -46,12 +46,12 @@ public class Voucher {
         this.number = number;
     }
 
-    public Long getTypeId() {
-        return typeId;
+    public String getType() {
+        return type;
     }
 
-    public void setTypeId(Long typeId) {
-        this.typeId = typeId;
+    public void setType(String type) {
+        this.type = type;
     }
 
     public LocalDate getLocalDate() {
@@ -78,12 +78,12 @@ public class Voucher {
         this.guid = guid;
     }
 
-    public List<VoucherEntry> getVoucherEntryList() {
-        return voucherEntryList;
+    public VoucherType getVoucherType() {
+        return voucherType;
     }
 
-    public void setVoucherEntryList(ArrayList<VoucherEntry> voucherEntryList) {
-        this.voucherEntryList = voucherEntryList;
+    public void setVoucherType(VoucherType voucherType) {
+        this.voucherType = voucherType;
     }
 
     @Override

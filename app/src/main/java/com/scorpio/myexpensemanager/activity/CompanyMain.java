@@ -96,11 +96,67 @@ public class CompanyMain extends AppCompatActivity
         //noinspection SimplifiableIfStatement
         if (id == R.id.action_settings) {
             return true;
+        }else if(id ==R.id.actionScanSms){
+            handleScanSms();
         }
 
         return super.onOptionsItemSelected(item);
     }
 
+    private void handleScanSms() {
+        //create inbox uri
+        Uri inboxUri = Uri.parse("content://sms/inbox");
+        //columns
+        String[] smsCol = new String[]{"_id", "address", "body", "date"};
+
+        //get the content provider
+        ContentResolver cr = getContentResolver();
+        //Fetch the sms from the built in content provider
+        Cursor cursor = cr.query(inboxUri, smsCol, null, null, null);
+        if (cursor.moveToFirst()) {
+
+            final int totalRecord = cursor.getCount();
+            ProcessSms processSms = new ProcessSms();
+            ProgressDialog progressDialog = new ProgressDialog(this);
+            progressDialog.setMessage(getString(R.string.msg_process_sms));
+            progressDialog.setProgressStyle(ProgressDialog.STYLE_HORIZONTAL);
+            progressDialog.setProgress(1);
+            progressDialog.setMax(totalRecord);
+            progressDialog.setCancelable(false);
+            progressDialog.show();
+            final Thread thread = new Thread() {
+                @Override
+                public void run() {
+                    int increment = 1;
+                    do {
+                        String id = cursor.getString(cursor.getColumnIndex("_id"));
+                        String from = cursor.getString(cursor.getColumnIndex("address"));
+                        String body = cursor.getString(cursor.getColumnIndex("body"));
+                        String receivedOn = cursor.getString(cursor.getColumnIndex("date"));
+                        Log.i(Constants.APP_NAME, "id: " + id + " address: " + from + " body: " +
+                                body +
+                                " ReceivedOn: " + receivedOn);
+                        final String DELIMETER = "-";
+                        String[] fromArr = from.split(DELIMETER);
+                        if (2 == fromArr.length) {
+                            from = fromArr[1];
+                            if (processSms.isSupportedSms(from)) {
+                                processSms.process(from, receivedOn, body);
+                            }
+                        }
+//                        try {
+//                            sleep(1000);
+//                        } catch (InterruptedException e) {
+//                            e.printStackTrace();
+//                        }
+                        progressDialog.setProgress(increment++);
+                    } while (cursor.moveToNext());
+                    progressDialog.dismiss();
+                }
+            };
+            thread.start();
+        }
+    }
     @SuppressWarnings("StatementWithEmptyBody")
     @Override
     public boolean onNavigationItemSelected(@NonNull MenuItem item) {

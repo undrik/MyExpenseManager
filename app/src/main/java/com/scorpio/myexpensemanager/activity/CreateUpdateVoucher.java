@@ -18,6 +18,7 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.scorpio.myexpensemanager.R;
 import com.scorpio.myexpensemanager.adapters.ItemRvTouchHelper;
@@ -29,6 +30,7 @@ import com.scorpio.myexpensemanager.db.listeners.OnItemClickListner;
 import com.scorpio.myexpensemanager.db.vo.Voucher;
 import com.scorpio.myexpensemanager.db.vo.VoucherEntry;
 import com.scorpio.myexpensemanager.db.vo.VoucherType;
+import com.scorpio.myexpensemanager.db.vo.VoucherWithEntries;
 import com.scorpio.myexpensemanager.fragments.VoucherDialog;
 import com.scorpio.myexpensemanager.viewmodels.VoucherTypeVM;
 import com.scorpio.myexpensemanager.viewmodels.VoucherVM;
@@ -50,7 +52,7 @@ public class CreateUpdateVoucher extends AppCompatActivity implements VoucherDia
     private TextView totalDebitTv, totalCreditTv;
     private Map<String, VoucherType> voucherTypeMap = new HashMap<>();
     private VoucherType voucherType;
-    private Voucher voucher = new Voucher();
+    private VoucherWithEntries voucher = new VoucherWithEntries();
     private RecyclerView voucheEntryRv;
     private VoucherEntryRvAdapter veRvAdapter;
     private Integer voucherNo;
@@ -96,10 +98,11 @@ public class CreateUpdateVoucher extends AppCompatActivity implements VoucherDia
         voucherNo = voucherVM.getVoucherSequence();
 //        setToolbarTitle(getString(R.string.menu_payment) + getString(R.string.space) +
 //                getString(R.string.entry));
-        inputVoucherNo = findViewById(R.id.inputVoucherNo);
+        inputVoucherNo = findViewById(R.id.voucherNoTv);
         inputVoucherNo.setText(voucherNo.toString());
-        voucherDate = findViewById(R.id.inputVoucherDate);
+        voucherDate = findViewById(R.id.voucherDateTv);
         voucherDate.setText(Util.getTodayWithDay());
+        voucher.setLocalDate(LocalDate.now());
         voucherDate.setOnClickListener((view) -> {
             DatePickerDialog datePickerDialog = new DatePickerDialog(CreateUpdateVoucher.this);
             datePickerDialog.getDatePicker().setMaxDate(Calendar.getInstance().getTimeInMillis());
@@ -109,6 +112,7 @@ public class CreateUpdateVoucher extends AppCompatActivity implements VoucherDia
                 LocalDate localDate = LocalDate.of(year, month, dayOfMonth);
                 String dateText = Util.convertToDDMMYYYEEE(localDate);
                 voucherDate.setText(dateText);
+                voucher.setLocalDate(localDate);
             });
 
             datePickerDialog.show();
@@ -141,6 +145,9 @@ public class CreateUpdateVoucher extends AppCompatActivity implements VoucherDia
             inputVoucherNo.setText(voucherType.getCurrentVoucherNo().toString());
             setToolbarTitle(voucherType.getName() + getString(R.string.space) +
                     getString(R.string.entry));
+            voucher.setNumber(voucherType.getCurrentVoucherNo().toString());
+            voucher.setType(voucherType.getName());
+            voucher.setVoucherType(voucherType);
         }
     }
 
@@ -183,7 +190,7 @@ public class CreateUpdateVoucher extends AppCompatActivity implements VoucherDia
                 handleClickCR();
                 return true;
             case R.id.actionCheck:
-
+                handleActionCheck();
                 return true;
             case R.id.actionPayment:
             case R.id.actionReceipt:
@@ -213,6 +220,17 @@ public class CreateUpdateVoucher extends AppCompatActivity implements VoucherDia
         showVoucherDialog(Constants.CREDIT);
     }
 
+    private void handleActionCheck() {
+        if (drTotal.doubleValue() != 0.0 && drTotal.doubleValue() == crTotal.doubleValue()) {
+            Long result = voucherVM.addVoucher(voucher);
+            if (result > 0) {
+                Toast.makeText(getApplicationContext(), getString(R.string.msg_success_create),
+                        Toast.LENGTH_LONG).show();
+                finish();
+            }
+        }
+    }
+
     void showVoucherDialog(int debitOrCredit) {
 //        mStackLevel++;
 
@@ -236,10 +254,7 @@ public class CreateUpdateVoucher extends AppCompatActivity implements VoucherDia
     //Handle the retrun value from the Voucher Dialog
     @Override
     public void onResult(VoucherEntry voucherEntry) {
-        if (null == voucher) {
-            voucher = new Voucher();
-        }
-        voucher.getVoucherEntryList().add(voucherEntry);
+        voucher.getVoucherEntries().add(voucherEntry);
         veRvAdapter.addItem(voucherEntry);
         calculateTotal();
     }
@@ -294,7 +309,7 @@ public class CreateUpdateVoucher extends AppCompatActivity implements VoucherDia
     //Calculate the total of debit and credit voucher entry
     private void calculateTotal() {
         drTotal = crTotal = 0.0;
-        for (VoucherEntry entry : voucher.getVoucherEntryList()) {
+        for (VoucherEntry entry : voucher.getVoucherEntries()) {
             if (entry.getDebitOrCredit() == Constants.DEBIT) {
                 drTotal += entry.getAmount();
             } else {

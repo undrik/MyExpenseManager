@@ -308,7 +308,7 @@ public class CreateUpdateCompany extends AppCompatActivity {
         List<Long> voucherTypeEntry = companyDb.voucherTypeDao().save(PopulateDefaults
                 .predefiniedVoucherTypes());
         Long result = appDb.companyDao().save(company);
-        companyDb.close();
+//        companyDb.close();
         if (result > 0) {
             company.setId(result);
         }

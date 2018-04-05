@@ -50,9 +50,9 @@ public class LedgerList extends AppCompatActivity implements ItemRvTouchHelper.R
         ledgerRvAdapter = new LedgerRvAdapter(new ArrayList<>());
         ledgerRv.setAdapter(ledgerRvAdapter);
 
-        ItemTouchHelper.SimpleCallback companySwiteCallback = new ItemRvTouchHelper(0,
+        ItemTouchHelper.SimpleCallback ledgerSwiteCallback = new ItemRvTouchHelper(0,
                 ItemTouchHelper.LEFT | ItemTouchHelper.RIGHT, this);
-        new ItemTouchHelper(companySwiteCallback).attachToRecyclerView(ledgerRv);
+        new ItemTouchHelper(ledgerSwiteCallback).attachToRecyclerView(ledgerRv);
 
         ProgressDialog progressDialog = new ProgressDialog(this);
         progressDialog.setCancelable(true);

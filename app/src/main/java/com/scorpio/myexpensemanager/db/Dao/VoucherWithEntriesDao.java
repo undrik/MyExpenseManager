@@ -6,11 +6,13 @@ import android.arch.persistence.room.Dao;
 import android.arch.persistence.room.Insert;
 import android.arch.persistence.room.Query;
 import android.arch.persistence.room.Transaction;
+import android.arch.persistence.room.Update;
 import android.content.Intent;
 import android.database.Cursor;
 
 import com.scorpio.myexpensemanager.db.vo.Voucher;
 import com.scorpio.myexpensemanager.db.vo.VoucherEntry;
+import com.scorpio.myexpensemanager.db.vo.VoucherType;
 import com.scorpio.myexpensemanager.db.vo.VoucherWithEntries;
 
 import java.util.List;
@@ -25,28 +27,35 @@ import java.util.stream.Collectors;
 @Dao
 public abstract class VoucherWithEntriesDao {
     @Insert
-    public abstract List<Long> save(Voucher... vouchers);
+    protected abstract List<Long> save(Voucher... vouchers);
 
     @Insert
-    public abstract Long save(Voucher voucher);
+    protected abstract Long save(Voucher voucher);
 
     @Insert
-    public abstract List<Long> save(VoucherEntry... voucherEntries);
+    protected abstract List<Long> save(VoucherEntry... voucherEntries);
 
     @Insert
-    public abstract List<Long> save(List<VoucherEntry> voucherEntries);
+    protected abstract List<Long> save(List<VoucherEntry> voucherEntries);
+
+    @Update
+    protected abstract int update(VoucherType voucherType);
 
     @SuppressLint("NewApi")
     @Transaction
-    public Long saveWithEntries(Voucher voucher) {
+    public Long saveWithEntries(VoucherWithEntries voucher) {
         voucher.setGuid(UUID.randomUUID().toString());
         Long voucherId = save(voucher);
-        List<VoucherEntry> voucherEntries = voucher.getVoucherEntryList().stream().map
+        List<VoucherEntry> voucherEntries = voucher.getVoucherEntries().stream().map
                 (voucherEntry -> {
                     voucherEntry.setVoucherId(voucherId);
+                    voucherEntry.setLocalDate(voucher.getLocalDate());
                     return voucherEntry;
                 }).collect(Collectors.toList());
         save(voucherEntries);
+        VoucherType voucherType = voucher.getVoucherType();
+        voucherType.setCurrentVoucherNo(voucherType.getCurrentVoucherNo() + 1);
+        update(voucherType);
         return voucherId;
     }
 

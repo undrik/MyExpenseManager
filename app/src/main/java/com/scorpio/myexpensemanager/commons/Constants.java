@@ -4,6 +4,7 @@ public interface Constants {
     String APP_NAME = "MYEXPENSE";
     String COMANY_OBJ = "companyobj";
     String LEDGER_OBJ = "ledgerobj";
+    String VOUCHER_OBJ = "voucherobj";
     String GROUP_OBJ = "groupobj";
     String G_NAME_OBJ = "gNameObj";
     String CREATE_GROUP = "creategroup";

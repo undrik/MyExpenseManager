@@ -78,6 +78,7 @@ public class LedgerVM extends AndroidViewModel {
                 return companyDb.ledgerDao().save(ledger);
             });
             try {
+                taskExecutor.shutdown();
                 result = future.get();
             } catch (InterruptedException e) {
                 Log.v(Constants.APP_NAME, e.getMessage());

@@ -1,6 +1,7 @@
 package com.scorpio.myexpensemanager.commons.tally;
 
 import android.annotation.SuppressLint;
+import android.content.Context;
 import android.support.annotation.NonNull;
 import android.util.Log;
 import android.util.Xml;
@@ -12,6 +13,7 @@ import com.scorpio.myexpensemanager.db.vo.NatureOfGroup;
 import com.scorpio.myexpensemanager.db.vo.Voucher;
 import com.scorpio.myexpensemanager.db.vo.VoucherEntry;
 import com.scorpio.myexpensemanager.db.vo.VoucherTypeEnum;
+import com.scorpio.myexpensemanager.db.vo.VoucherWithEntries;
 
 import org.xmlpull.v1.XmlPullParser;
 import org.xmlpull.v1.XmlPullParserException;
@@ -349,9 +351,9 @@ public class TallyFileHandler {
     }
 
     @SuppressLint("NewApi")
-    private Voucher readVoucher(XmlPullParser parser) throws IOException,
+    private VoucherWithEntries readVoucher(XmlPullParser parser) throws IOException,
             XmlPullParserException {
-        Voucher voucher = null;
+        VoucherWithEntries voucher = null;
         String vDate = null;
         String vGuid = null;
         String vType = null;
@@ -381,11 +383,11 @@ public class TallyFileHandler {
             } else if (name.equals(Constants.ALLLEDGERENTRIES_LIST)) {
                 VoucherEntry ve = readLedgerEntry(parser);
                 if (null != voucher && null != ve) {
-                    voucher.getVoucherEntryList().add(ve);
+                    voucher.getVoucherEntries().add(ve);
                 }
             }
             if (null == voucher && null != vDate && null != vType) {
-                voucher = new Voucher();
+                voucher = new VoucherWithEntries();
                 DateTimeFormatter pattern = DateTimeFormatter.ofPattern(Constants
                         .DATE_FORMAT_TALLY_YYYYMMDD);
                 try {
@@ -394,17 +396,17 @@ public class TallyFileHandler {
                     e.printStackTrace();
                 }
                 switch (vType) {
-                    case "Payment":
-                        voucher.setTypeId((long) VoucherTypeEnum.Payment.ordinal() + 1);
+                    case Constants.PAYMENT:
+                        voucher.setType(Constants.PAYMENT);
                         break;
-                    case "Receipt":
-                        voucher.setTypeId((long) VoucherTypeEnum.Receipt.ordinal() + 1);
+                    case Constants.RECEIPT:
+                        voucher.setType(Constants.RECEIPT);
                         break;
-                    case "Journal":
-                        voucher.setTypeId((long) VoucherTypeEnum.Journal.ordinal() + 1);
+                    case Constants.JOURNAL:
+                        voucher.setType(Constants.JOURNAL);
                         break;
-                    case "Contra":
-                        voucher.setTypeId((long) VoucherTypeEnum.Contra.ordinal() + 1);
+                    case Constants.CONTRA:
+                        voucher.setType(Constants.CONTRA);
                         break;
                 }
             }
