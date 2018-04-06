@@ -24,6 +24,7 @@ public class Voucher {
     private LocalDate localDate;
     private String narration;
     private String guid;
+    private String smsid;
     @Ignore
     @NonNull
     private VoucherType voucherType;
@@ -86,6 +87,14 @@ public class Voucher {
 
     public void setVoucherType(VoucherType voucherType) {
         this.voucherType = voucherType;
+    }
+
+    public String getSmsid() {
+        return smsid;
+    }
+
+    public void setSmsid(String smsid) {
+        this.smsid = smsid;
     }
 
     @Override
