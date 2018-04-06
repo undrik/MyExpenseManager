@@ -14,6 +14,7 @@ public class VoucherType {
     public String prefix;
     public String postfix;
     private String type;
+    private String delimiter;
 
     public VoucherType() {
         super();
@@ -23,6 +24,13 @@ public class VoucherType {
     public VoucherType(String name, Long currentVoucherNo) {
         this.name = name;
         this.currentVoucherNo = currentVoucherNo;
+    }
+
+    @Ignore
+    public VoucherType(String name, Long currentVoucherNo, String delimiter) {
+        this.name = name;
+        this.currentVoucherNo = currentVoucherNo;
+        this.delimiter = delimiter;
     }
 
     public Long getId() {
@@ -71,6 +79,14 @@ public class VoucherType {
 
     public void setType(String type) {
         this.type = type;
+    }
+
+    public String getDelimiter() {
+        return delimiter;
+    }
+
+    public void setDelimiter(String delimeter) {
+        this.delimiter = delimeter;
     }
 
     @Override

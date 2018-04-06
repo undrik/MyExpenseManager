@@ -5,6 +5,7 @@ import android.arch.persistence.room.Entity;
 import android.arch.persistence.room.Ignore;
 import android.arch.persistence.room.PrimaryKey;
 import android.arch.persistence.room.TypeConverters;
+import android.support.annotation.NonNull;
 
 import com.scorpio.myexpensemanager.db.converters.LocalDateEpochConverter;
 
@@ -24,6 +25,7 @@ public class Voucher {
     private String narration;
     private String guid;
     @Ignore
+    @NonNull
     private VoucherType voucherType;
 
     public Voucher() {

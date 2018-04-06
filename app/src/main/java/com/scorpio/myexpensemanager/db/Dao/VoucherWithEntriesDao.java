@@ -46,16 +46,18 @@ public abstract class VoucherWithEntriesDao {
     public Long saveWithEntries(VoucherWithEntries voucher) {
         voucher.setGuid(UUID.randomUUID().toString());
         Long voucherId = save(voucher);
-        List<VoucherEntry> voucherEntries = voucher.getVoucherEntries().stream().map
-                (voucherEntry -> {
-                    voucherEntry.setVoucherId(voucherId);
-                    voucherEntry.setLocalDate(voucher.getLocalDate());
-                    return voucherEntry;
-                }).collect(Collectors.toList());
-        save(voucherEntries);
-        VoucherType voucherType = voucher.getVoucherType();
-        voucherType.setCurrentVoucherNo(voucherType.getCurrentVoucherNo() + 1);
-        update(voucherType);
+        if (voucherId > 0) {
+            List<VoucherEntry> voucherEntries = voucher.getVoucherEntries().stream().map
+                    (voucherEntry -> {
+                        voucherEntry.setVoucherId(voucherId);
+                        voucherEntry.setLocalDate(voucher.getLocalDate());
+                        return voucherEntry;
+                    }).collect(Collectors.toList());
+            save(voucherEntries);
+            VoucherType voucherType = voucher.getVoucherType();
+            voucherType.setCurrentVoucherNo(voucherType.getCurrentVoucherNo() + 1);
+            update(voucherType);
+        }
         return voucherId;
     }
 
@@ -63,15 +65,15 @@ public abstract class VoucherWithEntriesDao {
     @Query("SELECT * FROM Voucher")
     public abstract LiveData<List<VoucherWithEntries>> findVoucherWithEntries();
 
-    @Query("SELECT seq FROM sqlite_sequence WHERE name = 'Voucher'")
-    public abstract Cursor findVoucherSequence();
-
-    public Integer fetchNextVoucherSequence() {
-        Integer result = 1;
-        Cursor cursor = findVoucherSequence();
-        if (null != cursor && cursor.moveToFirst()) {
-            result = cursor.getInt(cursor.getColumnIndex("sequence"));
-        }
-        return result;
-    }
+//    @Query("SELECT seq FROM sqlite_sequence WHERE name = 'Voucher'")
+//    public abstract Cursor findVoucherSequence();
+//
+//    public Integer fetchNextVoucherSequence() {
+//        Integer result = 1;
+//        Cursor cursor = findVoucherSequence();
+//        if (null != cursor && cursor.moveToFirst()) {
+//            result = cursor.getInt(cursor.getColumnIndex("sequence"));
+//        }
+//        return result;
+//    }
 }
