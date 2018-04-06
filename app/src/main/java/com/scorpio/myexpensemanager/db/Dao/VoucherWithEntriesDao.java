@@ -63,15 +63,15 @@ public abstract class VoucherWithEntriesDao {
     @Query("SELECT * FROM Voucher")
     public abstract LiveData<List<VoucherWithEntries>> findVoucherWithEntries();
 
-    @Query("SELECT seq FROM sqlite_sequence WHERE name = 'Voucher'")
-    public abstract Cursor findVoucherSequence();
-
-    public Integer fetchNextVoucherSequence() {
-        Integer result = 1;
-        Cursor cursor = findVoucherSequence();
-        if (null != cursor && cursor.moveToFirst()) {
-            result = cursor.getInt(cursor.getColumnIndex("sequence"));
-        }
-        return result;
-    }
+//    @Query("SELECT seq FROM sqlite_sequence WHERE name = 'Voucher'")
+//    public abstract Cursor findVoucherSequence();
+//
+//    public Integer fetchNextVoucherSequence() {
+//        Integer result = 1;
+//        Cursor cursor = findVoucherSequence();
+//        if (null != cursor && cursor.moveToFirst()) {
+//            result = cursor.getInt(cursor.getColumnIndex("sequence"));
+//        }
+//        return result;
+//    }
 }
