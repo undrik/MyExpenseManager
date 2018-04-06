@@ -8,12 +8,16 @@ import java.text.DecimalFormat;
 import java.text.NumberFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.time.Instant;
 import java.time.LocalDate;
+import java.time.ZoneId;
 import java.time.format.DateTimeFormatter;
+import java.time.format.DateTimeFormatterBuilder;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 import java.util.Locale;
+import java.util.concurrent.TimeUnit;
 
 /**
  * My Expense Manager Util class
@@ -93,6 +97,17 @@ public class Util {
         return new Date();
     }
 
+    public static LocalDate convertToLocalDateFromDMMMYY(String strDate) {
+        DateTimeFormatter formatter = new DateTimeFormatterBuilder()
+                // case insensitive to parse JAN and FEB
+                .parseCaseInsensitive()
+                // add pattern
+                .appendPattern(Constants.DATE_FORMAT_D_MMM_YY)
+                // create formatter (use English Locale to parse month names)
+                .toFormatter(Locale.ENGLISH);
+        return LocalDate.parse(strDate, formatter);
+    }
+
     public static long convertToTimeFromddMMMyyyy(String date) {
         SimpleDateFormat format = new SimpleDateFormat(Constants.DATE_FORMAT_D_MMM_YYYY, Locale
                 .ENGLISH);
@@ -170,5 +185,11 @@ public class Util {
             return Constants.ERROR_CODE_EXISTS;
         }
         return Constants.SUCCESS_CODE;
+    }
+
+    public static void main(String[] args) {
+        String strDate = "05-APR-18";
+        System.out.println(Util.convertToTimeFromddMMMyy(strDate));
+        System.out.println(Util.convertToLocalDateFromDMMMYY(strDate).toString());
     }
 }

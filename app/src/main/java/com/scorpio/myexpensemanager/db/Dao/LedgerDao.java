@@ -7,6 +7,7 @@ import android.arch.persistence.room.Insert;
 import android.arch.persistence.room.Query;
 import android.arch.persistence.room.Update;
 
+import com.scorpio.myexpensemanager.db.vo.IdTuple;
 import com.scorpio.myexpensemanager.db.vo.Ledger;
 import com.scorpio.myexpensemanager.db.vo.Name;
 
@@ -20,10 +21,16 @@ import java.util.List;
 @Dao
 public interface LedgerDao {
     @Query("SELECT * FROM Ledger WHERE name = :name")
-    LiveData<Ledger> findLedgerByName(final String name);
+    LiveData<Ledger> findLedgerByNameLD(final String name);
+
+    @Query("SELECT * FROM Ledger WHERE name = :name")
+    Ledger findLedgerByName(final String name);
 
     @Query("SELECT * FROM Ledger WHERE id = :id")
-    LiveData<Ledger> findLedgerById(final Integer id);
+    LiveData<Ledger> findLedgerByIdLD(final Long id);
+
+    @Query("SELECT * FROM Ledger WHERE id = :id")
+    Ledger findLedgerById(final Long id);
 
     @Query("SELECT * FROM Ledger")
     List<Ledger> findAllLedgers();

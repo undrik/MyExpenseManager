@@ -334,7 +334,7 @@ public class CreateUpdateCompany extends AppCompatActivity {
                 List<AccountGroup> groups = PopulateDefaults.predefinedGroups();
 //                groupViewModel.addAccountGroups(groups.toArray(new AccountGroup[groups.size()]));
                 companyDb.accountGroupDao().save(groups);
-                LedgerVM ledgerViewModel = new LedgerVM(getApplication(), company);
+                LedgerVM ledgerViewModel = new LedgerVM(getApplication());
                 List<Ledger> ledgers = PopulateDefaults.predefiniedLedgers();
 //                ledgerViewModel.addLedgers(ledgers.toArray(new Ledger[ledgers.size()]));
                 companyDb.ledgerDao().save(ledgers);

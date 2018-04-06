@@ -60,14 +60,11 @@ public class LedgerList extends AppCompatActivity implements ItemRvTouchHelper.R
         progressDialog.setMessage("Loading Ledgers...");
         progressDialog.show();
 
-        LedgerVM ledgerViewModel = new LedgerVM(this.getApplication(), Cache
-                .getCompany());
+        LedgerVM ledgerViewModel = new LedgerVM(this.getApplication());
         ledgerViewModel.fetchAllLedgers().observe(this, (ledgers -> {
             progressDialog.dismiss();
             ledgerRvAdapter.addItms(ledgers);
         }));
-
-
     }
 
     @Override
@@ -96,7 +93,7 @@ public class LedgerList extends AppCompatActivity implements ItemRvTouchHelper.R
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
-        switch (item.getItemId()){
+        switch (item.getItemId()) {
             case android.R.id.home:
                 onBackPressed();
                 return true;

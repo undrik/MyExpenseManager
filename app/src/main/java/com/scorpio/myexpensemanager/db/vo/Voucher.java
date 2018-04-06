@@ -3,6 +3,7 @@ package com.scorpio.myexpensemanager.db.vo;
 
 import android.arch.persistence.room.Entity;
 import android.arch.persistence.room.Ignore;
+import android.arch.persistence.room.Index;
 import android.arch.persistence.room.PrimaryKey;
 import android.arch.persistence.room.TypeConverters;
 
@@ -13,7 +14,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 
-@Entity
+@Entity(indices = {@Index("number")})
 public class Voucher {
     @PrimaryKey(autoGenerate = true)
     private Long id;

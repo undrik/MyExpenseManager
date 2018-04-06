@@ -3,8 +3,10 @@ package com.scorpio.myexpensemanager.activity;
 import android.Manifest;
 import android.annotation.SuppressLint;
 import android.app.ProgressDialog;
+import android.content.ContentResolver;
 import android.content.Intent;
 import android.content.pm.PackageManager;
+import android.database.Cursor;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
@@ -28,6 +30,7 @@ import com.scorpio.myexpensemanager.R;
 import com.scorpio.myexpensemanager.commons.Cache;
 import com.scorpio.myexpensemanager.commons.Constants;
 import com.scorpio.myexpensemanager.commons.FileSelector;
+import com.scorpio.myexpensemanager.commons.sms.ProcessSms;
 import com.scorpio.myexpensemanager.commons.tally.TallyFileHandler;
 import com.scorpio.myexpensemanager.db.CompanyDb;
 import com.scorpio.myexpensemanager.db.vo.AccountGroup;
@@ -49,7 +52,7 @@ public class CompanyMain extends AppCompatActivity
 
     //    private static final int PERMISSION_READ_EXTERNAL_STORAGE = 1000;
 //    private static final int PERMISSION_WRITE_EXTERNAL_STORAGE = 1010;
-//    private static final int PERMISSION_READ_SMS = 1030;
+    private static final int PERMISSION_READ_SMS = 1030;
     String[] permissionRequired = new String[]{Manifest.permission.READ_EXTERNAL_STORAGE,
             Manifest.permission.WRITE_EXTERNAL_STORAGE, Manifest.permission.READ_SMS};
 
@@ -96,8 +99,8 @@ public class CompanyMain extends AppCompatActivity
         //noinspection SimplifiableIfStatement
         if (id == R.id.action_settings) {
             return true;
-        }else if(id ==R.id.actionScanSms){
-            handleScanSms();
+        } else if (id == R.id.actionScanSms) {
+            checkSmsPermission();
         }
 
         return super.onOptionsItemSelected(item);
@@ -116,7 +119,7 @@ public class CompanyMain extends AppCompatActivity
         if (cursor.moveToFirst()) {
 
             final int totalRecord = cursor.getCount();
-            ProcessSms processSms = new ProcessSms();
+            ProcessSms processSms = new ProcessSms(getApplication());
             ProgressDialog progressDialog = new ProgressDialog(this);
             progressDialog.setMessage(getString(R.string.msg_process_sms));
             progressDialog.setProgressStyle(ProgressDialog.STYLE_HORIZONTAL);
@@ -157,6 +160,7 @@ public class CompanyMain extends AppCompatActivity
             thread.start();
         }
     }
+
     @SuppressWarnings("StatementWithEmptyBody")
     @Override
     public boolean onNavigationItemSelected(@NonNull MenuItem item) {
@@ -178,7 +182,7 @@ public class CompanyMain extends AppCompatActivity
         } else if (id == R.id.nav_income_expense) {
 
         } else if (id == R.id.nav_imp_account_group) {
-            checkPermission();
+            checkStoragePermission();
         } else if (id == R.id.nav_imp_voucher) {
 
         }
@@ -209,7 +213,19 @@ public class CompanyMain extends AppCompatActivity
         }
     }
 
-    private void checkPermission() {
+    private void checkSmsPermission() {
+        boolean result = false;
+
+        if (ActivityCompat.checkSelfPermission(this, permissionRequired[2]) != PackageManager
+                .PERMISSION_GRANTED) {
+            ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.READ_SMS},
+                    PERMISSION_READ_SMS);
+        } else {
+            handleScanSms();
+        }
+    }
+
+    private void checkStoragePermission() {
         boolean result = false;
 
         if (ActivityCompat.checkSelfPermission(this, permissionRequired[0]) != PackageManager
@@ -239,6 +255,14 @@ public class CompanyMain extends AppCompatActivity
                 importAccountGroup();
             } else {
                 Snackbar.make(companyMainLayout, getString(R.string.err_msg_file_permission),
+                        Snackbar.LENGTH_LONG).show();
+            }
+        }
+        if (requestCode == PERMISSION_READ_SMS) {
+            if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                handleScanSms();
+            } else {
+                Snackbar.make(companyMainLayout, getString(R.string.err_msg_sms_permission),
                         Snackbar.LENGTH_LONG).show();
             }
         }

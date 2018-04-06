@@ -36,8 +36,10 @@
     <string name="err_msg_email">Invalid email address</string>
     <string name="err_msg_file_permission">Read permission required to import</string>
     <string name="err_msg_wrong_file">Could not process the file</string>
+    <string name="err_msg_sms_permission">Read SMS permission required to import</string>
     <string name="msg_parsing">Parsing ...</string>
     <string name="msg_importing">Importing ...</string>
+    <string name="msg_process_sms">Processing SMS ...</string>
     <string name="msg_success_import">Successfully imported</string>
     <string name="err_msg_failed_import">Failed to import</string>
     <string name="msg_sure_delete">Are you sure to delete</string>

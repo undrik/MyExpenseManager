@@ -9,7 +9,9 @@ import android.arch.persistence.room.Transaction;
 import android.arch.persistence.room.Update;
 import android.content.Intent;
 import android.database.Cursor;
+import android.support.annotation.NonNull;
 
+import com.scorpio.myexpensemanager.db.vo.IdTuple;
 import com.scorpio.myexpensemanager.db.vo.Voucher;
 import com.scorpio.myexpensemanager.db.vo.VoucherEntry;
 import com.scorpio.myexpensemanager.db.vo.VoucherType;
@@ -53,15 +55,18 @@ public abstract class VoucherWithEntriesDao {
                     return voucherEntry;
                 }).collect(Collectors.toList());
         save(voucherEntries);
-        VoucherType voucherType = voucher.getVoucherType();
-        voucherType.setCurrentVoucherNo(voucherType.getCurrentVoucherNo() + 1);
-        update(voucherType);
+//        VoucherType voucherType = voucher.getVoucherType();
+//        voucherType.setCurrentVoucherNo(voucherType.getCurrentVoucherNo() + 1);
+//        update(voucherType);
         return voucherId;
     }
 
     @Transaction
     @Query("SELECT * FROM Voucher")
     public abstract LiveData<List<VoucherWithEntries>> findVoucherWithEntries();
+
+    @Query("SELECT id FROM voucher WHERE number = :number")
+    public abstract IdTuple findVoucherIdByNumber(@NonNull String number);
 
     @Query("SELECT seq FROM sqlite_sequence WHERE name = 'Voucher'")
     public abstract Cursor findVoucherSequence();

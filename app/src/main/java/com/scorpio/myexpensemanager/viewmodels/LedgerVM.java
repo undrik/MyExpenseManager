@@ -4,10 +4,12 @@ import android.annotation.SuppressLint;
 import android.app.Application;
 import android.arch.lifecycle.AndroidViewModel;
 import android.arch.lifecycle.LiveData;
+import android.content.Context;
 import android.os.AsyncTask;
 import android.support.annotation.NonNull;
 import android.util.Log;
 
+import com.scorpio.myexpensemanager.commons.Cache;
 import com.scorpio.myexpensemanager.commons.Constants;
 import com.scorpio.myexpensemanager.commons.TaskExecutor;
 import com.scorpio.myexpensemanager.db.CompanyDb;
@@ -17,6 +19,7 @@ import com.scorpio.myexpensemanager.db.vo.Ledger;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Calendar;
 import java.util.List;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.Future;
@@ -32,10 +35,11 @@ public class LedgerVM extends AndroidViewModel {
     private LiveData<List<Ledger>> ledgerLiveData;
     private static OnResultListener onResultListener;
 
-    public LedgerVM(@NonNull Application application, @NonNull final Company company) {
+    public LedgerVM(@NonNull Application application) {
         super(application);
-        if (null != company.getDbName()) {
-            companyDb = CompanyDb.getDatabase(this.getApplication(), company.getDbName());
+        if (null != Cache.getCompany().getDbName()) {
+            companyDb = CompanyDb.getDatabase(this.getApplication(), Cache.getCompany().getDbName
+                    ());
             ledgerLiveData = companyDb.ledgerDao().findAll();
         }
     }
@@ -74,11 +78,40 @@ public class LedgerVM extends AndroidViewModel {
             }
             TaskExecutor taskExecutor = new TaskExecutor();
 
-            Future<Long> future = taskExecutor.submit(() -> {
-                return companyDb.ledgerDao().save(ledger);
-            });
+            Future<Long> future = taskExecutor.submit(() -> companyDb.ledgerDao().save(ledger));
             try {
                 taskExecutor.shutdown();
+                result = future.get();
+            } catch (InterruptedException e) {
+                Log.v(Constants.APP_NAME, e.getMessage());
+            } catch (ExecutionException e) {
+                Log.v(Constants.APP_NAME, e.getMessage());
+            } finally {
+                taskExecutor.shutdown();
+            }
+        }
+        return result;
+    }
+
+    public Ledger getCreateLedger(@NonNull String name, @NonNull String gName) {
+        Ledger result = null;
+
+        if (null != companyDb) {
+            TaskExecutor taskExecutor = new TaskExecutor();
+            Future<Ledger> future = taskExecutor.submit(() -> {
+                Ledger ledger = companyDb.ledgerDao().findLedgerByName(name);
+                if (null == ledger) {
+                    Long r = companyDb.ledgerDao().save(new Ledger(name, gName, 0.0, Calendar
+                            .getInstance
+                                    ().getTimeInMillis()));
+                    if (r > 0) {
+                        ledger = companyDb.ledgerDao().findLedgerById(r);
+                    }
+                }
+                return ledger;
+            });
+
+            try {
                 result = future.get();
             } catch (InterruptedException e) {
                 Log.v(Constants.APP_NAME, e.getMessage());
