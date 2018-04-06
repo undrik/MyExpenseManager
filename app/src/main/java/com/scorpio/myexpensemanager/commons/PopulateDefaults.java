@@ -114,12 +114,12 @@ public class PopulateDefaults {
     public static List<VoucherType> predefiniedVoucherTypes() {
         List<VoucherType> voucherTypes = new ArrayList<>();
 
-        voucherTypes.add(new VoucherType(Constants.PAYMENT, 1L));
-        voucherTypes.add(new VoucherType(Constants.RECEIPT, 1L));
-        voucherTypes.add(new VoucherType(Constants.CONTRA, 1L));
-        voucherTypes.add(new VoucherType(Constants.JOURNAL, 1L));
-        voucherTypes.add(new VoucherType(Constants.PURCHASE, 1L));
-        voucherTypes.add(new VoucherType(Constants.SALES, 1L));
+        voucherTypes.add(new VoucherType(Constants.PAYMENT, 1L, "/"));
+        voucherTypes.add(new VoucherType(Constants.RECEIPT, 1L, "/"));
+        voucherTypes.add(new VoucherType(Constants.CONTRA, 1L, "/"));
+        voucherTypes.add(new VoucherType(Constants.JOURNAL, 1L, "/"));
+        voucherTypes.add(new VoucherType(Constants.PURCHASE, 1L, "/"));
+        voucherTypes.add(new VoucherType(Constants.SALES, 1L, "/"));
 
         return voucherTypes;
     }

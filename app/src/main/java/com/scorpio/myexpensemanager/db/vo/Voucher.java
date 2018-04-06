@@ -6,6 +6,7 @@ import android.arch.persistence.room.Ignore;
 import android.arch.persistence.room.Index;
 import android.arch.persistence.room.PrimaryKey;
 import android.arch.persistence.room.TypeConverters;
+import android.support.annotation.NonNull;
 
 import com.scorpio.myexpensemanager.db.converters.LocalDateEpochConverter;
 
@@ -24,7 +25,9 @@ public class Voucher {
     private LocalDate localDate;
     private String narration;
     private String guid;
+    private String smsid;
     @Ignore
+    @NonNull
     private VoucherType voucherType;
 
     public Voucher() {
@@ -85,6 +88,14 @@ public class Voucher {
 
     public void setVoucherType(VoucherType voucherType) {
         this.voucherType = voucherType;
+    }
+
+    public String getSmsid() {
+        return smsid;
+    }
+
+    public void setSmsid(String smsid) {
+        this.smsid = smsid;
     }
 
     @Override

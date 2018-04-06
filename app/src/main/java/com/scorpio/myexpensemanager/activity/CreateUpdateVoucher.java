@@ -95,7 +95,7 @@ public class CreateUpdateVoucher extends AppCompatActivity implements VoucherDia
     }
 
     private void initialize() {
-        voucherNo = voucherVM.getVoucherSequence();
+//        voucherNo = voucherVM.getVoucherSequence();
 //        setToolbarTitle(getString(R.string.menu_payment) + getString(R.string.space) +
 //                getString(R.string.entry));
         inputVoucherNo = findViewById(R.id.voucherNoTv);
