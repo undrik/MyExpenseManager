@@ -1,5 +1,6 @@
 package com.scorpio.myexpensemanager.adapters;
 
+import android.annotation.SuppressLint;
 import android.content.Context;
 import android.support.annotation.NonNull;
 import android.support.constraint.ConstraintLayout;
@@ -18,17 +19,21 @@ import com.scorpio.myexpensemanager.db.listeners.OnItemClickListner;
 import com.scorpio.myexpensemanager.db.vo.VoucherEntry;
 import com.scorpio.myexpensemanager.db.vo.VoucherWithEntries;
 
+import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 public class VoucherRvAdapter extends RecyclerView.Adapter<VoucherRvAdapter.VoucherViewHolder>
         implements View.OnClickListener {
     private List<VoucherWithEntries> vouchers;
+    private List<VoucherWithEntries> copyVouchers;
     private OnItemClickListner itemClickListner = null;
     private Context context;
 
     public VoucherRvAdapter(@NonNull Context context, @NonNull List<VoucherWithEntries> vouchers) {
         this.context = context;
         this.vouchers = vouchers;
+        copyVouchers = new ArrayList<>();
     }
 
     public void setItemClickListner(OnItemClickListner listner) {
@@ -81,6 +86,8 @@ public class VoucherRvAdapter extends RecyclerView.Adapter<VoucherRvAdapter.Vouc
 
     public void addItems(@NonNull List<VoucherWithEntries> vouchers) {
         this.vouchers = vouchers;
+        copyVouchers.clear();
+        copyVouchers.addAll(vouchers);
         notifyDataSetChanged();
     }
 
@@ -96,6 +103,21 @@ public class VoucherRvAdapter extends RecyclerView.Adapter<VoucherRvAdapter.Vouc
 
     public List<VoucherWithEntries> getItems() {
         return this.vouchers;
+    }
+
+    @SuppressLint("NewApi")
+    public void filterByAccountName(String accountName) {
+        if (!accountName.isEmpty()) {
+            vouchers.clear();
+            copyVouchers.forEach(voucher -> {
+                for (VoucherEntry entry : voucher.getVoucherEntries()) {
+                    if (entry.getLedgerName().equalsIgnoreCase(accountName)) {
+                        vouchers.add(voucher);
+                    }
+                }
+            });
+        }
+        notifyDataSetChanged();
     }
 
     @Override

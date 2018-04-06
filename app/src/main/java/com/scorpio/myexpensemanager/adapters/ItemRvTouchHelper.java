@@ -66,8 +66,7 @@ public class ItemRvTouchHelper extends ItemTouchHelper.SimpleCallback {
 //        final View companyCv = ((CompanyRvAdapter.CompanyViewHolder) viewHolder).commonCv;
 
         getDefaultUIUtil().onDraw(c, recyclerView, getCommonCardView(viewHolder), dX, dY,
-                actionState,
-                isCurrentlyActive);
+                actionState, isCurrentlyActive);
     }
 
     @Override
@@ -94,6 +93,8 @@ public class ItemRvTouchHelper extends ItemTouchHelper.SimpleCallback {
             commonCv = ((LedgerRvAdapter.LedgerViewHolder) viewHolder).commonCv;
         } else if (viewHolder instanceof VoucherEntryRvAdapter.VoucherEntryViewHolder) {
             commonCv = ((VoucherEntryRvAdapter.VoucherEntryViewHolder) viewHolder).commonCv;
+        } else if (viewHolder instanceof VoucherRvAdapter.VoucherViewHolder) {
+            commonCv = ((VoucherRvAdapter.VoucherViewHolder) viewHolder).commonCv;
         }
         return commonCv;
     }

@@ -57,7 +57,7 @@ public class VoucherTypeVM extends AndroidViewModel {
         return result;
     }
 
-    public VoucherType fetchCurrentVoucherNo(@NonNull String name) {
+    public VoucherType findVoucherTypeByName(@NonNull String name) {
         VoucherType voucherType = null;
 
         TaskExecutor taskExecutor = new TaskExecutor();
@@ -73,7 +73,6 @@ public class VoucherTypeVM extends AndroidViewModel {
         } finally {
             taskExecutor.shutdown();
         }
-
         return voucherType;
     }
 }

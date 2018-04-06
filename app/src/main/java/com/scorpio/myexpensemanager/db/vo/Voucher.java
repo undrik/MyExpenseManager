@@ -10,13 +10,14 @@ import android.support.annotation.NonNull;
 
 import com.scorpio.myexpensemanager.db.converters.LocalDateEpochConverter;
 
+import java.io.Serializable;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 
 
-@Entity(indices = {@Index("number")})
-public class Voucher {
+@Entity(indices = {@Index("number"),@Index("smsid")})
+public class Voucher implements Serializable {
     @PrimaryKey(autoGenerate = true)
     private Long id;
     private String number;

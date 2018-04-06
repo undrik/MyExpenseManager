@@ -10,6 +10,7 @@ import android.arch.persistence.room.Update;
 import android.content.Intent;
 import android.database.Cursor;
 
+import com.scorpio.myexpensemanager.db.vo.IdTuple;
 import com.scorpio.myexpensemanager.db.vo.Voucher;
 import com.scorpio.myexpensemanager.db.vo.VoucherEntry;
 import com.scorpio.myexpensemanager.db.vo.VoucherType;
@@ -46,22 +47,30 @@ public abstract class VoucherWithEntriesDao {
     public Long saveWithEntries(VoucherWithEntries voucher) {
         voucher.setGuid(UUID.randomUUID().toString());
         Long voucherId = save(voucher);
-        List<VoucherEntry> voucherEntries = voucher.getVoucherEntries().stream().map
-                (voucherEntry -> {
-                    voucherEntry.setVoucherId(voucherId);
-                    voucherEntry.setLocalDate(voucher.getLocalDate());
-                    return voucherEntry;
-                }).collect(Collectors.toList());
-        save(voucherEntries);
-        VoucherType voucherType = voucher.getVoucherType();
-        voucherType.setCurrentVoucherNo(voucherType.getCurrentVoucherNo() + 1);
-        update(voucherType);
+        if (voucherId > 0) {
+            List<VoucherEntry> voucherEntries = voucher.getVoucherEntries().stream().map
+                    (voucherEntry -> {
+                        voucherEntry.setVoucherId(voucherId);
+                        voucherEntry.setLocalDate(voucher.getLocalDate());
+                        return voucherEntry;
+                    }).collect(Collectors.toList());
+            save(voucherEntries);
+            VoucherType voucherType = voucher.getVoucherType();
+            voucherType.setCurrentVoucherNo(voucherType.getCurrentVoucherNo() + 1);
+            update(voucherType);
+        }
         return voucherId;
     }
 
     @Transaction
     @Query("SELECT * FROM Voucher")
     public abstract LiveData<List<VoucherWithEntries>> findVoucherWithEntries();
+
+    @Query("SELECT id FROM Voucher WHERE number = :number")
+    public abstract IdTuple findVoucherIdByNumber(String number);
+
+    @Query("SELECT id FROM Voucher WHERE smsid = :smsId")
+    public abstract IdTuple findVoucherIdBySmsId(String smsId);
 
 //    @Query("SELECT seq FROM sqlite_sequence WHERE name = 'Voucher'")
 //    public abstract Cursor findVoucherSequence();

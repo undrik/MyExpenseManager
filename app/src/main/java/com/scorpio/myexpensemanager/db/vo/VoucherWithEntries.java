@@ -4,6 +4,7 @@ import android.arch.persistence.room.Embedded;
 import android.arch.persistence.room.Relation;
 
 import java.io.Serializable;
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -13,7 +14,7 @@ import java.util.List;
 public class VoucherWithEntries extends Voucher implements Serializable {
 
     @Relation(parentColumn = "id", entityColumn = "voucherId", entity = VoucherEntry.class)
-    public List<VoucherEntry> voucherEntries;
+    public List<VoucherEntry> voucherEntries = new ArrayList<>();
 
     public List<VoucherEntry> getVoucherEntries() {
         return voucherEntries;

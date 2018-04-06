@@ -27,7 +27,6 @@ import com.scorpio.myexpensemanager.commons.Cache;
 import com.scorpio.myexpensemanager.commons.Constants;
 import com.scorpio.myexpensemanager.commons.Util;
 import com.scorpio.myexpensemanager.db.listeners.OnItemClickListner;
-import com.scorpio.myexpensemanager.db.vo.Voucher;
 import com.scorpio.myexpensemanager.db.vo.VoucherEntry;
 import com.scorpio.myexpensemanager.db.vo.VoucherType;
 import com.scorpio.myexpensemanager.db.vo.VoucherWithEntries;
@@ -55,7 +54,7 @@ public class CreateUpdateVoucher extends AppCompatActivity implements VoucherDia
     private VoucherWithEntries voucher = new VoucherWithEntries();
     private RecyclerView voucheEntryRv;
     private VoucherEntryRvAdapter veRvAdapter;
-    private Integer voucherNo;
+//    private Integer voucherNo;
     VoucherVM voucherVM;
     VoucherTypeVM voucherTypeVM;
     private Double drTotal = 0.0, crTotal = 0.0;
@@ -99,7 +98,7 @@ public class CreateUpdateVoucher extends AppCompatActivity implements VoucherDia
 //        setToolbarTitle(getString(R.string.menu_payment) + getString(R.string.space) +
 //                getString(R.string.entry));
         inputVoucherNo = findViewById(R.id.voucherNoTv);
-        inputVoucherNo.setText(voucherNo.toString());
+//        inputVoucherNo.setText(voucherNo.toString());
         voucherDate = findViewById(R.id.voucherDateTv);
         voucherDate.setText(Util.getTodayWithDay());
         voucher.setLocalDate(LocalDate.now());
@@ -140,7 +139,7 @@ public class CreateUpdateVoucher extends AppCompatActivity implements VoucherDia
     }
 
     private void setVoucherNo(String name) {
-        voucherType = voucherTypeVM.fetchCurrentVoucherNo(name);
+        voucherType = voucherTypeVM.findVoucherTypeByName(name);
         if (null != voucherType) {
             inputVoucherNo.setText(voucherType.getCurrentVoucherNo().toString());
             setToolbarTitle(voucherType.getName() + getString(R.string.space) +

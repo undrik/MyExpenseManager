@@ -76,6 +76,26 @@ public class VoucherVM extends AndroidViewModel {
         return result;
     }
 
+    public IdTuple getVoucherIdBySmdId(@NonNull String smsId) {
+        IdTuple result = null;
+
+        TaskExecutor taskExecutor = new TaskExecutor();
+        Future<IdTuple> future = taskExecutor.submit(() ->
+                companyDb.voucherWithEntriesDao().findVoucherIdBySmsId(smsId)
+        );
+
+        try {
+            result = future.get();
+        } catch (InterruptedException e) {
+            Log.v(Constants.APP_NAME, e.getMessage());
+        } catch (ExecutionException e) {
+            Log.v(Constants.APP_NAME, e.getMessage());
+        } finally {
+            taskExecutor.shutdown();
+        }
+        return result;
+    }
+
     public Long addVoucher(@NonNull VoucherWithEntries voucher) {
         Long result = -1L;
 
