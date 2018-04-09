@@ -107,6 +107,7 @@
     <!-- Voucher List -->
     <string name="search_account">Search account</string>
     <string name="title_select_range">Select range</string>
+    <string name="summary">Summary :</string>
 
     <!-- Text -->
     <string name="space">\u0020</string>

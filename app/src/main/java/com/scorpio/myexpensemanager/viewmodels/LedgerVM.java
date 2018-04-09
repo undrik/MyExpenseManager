@@ -16,6 +16,7 @@ import com.scorpio.myexpensemanager.db.CompanyDb;
 import com.scorpio.myexpensemanager.db.listeners.OnResultListener;
 import com.scorpio.myexpensemanager.db.vo.Company;
 import com.scorpio.myexpensemanager.db.vo.Ledger;
+import com.scorpio.myexpensemanager.db.vo.Name;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -29,7 +30,7 @@ import java.util.stream.Collectors;
  * View model for Ledger
  * Created by User on 24-02-2018.
  */
-
+@SuppressLint("NewApi")
 public class LedgerVM extends AndroidViewModel {
     private CompanyDb companyDb;
     private LiveData<List<Ledger>> ledgerLiveData;
@@ -48,11 +49,37 @@ public class LedgerVM extends AndroidViewModel {
         this.onResultListener = listener;
     }
 
-    public LiveData<List<Ledger>> fetchAllLedgers() {
+    public LiveData<List<Ledger>> getAllLedgersLD() {
         return ledgerLiveData;
     }
 
-    @SuppressLint("NewApi")
+    public List<String> getAllLedgers() {
+        List<String> result = new ArrayList<>();
+
+        if (null != companyDb) {
+            TaskExecutor taskExecutor = new TaskExecutor();
+            Future<List<String>> future = (Future<List<String>>) taskExecutor.submit(() -> {
+                List<Name> names = companyDb.ledgerDao().findAllLedgerNames();
+                List<String> nameList = names.stream().map(name -> name.getName()).collect
+                        (Collectors.toList());
+                return nameList;
+            });
+
+            try {
+                taskExecutor.shutdown();
+                result = future.get();
+            } catch (InterruptedException e) {
+                Log.v(Constants.APP_NAME, e.getMessage());
+            } catch (ExecutionException e) {
+                Log.v(Constants.APP_NAME, e.getMessage());
+            } finally {
+                taskExecutor.shutdown();
+            }
+        }
+        return result;
+    }
+
+
     public void addLedgers(@NonNull Ledger... ledgers) {
         if (null != companyDb) {
             List<Ledger> ledgerList = Arrays.stream(ledgers).map(ledger -> {

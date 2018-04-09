@@ -17,7 +17,6 @@ import android.view.MenuItem;
 import com.scorpio.myexpensemanager.R;
 import com.scorpio.myexpensemanager.adapters.ItemRvTouchHelper;
 import com.scorpio.myexpensemanager.adapters.LedgerRvAdapter;
-import com.scorpio.myexpensemanager.commons.Cache;
 import com.scorpio.myexpensemanager.commons.Constants;
 import com.scorpio.myexpensemanager.db.vo.Ledger;
 import com.scorpio.myexpensemanager.viewmodels.LedgerVM;
@@ -61,7 +60,7 @@ public class LedgerList extends AppCompatActivity implements ItemRvTouchHelper.R
         progressDialog.show();
 
         LedgerVM ledgerViewModel = new LedgerVM(this.getApplication());
-        ledgerViewModel.fetchAllLedgers().observe(this, (ledgers -> {
+        ledgerViewModel.getAllLedgersLD().observe(this, (ledgers -> {
             progressDialog.dismiss();
             ledgerRvAdapter.addItms(ledgers);
         }));

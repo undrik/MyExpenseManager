@@ -108,7 +108,7 @@ public class CreateUpdateAccount extends AppCompatActivity {
 //        });
 //        LedgerVM ledgerViewModel = new LedgerVM(getApplication(), Cache
 // .getCompany());
-//        ledgerViewModel.fetchAllLedgers().observe(this, ledgers -> {
+//        ledgerViewModel.getAllLedgersLD().observe(this, ledgers -> {
 //            ledgersInDb = ledgers.stream().map(ledger -> ledger.getName()).collect(Collectors
 //                    .toList());
 //            inputAccountName.addTextChangedListener(new AccountTextWatcher(inputAccountName,

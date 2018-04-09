@@ -1,12 +1,9 @@
 package com.scorpio.myexpensemanager.activity;
 
 import android.arch.lifecycle.ViewModelProviders;
-import android.content.DialogInterface;
 import android.content.Intent;
-import android.graphics.Color;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
-import android.support.design.widget.Snackbar;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
@@ -16,35 +13,37 @@ import android.support.v7.widget.Toolbar;
 import android.support.v7.widget.helper.ItemTouchHelper;
 import android.view.Menu;
 import android.view.MenuItem;
-import android.view.View;
+import android.widget.ArrayAdapter;
 
 import com.scorpio.myexpensemanager.R;
 import com.scorpio.myexpensemanager.adapters.ItemRvTouchHelper;
-import com.scorpio.myexpensemanager.adapters.LedgerRvAdapter;
 import com.scorpio.myexpensemanager.adapters.VoucherRvAdapter;
 import com.scorpio.myexpensemanager.commons.Cache;
 import com.scorpio.myexpensemanager.commons.Constants;
-import com.scorpio.myexpensemanager.db.vo.Ledger;
 import com.scorpio.myexpensemanager.db.vo.VoucherWithEntries;
+import com.scorpio.myexpensemanager.viewmodels.LedgerVM;
 import com.scorpio.myexpensemanager.viewmodels.VoucherVM;
 import com.squareup.timessquare.CalendarPickerView;
 
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.List;
 
 public class VoucherList extends AppCompatActivity implements ItemRvTouchHelper
         .RvItemSwipeListener, SearchView.OnQueryTextListener {
 
     private VoucherRvAdapter voucherRvAdapter;
+    private Toolbar toolbar;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_voucher_list);
-        Toolbar toolbar = (Toolbar) findViewById(R.id.main_toolbar);
+        toolbar = (Toolbar) findViewById(R.id.voucherListToolBar);
 
-        toolbar.setTitle(getString(R.string.title_activity_voucher_list));
+//        toolbar.setTitle(getString(R.string.title_activity_voucher_list));
+
         setSupportActionBar(toolbar);
 
         getSupportActionBar().setHomeButtonEnabled(true);
@@ -77,10 +76,31 @@ public class VoucherList extends AppCompatActivity implements ItemRvTouchHelper
         getMenuInflater().inflate(R.menu.menu_voucher_list, menu);
 
         MenuItem searchItem = menu.findItem(R.id.actionSearch);
-        SearchView searchView = (SearchView) searchItem.getActionView();
-        searchView.setQueryHint(getString(R.string.search_account));
-        searchView.setOnQueryTextListener(this);
-        searchView.setIconified(false);
+
+        LedgerVM ledgerVM = new LedgerVM(getApplication());
+        List<String> ledersInDb = ledgerVM.getAllLedgers();
+        if (null != ledersInDb && ledersInDb.size() > 0) {
+
+            SearchView searchView = (SearchView) searchItem.getActionView();
+            searchView.setQueryHint(getString(R.string.search_account));
+            searchView.setOnQueryTextListener(this);
+            searchView.setIconified(false);
+            ArrayAdapter<String> adapter = new ArrayAdapter<String>(this, R.layout
+                    .auto_complete_item, ledersInDb);
+            final SearchView.SearchAutoComplete searchAutoComplete = searchView.findViewById
+                    (android.support.v7.appcompat.R.id.search_src_text);
+            searchAutoComplete.setAdapter(adapter);
+            searchAutoComplete.setThreshold(1);
+            searchAutoComplete.setOnItemClickListener((parent, view, position, id) -> {
+                String sStr = (String) parent.getItemAtPosition(position);
+                searchAutoComplete.setText(sStr);
+                searchView.setIconified(true);
+//                searchView.onActionViewCollapsed();
+                toolbar.collapseActionView();
+            });
+        } else {
+            searchItem.setVisible(false);
+        }
         return true;
     }
 
@@ -131,7 +151,7 @@ public class VoucherList extends AppCompatActivity implements ItemRvTouchHelper
 
     @Override
     public boolean onQueryTextChange(String newText) {
-        voucherRvAdapter.filterByAccountName(newText);
+//        voucherRvAdapter.filterByAccountName(newText);
         return true;
     }
 
@@ -140,26 +160,12 @@ public class VoucherList extends AppCompatActivity implements ItemRvTouchHelper
                 (R.layout.dialog_calendar_picker_view, null, false);
         AlertDialog dialog = new AlertDialog.Builder(this).setTitle(getString(R.string
                 .title_select_range)).setView(calendarPickerView).setPositiveButton(R.string
-                .done, new DialogInterface.OnClickListener() {
+                .done, (dialog13, which) -> {
 
-
-            @Override
-            public void onClick(DialogInterface dialog, int which) {
-
-            }
-        }).setNeutralButton(getString(R.string.cancel), new DialogInterface.OnClickListener() {
-            @Override
-            public void onClick(DialogInterface dialog, int which) {
-                dialog.dismiss();
-            }
-        }).create();
-        dialog.setOnShowListener(new DialogInterface.OnShowListener() {
-            @Override
-            public void onShow(DialogInterface dialog) {
-                calendarPickerView.fixDialogDimens();
-            }
-        });
-        Date minDate = Cache.getCompany().getFinYearStart();
+        }).setNeutralButton(getString(R.string.cancel), (dialog12, which) -> dialog12.dismiss())
+                .create();
+        dialog.setOnShowListener(dialog1 -> calendarPickerView.fixDialogDimens());
+        Date minDate = Cache.getCompany().getBookStart();
         Date maxDate = new Date(Calendar.getInstance().getTimeInMillis() + Constants.ONE_DAY);
         calendarPickerView.init(minDate, maxDate).inMode(selectionMode);
         dialog.show();
