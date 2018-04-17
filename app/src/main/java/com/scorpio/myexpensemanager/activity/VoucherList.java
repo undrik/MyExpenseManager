@@ -1,9 +1,15 @@
 package com.scorpio.myexpensemanager.activity;
 
+import android.Manifest;
 import android.arch.lifecycle.ViewModelProviders;
 import android.content.Intent;
+import android.content.pm.PackageManager;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
+import android.support.constraint.ConstraintLayout;
 import android.support.design.widget.FloatingActionButton;
+import android.support.design.widget.Snackbar;
+import android.support.v4.app.ActivityCompat;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
@@ -11,6 +17,7 @@ import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.SearchView;
 import android.support.v7.widget.Toolbar;
 import android.support.v7.widget.helper.ItemTouchHelper;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.ArrayAdapter;
@@ -20,6 +27,7 @@ import com.scorpio.myexpensemanager.adapters.ItemRvTouchHelper;
 import com.scorpio.myexpensemanager.adapters.VoucherRvAdapter;
 import com.scorpio.myexpensemanager.commons.Cache;
 import com.scorpio.myexpensemanager.commons.Constants;
+import com.scorpio.myexpensemanager.commons.tally.TallyVoucher;
 import com.scorpio.myexpensemanager.db.vo.VoucherWithEntries;
 import com.scorpio.myexpensemanager.viewmodels.LedgerVM;
 import com.scorpio.myexpensemanager.viewmodels.VoucherVM;
@@ -35,6 +43,11 @@ public class VoucherList extends AppCompatActivity implements ItemRvTouchHelper
 
     private VoucherRvAdapter voucherRvAdapter;
     private Toolbar toolbar;
+    private Date voucherStartDate, voucherEndDate;
+    String[] permissionRequired = new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE};
+    private static final int PERMISSION_CALLBACK = 1020;
+    private static final int DIRECTORY_CHOOSER = 1030;
+    private ConstraintLayout voucherListLayout;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -48,6 +61,8 @@ public class VoucherList extends AppCompatActivity implements ItemRvTouchHelper
 
         getSupportActionBar().setHomeButtonEnabled(true);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+
+        voucherListLayout = findViewById(R.id.voucherListLayout);
 
         FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
         fab.setOnClickListener((view) -> {
@@ -116,6 +131,9 @@ public class VoucherList extends AppCompatActivity implements ItemRvTouchHelper
             case R.id.actionRange:
                 showCalendarPickerView(CalendarPickerView.SelectionMode.RANGE);
                 return true;
+            case R.id.actionExport:
+                checkWritePermission();
+                return true;
         }
         return super.onOptionsItemSelected(item);
     }
@@ -137,9 +155,9 @@ public class VoucherList extends AppCompatActivity implements ItemRvTouchHelper
 //                snackbar.setActionTextColor(Color.YELLOW);
 //                snackbar.show();
             } else {
-                Intent intent = new Intent(this, CreateUpdateAccount.class);
-                intent.putExtra(Constants.VOUCHER_OBJ, voucher);
-                startActivity(intent);
+//                Intent intent = new Intent(this, CreateUpdateAccount.class);
+//                intent.putExtra(Constants.VOUCHER_OBJ, voucher);
+//                startActivity(intent);
             }
         }
     }
@@ -159,10 +177,21 @@ public class VoucherList extends AppCompatActivity implements ItemRvTouchHelper
         CalendarPickerView calendarPickerView = (CalendarPickerView) getLayoutInflater().inflate
                 (R.layout.dialog_calendar_picker_view, null, false);
         AlertDialog dialog = new AlertDialog.Builder(this).setTitle(getString(R.string
-                .title_select_range)).setView(calendarPickerView).setPositiveButton(R.string
-                .done, (dialog13, which) -> {
+                .title_select_range))
+                .setView(calendarPickerView)
+                .setPositiveButton(R.string
+                        .done, (dialog13, which) -> {
+                    //Handle the done button click
+                    List<Date> dates = calendarPickerView.getSelectedDates();
+                    if (dates.size() == 1) {
+                        voucherEndDate = voucherStartDate = dates.get(0);
+                    } else {
+                        voucherStartDate = dates.get(0);
+                        voucherEndDate = dates.get(1);
+                    }
 
-        }).setNeutralButton(getString(R.string.cancel), (dialog12, which) -> dialog12.dismiss())
+                }).setNeutralButton(getString(R.string.cancel), (dialog12, which) ->
+                        dialog12.dismiss())
                 .create();
         dialog.setOnShowListener(dialog1 -> calendarPickerView.fixDialogDimens());
         Date minDate = Cache.getCompany().getBookStart();
@@ -170,5 +199,67 @@ public class VoucherList extends AppCompatActivity implements ItemRvTouchHelper
         calendarPickerView.init(minDate, maxDate).inMode(selectionMode);
         dialog.show();
 
+    }
+
+    private void checkWritePermission() {
+        if (ActivityCompat.checkSelfPermission(this, permissionRequired[0]) != PackageManager
+                .PERMISSION_GRANTED) {
+            ActivityCompat.requestPermissions(this, permissionRequired, PERMISSION_CALLBACK);
+        } else {
+            showDirectoryChooser();
+        }
+    }
+
+    @Override
+    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions,
+                                           @NonNull int[] grantResults) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
+        if (requestCode == PERMISSION_CALLBACK) {
+            if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                showDirectoryChooser();
+            } else {
+                Snackbar.make(voucherListLayout, getString(R.string.err_msg_write_file_permission),
+                        Snackbar.LENGTH_LONG).show();
+            }
+        }
+    }
+
+//    @Override
+//    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+//        super.onActivityResult(requestCode, resultCode, data);
+//        if (requestCode == DIRECTORY_CHOOSER) {
+//            if (resultCode == DirectoryChooserActivity.RESULT_CODE_DIR_SELECTED) {
+//                String directory = data.getStringExtra(DirectoryChooserActivity
+//                        .RESULT_SELECTED_DIR);
+//                Log.v(Constants.APP_NAME, "Directory Selected : " + directory);
+//            } else {
+//                // Nothing selected
+//            }
+//        }
+//    }
+
+    private void showDirectoryChooser() {
+//        Intent intent = new Intent(Intent.ACTION_PICK);
+////        intent.setType("vnd.android.cursor.dir");
+//        startActivityForResult(intent, DIRECTORY_CHOOSER);
+//        final Intent chooserIntent = new Intent(this, DirectoryChooserActivity.class);
+//
+//        final DirectoryChooserConfig config = DirectoryChooserConfig.builder()
+//                .newDirectoryName("DirChooserSample")
+////                .allowReadOnlyDirectory(true)
+////                .allowNewDirectoryNameModification(true)
+//                .build();
+//
+//        chooserIntent.putExtra(DirectoryChooserActivity.EXTRA_CONFIG, config);
+//        startActivityForResult(chooserIntent, DIRECTORY_CHOOSER);
+
+        Log.v(Constants.APP_NAME, "getFilesDir : " + getFilesDir());
+        Log.v(Constants.APP_NAME, "getCacheDir : " + getCacheDir());
+        Log.v(Constants.APP_NAME, "getExternalFilesDir" + getExternalFilesDir(null));
+        TallyVoucher tallyVoucher = new TallyVoucher(getExternalFilesDir(null).getPath());
+        tallyVoucher.export(voucherRvAdapter.getItems());
+    }
+
+    private void exportVouchers() {
     }
 }

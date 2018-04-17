@@ -36,26 +36,6 @@ public class VoucherVM extends AndroidViewModel {
         return vouchersLd;
     }
 
-//    public int getVoucherSequence() {
-//        int result = 1;
-//
-//        TaskExecutor taskExecutor = new TaskExecutor();
-//        Future<Integer> future = taskExecutor.submit(() ->
-//                companyDb.voucherWithEntriesDao().fetchNextVoucherSequence()
-//        );
-//
-//        try {
-//            result = future.get();
-//        } catch (InterruptedException e) {
-//            Log.v(Constants.APP_NAME, e.getMessage());
-//        } catch (ExecutionException e) {
-//            Log.v(Constants.APP_NAME, e.getMessage());
-//        } finally {
-//            taskExecutor.shutdown();
-//        }
-//        return result;
-//    }
-
     public IdTuple getVoucherIdByNumber(@NonNull String number) {
         IdTuple result = null;
 

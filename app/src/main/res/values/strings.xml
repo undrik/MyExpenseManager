@@ -5,6 +5,7 @@
     <string name="action_search">Search</string>
     <string name="action_date">Date</string>
     <string name="action_range">Range</string>
+    <string name="action_export">Export</string>
 
     <string name="placeholder">Placeholder</string>
     <string name="initializing">Initializing...</string>
@@ -39,6 +40,7 @@
     <string name="err_msg_name_exists">Name already exists</string>
     <string name="err_msg_email">Invalid email address</string>
     <string name="err_msg_file_permission">Read permission required to import</string>
+    <string name="err_msg_write_file_permission">Write permission required to export</string>
     <string name="err_msg_wrong_file">Could not process the file</string>
     <string name="err_msg_sms_permission">Read SMS permission required to import</string>
     <string name="msg_parsing">Parsing ...</string>

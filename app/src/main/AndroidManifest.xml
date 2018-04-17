@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
     package="com.scorpio.myexpensemanager">
 
     <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
@@ -13,13 +14,13 @@
         android:label="@string/app_name"
         android:roundIcon="@mipmap/ic_app_launcher_round"
         android:supportsRtl="true"
-        android:theme="@style/AppTheme.NoActionBar">
+        android:theme="@style/MyAppTheme.NoActionBar">
 
         <!-- android:theme="@style/AppTheme"> -->
         <activity
             android:name=".MyExpenseManager"
             android:label="@string/app_name"
-            android:theme="@style/AppTheme.NoActionBar">
+            android:theme="@style/MyAppTheme.NoActionBar">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
@@ -32,17 +33,17 @@
         <activity
             android:name=".activity.CompanyMain"
             android:label="@string/title_activity_company_main"
-            android:theme="@style/AppTheme.NoActionBar" />
+            android:theme="@style/MyAppTheme.NoActionBar" />
         <activity android:name=".activity.CreateUpdateAccount" />
         <activity
             android:name=".activity.LedgerList"
             android:label="@string/title_activity_ledger_list"
-            android:theme="@style/AppTheme.NoActionBar" />
+            android:theme="@style/MyAppTheme.NoActionBar" />
         <activity android:name=".activity.CreateUpdateVoucher" />
         <activity
             android:name=".activity.VoucherList"
             android:label="@string/title_activity_voucher_list"
-            android:theme="@style/AppTheme.NoActionBar"></activity>
+            android:theme="@style/MyAppTheme.NoActionBar"></activity>
     </application>
 
 </manifest>

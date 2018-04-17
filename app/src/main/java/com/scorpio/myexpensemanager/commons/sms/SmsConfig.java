@@ -1,14 +1,19 @@
 package com.scorpio.myexpensemanager.commons.sms;
 
-import java.util.ArrayList;
-import java.util.List;
+import android.support.annotation.NonNull;
 
 public class SmsConfig {
+    @NonNull
     private String address;
+    @NonNull
     private String voucherType;
+    @NonNull
     private String drLederName;
+    @NonNull
     private String crLedgerName;
-    private List<String> patterns = new ArrayList<>();
+    @NonNull
+    private String pattern;
+    private int pareseFunction;
 
     public SmsConfig(String address, String voucherType, String drLederName, String crLedgerName) {
         this.address = address;
@@ -49,12 +54,20 @@ public class SmsConfig {
         this.crLedgerName = crLedgerName;
     }
 
-    public List<String> getPatterns() {
-        return patterns;
+    public String getPattern() {
+        return pattern;
     }
 
-    public void setPatterns(List<String> patterns) {
-        this.patterns = patterns;
+    public void setPattern(String pattern) {
+        this.pattern = pattern;
+    }
+
+    public int getPareseFunction() {
+        return pareseFunction;
+    }
+
+    public void setPareseFunction(int pareseFunction) {
+        this.pareseFunction = pareseFunction;
     }
 
     @Override
@@ -64,7 +77,7 @@ public class SmsConfig {
                 ", voucherType='" + voucherType + '\'' +
                 ", drLederName='" + drLederName + '\'' +
                 ", crLedgerName='" + crLedgerName + '\'' +
-                ", patterns=" + patterns +
+                ", pattern=" + pattern +
                 '}';
     }
 }

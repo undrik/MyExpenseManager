@@ -66,11 +66,11 @@ public class VoucherRvAdapter extends RecyclerView.Adapter<VoucherRvAdapter.Vouc
                 TextView veCreditTv = voucherLineItem.findViewById(R.id.veCreditTv);
                 if (entry.getDebitOrCredit().intValue() == Constants.DEBIT) {
                     veDrCrTv.setText(context.getString(R.string.dr));
-                    veDebitTv.setText(Util.convertAmountWithSign(entry.getAmount()));
+                    veDebitTv.setText(Util.convertAmount(entry.getAmount()));
                     veCreditTv.setVisibility(View.INVISIBLE);
                 } else {
                     veDrCrTv.setText(context.getString(R.string.cr));
-                    veCreditTv.setText(Util.convertAmountWithSign(entry.getAmount()));
+                    veCreditTv.setText(Util.convertAmount(entry.getAmount()));
                     veDebitTv.setVisibility(View.INVISIBLE);
                 }
                 holder.voucherItemLayout.addView(voucherLineItem);

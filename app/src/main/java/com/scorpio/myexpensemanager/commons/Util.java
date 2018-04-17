@@ -63,6 +63,16 @@ public class Util {
         return LocalDate.now().format(pattern);
     }
 
+    public static LocalDate converDateToLocalDate(final Date date) {
+        ZoneId defaultZoneId = ZoneId.systemDefault();
+        Instant instant = date.toInstant();
+        return instant.atZone(defaultZoneId).toLocalDate();
+    }
+
+    public static Date convertLocalDateToDate(final LocalDate localDate) {
+        return Date.from(localDate.atStartOfDay().atZone(ZoneId.systemDefault()).toInstant());
+    }
+
     public static String convertToDDMMYYYEEE(LocalDate localDate) {
         DateTimeFormatter pattern = DateTimeFormatter.ofPattern(Constants
                 .DATE_FORMAT_WITH_SHORT_WEEK);
@@ -75,6 +85,11 @@ public class Util {
                 .DATE_FORMAT_D_MMM_YYYY);
 
         return localDate.format(pattern);
+    }
+
+    public static String convertLocalDateToString(final String pattern, final LocalDate localDate) {
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern(pattern);
+        return localDate.format(formatter);
     }
 
     public static String convertToDDMMMYYYY(long timeInMils) {

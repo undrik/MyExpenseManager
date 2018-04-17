@@ -253,6 +253,9 @@ public interface Constants {
 
     //Supported SMS
     String CITIBK = "CITIBK";
+    String CITIBANK_CREDIT_CARD = "Citibank Credit Card";
+
+
     String ZETAAA = "ZETAAA";
     //Citibank pattern
     //(([r|R][s|S][\s\.])([\d,]*[\.]\d*)([\s\w]+\s[\s\w]+)(\d{4}X*\d{4})(\son\s)

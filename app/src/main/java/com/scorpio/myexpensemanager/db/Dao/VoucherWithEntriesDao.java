@@ -16,6 +16,7 @@ import com.scorpio.myexpensemanager.db.vo.VoucherEntry;
 import com.scorpio.myexpensemanager.db.vo.VoucherType;
 import com.scorpio.myexpensemanager.db.vo.VoucherWithEntries;
 
+import java.time.LocalDate;
 import java.util.List;
 import java.util.UUID;
 import java.util.stream.Collectors;
@@ -72,15 +73,9 @@ public abstract class VoucherWithEntriesDao {
     @Query("SELECT id FROM Voucher WHERE smsid = :smsId")
     public abstract IdTuple findVoucherIdBySmsId(String smsId);
 
-//    @Query("SELECT seq FROM sqlite_sequence WHERE name = 'Voucher'")
-//    public abstract Cursor findVoucherSequence();
-//
-//    public Integer fetchNextVoucherSequence() {
-//        Integer result = 1;
-//        Cursor cursor = findVoucherSequence();
-//        if (null != cursor && cursor.moveToFirst()) {
-//            result = cursor.getInt(cursor.getColumnIndex("sequence"));
-//        }
-//        return result;
-//    }
+    @Transaction
+    @Query("SELECT * FROM Voucher WHERE localDate BETWEEN :minDate AND :maxDate")
+    public abstract List<VoucherWithEntries> findVoucherWithMinMaxDate(final Long minDate,
+                                                                       final Long maxDate);
+
 }
