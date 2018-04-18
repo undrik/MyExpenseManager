@@ -13,12 +13,13 @@
         android:layout_marginEnd="8dp"
         android:layout_marginStart="8dp"
         android:text="@string/placeholder"
+        android:textStyle="bold"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
     <TextView
-        android:id="@+id/textView12"
+        android:id="@+id/voucherListAccountNameLabelTv"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginStart="8dp"
@@ -32,15 +33,16 @@
         android:layout_height="wrap_content"
         android:layout_marginStart="4dp"
         android:text="@string/placeholder"
-        app:layout_constraintStart_toEndOf="@+id/textView12"
-        app:layout_constraintTop_toTopOf="@+id/textView12" />
+        app:layout_constraintStart_toEndOf="@+id/voucherListAccountNameLabelTv"
+        app:layout_constraintTop_toTopOf="@+id/voucherListAccountNameLabelTv" />
 
     <TextView
-        android:id="@+id/voucheListDateRangeTv"
+        android:id="@+id/voucherListDateRangeTv"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginStart="8dp"
         android:text="@string/placeholder"
+        android:visibility="visible"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/textView12" />
+        app:layout_constraintTop_toBottomOf="@+id/voucherListAccountNameLabelTv" />
 </android.support.constraint.ConstraintLayout>

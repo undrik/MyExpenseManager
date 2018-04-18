@@ -1,5 +1,6 @@
 package com.scorpio.myexpensemanager.viewmodels;
 
+import android.annotation.SuppressLint;
 import android.app.Application;
 import android.arch.lifecycle.AndroidViewModel;
 import android.arch.lifecycle.LiveData;
@@ -9,11 +10,14 @@ import android.util.Log;
 import com.scorpio.myexpensemanager.commons.Cache;
 import com.scorpio.myexpensemanager.commons.Constants;
 import com.scorpio.myexpensemanager.commons.TaskExecutor;
+import com.scorpio.myexpensemanager.commons.Util;
 import com.scorpio.myexpensemanager.db.CompanyDb;
 import com.scorpio.myexpensemanager.db.vo.IdTuple;
 import com.scorpio.myexpensemanager.db.vo.Voucher;
 import com.scorpio.myexpensemanager.db.vo.VoucherWithEntries;
 
+import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.Future;
@@ -22,6 +26,7 @@ import java.util.concurrent.Future;
  * Created by hkundu on 13-03-2018.
  */
 
+@SuppressLint("NewApi")
 public class VoucherVM extends AndroidViewModel {
     private CompanyDb companyDb;
     private LiveData<List<VoucherWithEntries>> vouchersLd;
@@ -34,6 +39,29 @@ public class VoucherVM extends AndroidViewModel {
 
     public LiveData<List<VoucherWithEntries>> findVoucherWithEntries() {
         return vouchersLd;
+    }
+
+    public List<VoucherWithEntries> getVoucherByMinMaxDate(final Date voucherMinDate, final Date
+            voucherMaxDate) {
+        List<VoucherWithEntries> result = new ArrayList<>();
+
+        TaskExecutor taskExecutor = new TaskExecutor();
+        Future<List<VoucherWithEntries>> future = taskExecutor.submit(() -> {
+            Long minDate = Util.convertDateToLocalDate(voucherMinDate).toEpochDay();
+            Long maxDate = Util.convertDateToLocalDate(voucherMaxDate).toEpochDay();
+            return companyDb.voucherWithEntriesDao().findVoucherWithMinMaxDate(minDate, maxDate);
+        });
+        try {
+            result = future.get();
+        } catch (InterruptedException e) {
+            Log.v(Constants.APP_NAME, e.getMessage());
+        } catch (ExecutionException e) {
+            Log.v(Constants.APP_NAME, e.getMessage());
+        } finally {
+            taskExecutor.shutdown();
+        }
+
+        return result;
     }
 
     public IdTuple getVoucherIdByNumber(@NonNull String number) {

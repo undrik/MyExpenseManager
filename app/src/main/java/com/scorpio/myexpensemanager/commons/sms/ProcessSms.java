@@ -1,5 +1,6 @@
 package com.scorpio.myexpensemanager.commons.sms;
 
+import android.annotation.SuppressLint;
 import android.app.Application;
 
 import com.scorpio.myexpensemanager.commons.Constants;
@@ -16,10 +17,13 @@ import org.apache.commons.collections4.MultiValuedMap;
 import org.apache.commons.collections4.multimap.ArrayListValuedHashMap;
 
 import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
+import java.util.concurrent.CompletionService;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+@SuppressLint("NewApi")
 public class ProcessSms {
     //    Map<String, SmsConfigModel> smsConfigMap = new HashMap<>();
     private MultiValuedMap<String, SmsConfig> smsConfigMapData = new ArrayListValuedHashMap<>();
@@ -43,6 +47,26 @@ public class ProcessSms {
                 "([\\s\\w]+\\s[\\s\\w]+)(\\d{4}X*\\d{4})(\\son\\s)" +
                 "(\\d+[-:][a-zA-Z]+?[-:]\\d{2,4})(\\sat\\s)([\\w\\s]+[a-zA-Z]+))");
         smsConfigMapData.put(Constants.CITIBK, citibkSmsConfig);
+
+        SmsConfig hdfcBankCardConfig = new SmsConfig(Constants.HDFCBK, Constants.CONTRA, Constants
+                .HDFC_BANK_CARD, null);
+        hdfcBankCardConfig.setPareseFunction(1);
+        hdfcBankCardConfig.setPattern("(([r|R][s|S][\\s\\.]*)([\\d]*[\\\\.]\\d*)([\\s\\w]+)" +
+                "(\\swithdrawn\\s)([\\s\\w]+)(\\d{4})(\\son\\s)(\\d+[-:][\\d]*[-:]\\d{2,4}))");
+        smsConfigMapData.put(Constants.HDFCBK, hdfcBankCardConfig);
+        SmsConfig hdfcBankConfig = new SmsConfig(Constants.HDFCBK, Constants.RECEIPT, Constants
+                .HDFC_BANK, null);
+        hdfcBankConfig.setPareseFunction(2);
+        hdfcBankConfig.setPattern("(([\\d,]*[\\\\.]\\d*)([\\s\\w/]+)(\\d{4})([\\s\\w]+)" +
+                "(-[\\w\\s]+-)([\\w\\s]+)([-\\w\\s]+)(\\d{2}[-:][a-zA-Z]+?[-:]\\d{2,4}))");
+        smsConfigMapData.put(Constants.HDFCBK, hdfcBankConfig);
+
+        SmsConfig hdfcBankConfig2 = new SmsConfig(Constants.HDFCBK, Constants.PAYMENT, null,
+                Constants.HDFC_BANK);
+        hdfcBankConfig2.setPareseFunction(3);
+        hdfcBankConfig2.setPattern("([\\w\\s]+[r|R][s|S][\\s\\.]*)([\\d,]*[\\\\.]\\d*)([\\w\\s]+)" +
+                "(\\d{4})([\\w\\s]+using)([\\w\\s]+)");
+        smsConfigMapData.put(Constants.HDFCBK, hdfcBankConfig2);
     }
 
     public final boolean isSupportedSms(String address) {
@@ -62,10 +86,104 @@ public class ProcessSms {
                 if (from.equalsIgnoreCase(Constants.CITIBK)) {
                     processCitibankCreditCardSms(smsConfig, receivedOn, from, body);
                 }
+                //Process HDFC Bank messages
+                if (from.equalsIgnoreCase(Constants.HDFCBK)) {
+                    processHdfcBankSms(smsConfig, receivedOn, from, body);
+                }
+
                 //processing Zeta Meal Voucher card messages
                 if (from.equalsIgnoreCase(Constants.ZETAAA)) {
                     processZetaMealVoucherCardSms(smsConfig, receivedOn, from, body);
                 }
+            }
+        }
+    }
+
+    private void processHdfcBankSms(SmsConfig smsConfig, String receivedOn, String from, String
+            body) {
+        switch (smsConfig.getPareseFunction()) {
+            case 1:
+                processHdfcBankSmsPattern1(smsConfig, receivedOn, from, body);
+                break;
+            case 2:
+                processHdfcBankSmsPattern2(smsConfig, receivedOn, from, body);
+                break;
+            case 3:
+                processHdfcBankSmsPattern3(smsConfig, receivedOn, from, body);
+                break;
+        }
+
+    }
+
+    private void processHdfcBankSmsPattern3(SmsConfig smsConfig, String receivedOn, String from,
+                                            String body) {
+        String pattern = smsConfig.getPattern();
+        if (null != pattern && null != body) {
+            Pattern p = Pattern.compile(pattern);
+            Matcher matcher = p.matcher(body);
+            if (matcher.find()) {
+                String amount = matcher.group(2);
+                amount = removeComma(amount);
+                String acNo = matcher.group(4);
+                String atMechant = matcher.group(6);
+                atMechant = atMechant.trim();
+                Ledger drLedger = ledgerVM.getCreateLedger(atMechant, Constants.DIRECT_EXPENSES);
+                Ledger crLedger = ledgerVM.getCreateLedger(smsConfig.getCrLedgerName() +
+                        Constants.DASH + acNo, Constants.BANK_ACCOUNTS);
+                VoucherType voucherType = voucherTypeVM.findVoucherTypeByName(smsConfig
+                        .getVoucherType());
+                saveVoucher(drLedger, crLedger, voucherType,
+                        Util.convertToLocalDateFromTimeInMills(receivedOn),
+                        Double.parseDouble(amount), receivedOn, from, body);
+            }
+        }
+    }
+
+    private void processHdfcBankSmsPattern2(SmsConfig smsConfig, String receivedOn, String from,
+                                            String body) {
+        String pattern = smsConfig.getPattern();
+        if (null != pattern && null != body) {
+            Pattern p = Pattern.compile(pattern);
+            Matcher matcher = p.matcher(body);
+            if (matcher.find()) {
+                String amount = matcher.group(2);
+                amount = removeComma(amount);
+                String acNo = matcher.group(4);
+                String atMechant = matcher.group(7);
+                atMechant = atMechant.trim();
+                String onDate = matcher.group(9);
+                Ledger drLedger = ledgerVM.getCreateLedger(smsConfig.getDrLederName() +
+                        Constants.DASH + acNo, Constants.BANK_ACCOUNTS);
+                Ledger crLedger = ledgerVM.getCreateLedger(atMechant, Constants.DIRECT_INCOMES);
+                VoucherType voucherType = voucherTypeVM.findVoucherTypeByName(smsConfig
+                        .getVoucherType());
+                saveVoucher(drLedger, crLedger, voucherType, Util.convertToLocalDateFromDMMMYY
+                        (onDate), Double.parseDouble(amount), receivedOn, from, body);
+            }
+        }
+    }
+
+
+    private void processHdfcBankSmsPattern1(SmsConfig smsConfig, String receivedOn, String from,
+                                            String body) {
+        String pattern = smsConfig.getPattern();
+        if (null != pattern && null != body) {
+            Pattern p = Pattern.compile(pattern);
+            Matcher matcher = p.matcher(body);
+            if (matcher.find()) {
+                String amount = matcher.group(3);
+                amount = removeComma(amount);
+                String cardNo = matcher.group(7);
+                String onDate = matcher.group(9);
+                Ledger drLedger = ledgerVM.getCreateLedger(smsConfig.getDrLederName() +
+                        Constants.DASH + cardNo, Constants.BANK_ACCOUNTS);
+                Ledger crLedger = ledgerVM.getCreateLedger(Constants.CASH_IN_WALLET, Constants
+                        .CASH_IN_HAND);
+                VoucherType voucherType = voucherTypeVM.findVoucherTypeByName(smsConfig
+                        .getVoucherType());
+                saveVoucher(drLedger, crLedger, voucherType, Util.convertToLocalDateFromPattern
+                        (DateTimeFormatter.ISO_LOCAL_DATE, onDate), Double.parseDouble
+                        (amount), receivedOn, from, body);
             }
         }
     }
@@ -82,6 +200,7 @@ public class ProcessSms {
 //                String ccNo = matcher.group(5);
                 String onDate = matcher.group(7);
                 String atMerchent = matcher.group(9);
+                atMerchent = atMerchent.trim();
                 Ledger drLedger = ledgerVM.getCreateLedger(atMerchent, Constants
                         .DIRECT_EXPENSES);
                 SmsConfig citibkSmsConfig = smsConfig;

@@ -5,6 +5,7 @@ import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 
 import java.text.DecimalFormat;
+import java.text.MessageFormat;
 import java.text.NumberFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -63,7 +64,7 @@ public class Util {
         return LocalDate.now().format(pattern);
     }
 
-    public static LocalDate converDateToLocalDate(final Date date) {
+    public static LocalDate convertDateToLocalDate(final Date date) {
         ZoneId defaultZoneId = ZoneId.systemDefault();
         Instant instant = date.toInstant();
         return instant.atZone(defaultZoneId).toLocalDate();
@@ -123,6 +124,21 @@ public class Util {
         return LocalDate.parse(strDate, formatter);
     }
 
+    public static LocalDate convertToLocalDateFromPattern(String pattern, String strDate) {
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern(pattern);
+        return LocalDate.parse(strDate, formatter);
+    }
+
+    public static LocalDate convertToLocalDateFromPattern(DateTimeFormatter pattern, String
+            strDate) {
+        return LocalDate.parse(strDate, pattern);
+    }
+
+    public static LocalDate convertToLocalDateFromTimeInMills(String timeInMills) {
+        return Instant.ofEpochMilli(Long.parseLong(timeInMills)).atZone(ZoneId.systemDefault())
+                .toLocalDate();
+    }
+
     public static long convertToTimeFromddMMMyyyy(String date) {
         SimpleDateFormat format = new SimpleDateFormat(Constants.DATE_FORMAT_D_MMM_YYYY, Locale
                 .ENGLISH);
@@ -139,9 +155,14 @@ public class Util {
         return dateFormat.format(new Date(timeInMils));
     }
 
-//    public static String FormatDate(String format, long starDate, long endDate) {
-//        return MessageFormat.format(format, new Date[]{new Date(starDate), new Date(endDate)});
-//    }
+    public static String FormatDate(String format, Date date) {
+        SimpleDateFormat dateFormat = new SimpleDateFormat(format, Locale.ENGLISH);
+        return dateFormat.format(date);
+    }
+
+    public static String FormatDate(String format, Date startDate, Date endDate) {
+        return MessageFormat.format(format, startDate, endDate);
+    }
 
     public static long convertToTimeFromddMMMyy(String date) {
         SimpleDateFormat format = new SimpleDateFormat(Constants.DATE_FORMAT_D_MMM_YY, Locale
@@ -206,5 +227,14 @@ public class Util {
         String strDate = "05-APR-18";
         System.out.println(Util.convertToTimeFromddMMMyy(strDate));
         System.out.println(Util.convertToLocalDateFromDMMMYY(strDate).toString());
+        String receivedOn = "1522822629838";
+        System.out.println("Local Date : " + Util.convertToLocalDateFromTimeInMills(receivedOn));
+        String strDate1 = "07/04/18";
+
+        System.out.println("Local date : " + Util.convertToLocalDateFromPattern("dd/MM/yy",
+                strDate1));
+
+        System.out.println(Util.FormatDate(Constants.DATE_FORMAT_RANGE, new Date(), new Date()));
+
     }
 }

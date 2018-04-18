@@ -34,6 +34,7 @@ public class VoucherRvAdapter extends RecyclerView.Adapter<VoucherRvAdapter.Vouc
         this.context = context;
         this.vouchers = vouchers;
         copyVouchers = new ArrayList<>();
+        copyVouchers.addAll(vouchers);
     }
 
     public void setItemClickListner(OnItemClickListner listner) {
@@ -107,7 +108,7 @@ public class VoucherRvAdapter extends RecyclerView.Adapter<VoucherRvAdapter.Vouc
 
     @SuppressLint("NewApi")
     public void filterByAccountName(String accountName) {
-        if (!accountName.isEmpty()) {
+        if (null != accountName && !accountName.isEmpty()) {
             vouchers.clear();
             copyVouchers.forEach(voucher -> {
                 for (VoucherEntry entry : voucher.getVoucherEntries()) {

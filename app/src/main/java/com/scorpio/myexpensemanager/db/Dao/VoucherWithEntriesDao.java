@@ -64,7 +64,7 @@ public abstract class VoucherWithEntriesDao {
     }
 
     @Transaction
-    @Query("SELECT * FROM Voucher")
+    @Query("SELECT * FROM Voucher ORDER BY localDate DESC")
     public abstract LiveData<List<VoucherWithEntries>> findVoucherWithEntries();
 
     @Query("SELECT id FROM Voucher WHERE number = :number")

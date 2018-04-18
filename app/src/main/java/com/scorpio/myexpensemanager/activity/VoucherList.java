@@ -20,13 +20,16 @@ import android.support.v7.widget.helper.ItemTouchHelper;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
 import android.widget.ArrayAdapter;
+import android.widget.TextView;
 
 import com.scorpio.myexpensemanager.R;
 import com.scorpio.myexpensemanager.adapters.ItemRvTouchHelper;
 import com.scorpio.myexpensemanager.adapters.VoucherRvAdapter;
 import com.scorpio.myexpensemanager.commons.Cache;
 import com.scorpio.myexpensemanager.commons.Constants;
+import com.scorpio.myexpensemanager.commons.Util;
 import com.scorpio.myexpensemanager.commons.tally.TallyVoucher;
 import com.scorpio.myexpensemanager.db.vo.VoucherWithEntries;
 import com.scorpio.myexpensemanager.viewmodels.LedgerVM;
@@ -41,6 +44,8 @@ import java.util.List;
 public class VoucherList extends AppCompatActivity implements ItemRvTouchHelper
         .RvItemSwipeListener, SearchView.OnQueryTextListener {
 
+    private TextView voucherListDateRangeTv, voucherListAccountNameTv, voucherListCompanyNameTv,
+            voucherListAccountNameLabelTv;
     private VoucherRvAdapter voucherRvAdapter;
     private Toolbar toolbar;
     private Date voucherStartDate, voucherEndDate;
@@ -48,12 +53,17 @@ public class VoucherList extends AppCompatActivity implements ItemRvTouchHelper
     private static final int PERMISSION_CALLBACK = 1020;
     private static final int DIRECTORY_CHOOSER = 1030;
     private ConstraintLayout voucherListLayout;
+    private String ledgerName;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_voucher_list);
         toolbar = (Toolbar) findViewById(R.id.voucherListToolBar);
+        voucherListCompanyNameTv = toolbar.findViewById(R.id.voucherListCompanyNameTv);
+        voucherListAccountNameTv = toolbar.findViewById(R.id.voucherListAccountNameTv);
+        voucherListAccountNameLabelTv = toolbar.findViewById(R.id.voucherListAccountNameLabelTv);
+        voucherListDateRangeTv = toolbar.findViewById(R.id.voucherListDateRangeTv);
 
 //        toolbar.setTitle(getString(R.string.title_activity_voucher_list));
 
@@ -83,6 +93,9 @@ public class VoucherList extends AppCompatActivity implements ItemRvTouchHelper
         voucherVM.findVoucherWithEntries().observe(this, (voucherWithEntries ->
                 voucherRvAdapter.addItems(voucherWithEntries)
         ));
+        refreshVoucherCompany();
+        refreshVoucherSummary();
+        refreshVoucherRange();
     }
 
     @Override
@@ -105,13 +118,18 @@ public class VoucherList extends AppCompatActivity implements ItemRvTouchHelper
             final SearchView.SearchAutoComplete searchAutoComplete = searchView.findViewById
                     (android.support.v7.appcompat.R.id.search_src_text);
             searchAutoComplete.setAdapter(adapter);
+            if (null != ledgerName) {
+                searchAutoComplete.setText(ledgerName);
+            }
             searchAutoComplete.setThreshold(1);
             searchAutoComplete.setOnItemClickListener((parent, view, position, id) -> {
                 String sStr = (String) parent.getItemAtPosition(position);
                 searchAutoComplete.setText(sStr);
                 searchView.setIconified(true);
 //                searchView.onActionViewCollapsed();
+                ledgerName = sStr;
                 toolbar.collapseActionView();
+                refreshVoucherSummary();
             });
         } else {
             searchItem.setVisible(false);
@@ -187,9 +205,9 @@ public class VoucherList extends AppCompatActivity implements ItemRvTouchHelper
                         voucherEndDate = voucherStartDate = dates.get(0);
                     } else {
                         voucherStartDate = dates.get(0);
-                        voucherEndDate = dates.get(1);
+                        voucherEndDate = dates.get(dates.size() - 1);
                     }
-
+                    refreshVoucherListByDate();
                 }).setNeutralButton(getString(R.string.cancel), (dialog12, which) ->
                         dialog12.dismiss())
                 .create();
@@ -199,6 +217,51 @@ public class VoucherList extends AppCompatActivity implements ItemRvTouchHelper
         calendarPickerView.init(minDate, maxDate).inMode(selectionMode);
         dialog.show();
 
+    }
+
+    private void refreshVoucherCompany() {
+        voucherListCompanyNameTv.setText(Cache.getCompany().getName());
+    }
+
+    private void refreshVoucherSummary() {
+        if (null == ledgerName) {
+            voucherListAccountNameLabelTv.setVisibility(View.INVISIBLE);
+            voucherListAccountNameTv.setVisibility(View.INVISIBLE);
+        } else {
+            voucherListAccountNameLabelTv.setVisibility(View.VISIBLE);
+            voucherListAccountNameTv.setVisibility(View.VISIBLE);
+            voucherListAccountNameTv.setText(ledgerName);
+            refreshVoucherList();
+        }
+    }
+
+    private void refreshVoucherList() {
+        voucherRvAdapter.filterByAccountName(ledgerName);
+    }
+
+    private void refreshVoucherListByDate() {
+        VoucherVM voucherVM = new VoucherVM(getApplication());
+        List<VoucherWithEntries> vouchers = voucherVM.getVoucherByMinMaxDate(voucherStartDate,
+                voucherEndDate);
+        voucherRvAdapter.addItems(vouchers);
+        refreshVoucherRange();
+    }
+
+    private void refreshVoucherRange() {
+        if (null == voucherStartDate || null == voucherEndDate) {
+            voucherListDateRangeTv.setVisibility(View.INVISIBLE);
+        } else {
+            voucherListDateRangeTv.setVisibility(View.VISIBLE);
+            if (voucherStartDate.equals(voucherEndDate)) {
+                voucherListDateRangeTv.setText("For " + Util.FormatDate(Constants
+                                .DATE_FORMAT_D_MMM_YY,
+
+                        voucherStartDate));
+            } else {
+                voucherListDateRangeTv.setText(Util.FormatDate(Constants.DATE_FORMAT_RANGE,
+                        voucherStartDate, voucherEndDate));
+            }
+        }
     }
 
     private void checkWritePermission() {
@@ -256,10 +319,11 @@ public class VoucherList extends AppCompatActivity implements ItemRvTouchHelper
         Log.v(Constants.APP_NAME, "getFilesDir : " + getFilesDir());
         Log.v(Constants.APP_NAME, "getCacheDir : " + getCacheDir());
         Log.v(Constants.APP_NAME, "getExternalFilesDir" + getExternalFilesDir(null));
-        TallyVoucher tallyVoucher = new TallyVoucher(getExternalFilesDir(null).getPath());
-        tallyVoucher.export(voucherRvAdapter.getItems());
+        exportVouchers();
     }
 
     private void exportVouchers() {
+        TallyVoucher tallyVoucher = new TallyVoucher(getExternalFilesDir(null).getPath());
+        tallyVoucher.export(voucherRvAdapter.getItems());
     }
 }

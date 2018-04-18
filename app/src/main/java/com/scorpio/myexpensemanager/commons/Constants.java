@@ -52,7 +52,7 @@ public interface Constants {
     int CREDIT = 1;
     String SINGLE_SPACE = " ";
     String FORMAT_ASON = "(As on {0,date,d-MMM})";
-    String DATE_FORMAT_RANGE = "({0,localDate,d-MMM-yyyy} to {1,localDate,d-MMM-yyyy})";
+    String DATE_FORMAT_RANGE = "({0,date,d-MMM-yyyy} to {1,date,d-MMM-yyyy})";
     String FORMAT_BALANCE_SHEET = "(As on {0,date,d-MMM-yyyy})";
     String DATE_FORMAT_D_MMM_YYYY = "d-MMM-yyyy";
     String DATE_FORMAT_D_MMM_YY = "d-MMM-yy";
@@ -251,9 +251,16 @@ public interface Constants {
             Constants.CASH_IN_HAND};
     String[] My_BANK_ACCOUNTS = new String[]{Constants.BANK_ACCOUNTS, Constants.BANK_OD_ACCOUNT};
 
+    //Separator
+    String DASH = " - ";
+
     //Supported SMS
     String CITIBK = "CITIBK";
     String CITIBANK_CREDIT_CARD = "Citibank Credit Card";
+
+    String HDFCBK = "HDFCBK";
+    String HDFC_BANK_CARD = "HDFC Bank Card";
+    String HDFC_BANK = "HDFC Bank";
 
 
     String ZETAAA = "ZETAAA";
