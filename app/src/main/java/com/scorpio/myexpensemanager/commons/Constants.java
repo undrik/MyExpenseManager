@@ -59,6 +59,7 @@ public interface Constants {
     String DATE_FORMAT_D_MMM = "d-MMM";
     String DATE_FORMAT_WITH_SHORT_WEEK = "d-MMM-yyyy (EEE)";
     String DATE_FORMAT_WITH_LONG_WEEK = "d-MMM-yyyy EEEE";
+    String DATE_FORMAT_SBI = "dd/MM/yy";
 
 
     String DB_EXTENSION = ".db";
@@ -261,6 +262,11 @@ public interface Constants {
     String HDFCBK = "HDFCBK";
     String HDFC_BANK_CARD = "HDFC Bank Card";
     String HDFC_BANK = "HDFC Bank";
+    String ATMSBI = "ATMSBI";
+    String SBI_ACCOUNT = "State Bank of India";
+    String CBSSBI = "CBSSBI";
+    String INCOME_OTHER = "Income Other";
+    String EXPENSE_OTHER = "Expense Other";
 
 
     String ZETAAA = "ZETAAA";

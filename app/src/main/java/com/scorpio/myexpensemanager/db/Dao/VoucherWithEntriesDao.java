@@ -3,6 +3,7 @@ package com.scorpio.myexpensemanager.db.Dao;
 import android.annotation.SuppressLint;
 import android.arch.lifecycle.LiveData;
 import android.arch.persistence.room.Dao;
+import android.arch.persistence.room.Delete;
 import android.arch.persistence.room.Insert;
 import android.arch.persistence.room.Query;
 import android.arch.persistence.room.Transaction;
@@ -43,6 +44,15 @@ public abstract class VoucherWithEntriesDao {
     @Update
     protected abstract int update(VoucherType voucherType);
 
+    @Update
+    protected abstract int update(Voucher voucher);
+
+    @Delete
+    protected abstract int delete(Voucher voucher);
+
+    @Delete
+    protected abstract int delete(List<VoucherEntry> voucherEntries);
+
     @SuppressLint("NewApi")
     @Transaction
     public Long saveWithEntries(VoucherWithEntries voucher) {
@@ -64,6 +74,13 @@ public abstract class VoucherWithEntriesDao {
     }
 
     @Transaction
+    public int deleteWithEntry(VoucherWithEntries voucherWithEntries) {
+        Voucher voucher = voucherWithEntries;
+        delete(voucherWithEntries.getVoucherEntries());
+        return delete(voucher);
+    }
+
+    @Transaction
     @Query("SELECT * FROM Voucher ORDER BY localDate DESC")
     public abstract LiveData<List<VoucherWithEntries>> findVoucherWithEntries();
 
@@ -74,7 +91,8 @@ public abstract class VoucherWithEntriesDao {
     public abstract IdTuple findVoucherIdBySmsId(String smsId);
 
     @Transaction
-    @Query("SELECT * FROM Voucher WHERE localDate BETWEEN :minDate AND :maxDate")
+    @Query("SELECT * FROM Voucher WHERE localDate BETWEEN :minDate AND :maxDate ORDER BY " +
+            "localDate DESC")
     public abstract List<VoucherWithEntries> findVoucherWithMinMaxDate(final Long minDate,
                                                                        final Long maxDate);
 

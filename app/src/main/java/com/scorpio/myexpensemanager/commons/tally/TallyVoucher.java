@@ -2,6 +2,7 @@ package com.scorpio.myexpensemanager.commons.tally;
 
 import android.util.Log;
 import android.util.Xml;
+import android.widget.Toast;
 
 import com.scorpio.myexpensemanager.commons.Constants;
 import com.scorpio.myexpensemanager.commons.Util;
@@ -29,8 +30,11 @@ public class TallyVoucher {
         this.fileName = path + "/" + name;
     }
 
-    public void export(final List<VoucherWithEntries> voucherWithEntries) {
+    public String getFileName() {
+        return fileName;
+    }
 
+    public boolean export(final List<VoucherWithEntries> voucherWithEntries) {
         try {
             file = new File(this.fileName);
             file.createNewFile();
@@ -119,8 +123,10 @@ public class TallyVoucher {
             serializer.endTag(null, Constants.ENVELOPE);
             serializer.flush();
             fos.close();
+            return true;
         } catch (IOException e) {
             Log.v(Constants.APP_NAME, e.getMessage());
+            return false;
         }
     }
 }

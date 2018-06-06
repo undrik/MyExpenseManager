@@ -30,15 +30,15 @@ import java.time.LocalDate;
 )
 public class VoucherEntry {
     @PrimaryKey(autoGenerate = true)
-    public Long id;
+    private Long id;
     @NonNull
-    public String ledgerName;
-    public Long voucherId;
-    public Integer debitOrCredit;
-    public Double amount;
+    private String ledgerName;
+    private Long voucherId;
+    private Integer debitOrCredit;
+    private Double amount;
     private String narration;
     @TypeConverters(LocalDateEpochConverter.class)
-    public LocalDate localDate;
+    private LocalDate localDate;
 
 
     public VoucherEntry() {

@@ -54,7 +54,7 @@ public class CreateUpdateVoucher extends AppCompatActivity implements VoucherDia
     private VoucherWithEntries voucher = new VoucherWithEntries();
     private RecyclerView voucheEntryRv;
     private VoucherEntryRvAdapter veRvAdapter;
-//    private Integer voucherNo;
+    //    private Integer voucherNo;
     VoucherVM voucherVM;
     VoucherTypeVM voucherTypeVM;
     private Double drTotal = 0.0, crTotal = 0.0;
@@ -108,7 +108,8 @@ public class CreateUpdateVoucher extends AppCompatActivity implements VoucherDia
             datePickerDialog.getDatePicker().setMinDate(Cache.getCompany().getBookStart().getTime
                     ());
             datePickerDialog.setOnDateSetListener((v, year, month, dayOfMonth) -> {
-                LocalDate localDate = LocalDate.of(year, month, dayOfMonth);
+                //As Localdate January starts with 1
+                LocalDate localDate = LocalDate.of(year, month + 1, dayOfMonth);
                 String dateText = Util.convertToDDMMYYYEEE(localDate);
                 voucherDate.setText(dateText);
                 voucher.setLocalDate(localDate);
@@ -220,13 +221,16 @@ public class CreateUpdateVoucher extends AppCompatActivity implements VoucherDia
     }
 
     private void handleActionCheck() {
-        if (drTotal.doubleValue() != 0.0 && drTotal.doubleValue() == crTotal.doubleValue()) {
+        if (drTotal.doubleValue() != 0.0 && ((-1) * drTotal.doubleValue()) == crTotal.doubleValue
+                ()) {
             Long result = voucherVM.addVoucher(voucher);
             if (result > 0) {
                 Toast.makeText(getApplicationContext(), getString(R.string.msg_success_create),
                         Toast.LENGTH_LONG).show();
                 finish();
             }
+        } else {
+            Toast.makeText(getApplicationContext(), "Total mismatch", Toast.LENGTH_LONG).show();
         }
     }
 

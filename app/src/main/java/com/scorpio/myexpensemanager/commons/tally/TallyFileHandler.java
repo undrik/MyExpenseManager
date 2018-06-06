@@ -1,7 +1,6 @@
 package com.scorpio.myexpensemanager.commons.tally;
 
 import android.annotation.SuppressLint;
-import android.content.Context;
 import android.support.annotation.NonNull;
 import android.util.Log;
 import android.util.Xml;
@@ -12,7 +11,6 @@ import com.scorpio.myexpensemanager.db.vo.Ledger;
 import com.scorpio.myexpensemanager.db.vo.NatureOfGroup;
 import com.scorpio.myexpensemanager.db.vo.Voucher;
 import com.scorpio.myexpensemanager.db.vo.VoucherEntry;
-import com.scorpio.myexpensemanager.db.vo.VoucherTypeEnum;
 import com.scorpio.myexpensemanager.db.vo.VoucherWithEntries;
 
 import org.xmlpull.v1.XmlPullParser;

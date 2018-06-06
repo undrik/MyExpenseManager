@@ -19,7 +19,6 @@ import org.apache.commons.collections4.multimap.ArrayListValuedHashMap;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
-import java.util.concurrent.CompletionService;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -67,6 +66,32 @@ public class ProcessSms {
         hdfcBankConfig2.setPattern("([\\w\\s]+[r|R][s|S][\\s\\.]*)([\\d,]*[\\\\.]\\d*)([\\w\\s]+)" +
                 "(\\d{4})([\\w\\s]+using)([\\w\\s]+)");
         smsConfigMapData.put(Constants.HDFCBK, hdfcBankConfig2);
+        SmsConfig sbiConfig1 = new SmsConfig(Constants.ATMSBI, Constants.CONTRA, Constants
+                .SBI_ACCOUNT, null);
+        sbiConfig1.setPareseFunction(1);
+        sbiConfig1.setPattern("([r|R][s|S][\\s]*)([\\d\\.]*)([\\w\\s/,]+)(\\d{4})(on)" +
+                "(\\d*[-:/]\\d*[-:/]\\d*)");
+        smsConfigMapData.put(Constants.ATMSBI, sbiConfig1);
+        SmsConfig sbiConfig2 = new SmsConfig(Constants.CBSSBI, Constants.RECEIPT, Constants
+                .SBI_ACCOUNT, Constants.INCOME_OTHER);
+        sbiConfig2.setPareseFunction(2);
+        sbiConfig2.setPattern("([\\w\\s/]+)(\\d{4})([\\w\\s]*)([cC]redit[ed]*)" +
+                "([\\w\\s]*[INR|Rs]\\s)([\\d]*[\\.,]*\\d*[\\.]\\d*)(\\son\\s)" +
+                "(\\d*[-:/]\\d*[-:/]\\d*)");
+        smsConfigMapData.put(Constants.CBSSBI, sbiConfig2);
+        SmsConfig sbiConfig3 = new SmsConfig(Constants.CBSSBI, Constants.RECEIPT, Constants
+                .SBI_ACCOUNT, null);
+        sbiConfig3.setPareseFunction(3);
+        sbiConfig3.setPattern("([\\w\\s/]+)(\\d{4})([\\w\\s]*)([cC]redit[ed]*)" +
+                "([\\w\\s]*[INR|Rs]\\s)([\\d]*[\\.,]*\\d*[\\.]\\d*)(\\son\\s)" +
+                "(\\d*[-:/]\\d*[-:/]\\d*)([\\w\\s-]*)(from\\s)([\\w\\s]+[\\.?\\s]*)([\\w\\s]*)");
+        smsConfigMapData.put(Constants.CBSSBI, sbiConfig3);
+        SmsConfig sbiConfig4 = new SmsConfig(Constants.CBSSBI, Constants.PAYMENT, Constants
+                .EXPENSE_OTHER, Constants.SBI_ACCOUNT);
+        sbiConfig4.setPareseFunction(4);
+        sbiConfig4.setPattern("([\\w\\s/]+)(\\d{4})([\\w\\s]*)(debit*)([\\w\\s]*[INR|Rs]\\s)" +
+                "([\\d]*[\\.,]*\\d*[\\.]\\d*)(\\son\\s)(\\d*[-:/]\\d*[-:/]\\d*)");
+        smsConfigMapData.put(Constants.CBSSBI, sbiConfig4);
     }
 
     public final boolean isSupportedSms(String address) {
@@ -90,11 +115,140 @@ public class ProcessSms {
                 if (from.equalsIgnoreCase(Constants.HDFCBK)) {
                     processHdfcBankSms(smsConfig, receivedOn, from, body);
                 }
+                //Process SBI Bank messages
+                if (from.equalsIgnoreCase(Constants.ATMSBI)) {
+                    processSbiBankSms(smsConfig, receivedOn, from, body);
+                }
+                if (from.equalsIgnoreCase(Constants.CBSSBI)) {
+                    processSbiBankSms(smsConfig, receivedOn, from, body);
+                }
 
                 //processing Zeta Meal Voucher card messages
                 if (from.equalsIgnoreCase(Constants.ZETAAA)) {
                     processZetaMealVoucherCardSms(smsConfig, receivedOn, from, body);
                 }
+            }
+        }
+    }
+
+    private void processSbiBankSms(SmsConfig smsConfig, String receivedOn, String from, String
+            body) {
+        switch (smsConfig.getPareseFunction()) {
+            case 1:
+                processSbiBankSmsPattern1(smsConfig, receivedOn, from, body);
+                break;
+            case 2:
+                processSbiBankSmsPattern2(smsConfig, receivedOn, from, body);
+                break;
+            case 3:
+                processSbiBankSmsPattern3(smsConfig, receivedOn, from, body);
+                break;
+            case 4:
+                processSbiBankSmsPattern4(smsConfig, receivedOn, from, body);
+        }
+    }
+
+    private void processSbiBankSmsPattern4(SmsConfig smsConfig, String receivedOn, String from,
+                                           String body) {
+        String pattern = smsConfig.getPattern();
+        if (null != pattern && null != body) {
+            Pattern p = Pattern.compile(pattern);
+            Matcher matcher = p.matcher(body);
+            if (matcher.find()) {
+                String acNo = matcher.group(2);
+                String amount = removeComma(matcher.group(6));
+                String onDate = matcher.group(8);
+//                atMechant = atMechant.trim();
+                Ledger drLedger = ledgerVM.getCreateLedger(smsConfig.getDrLederName(),
+                        Constants.EXPENSE_OTHER);
+                Ledger crLedger = ledgerVM.getCreateLedger(smsConfig.getCrLedgerName() +
+                        Constants.DASH + acNo, Constants.BANK_ACCOUNTS);
+                VoucherType voucherType = voucherTypeVM.findVoucherTypeByName(smsConfig
+                        .getVoucherType());
+                saveVoucher(drLedger, crLedger, voucherType,
+                        Util.convertToLocalDateFromPattern(Constants.DATE_FORMAT_SBI, onDate),
+                        Double.parseDouble(amount), receivedOn, from, body);
+            }
+        }
+    }
+
+    private void processSbiBankSmsPattern3(SmsConfig smsConfig, String receivedOn, String from,
+                                           String body) {
+        String pattern = smsConfig.getPattern();
+        if (null != pattern && null != body) {
+            Pattern p = Pattern.compile(pattern);
+            Matcher matcher = p.matcher(body);
+            if (matcher.find()) {
+                String acNo = matcher.group(2);
+                String amount = matcher.group(6);
+                amount = removeComma(amount);
+                String onDate = matcher.group(8);
+                String salutation = matcher.group(11);
+                String fromPerson = matcher.group(12);
+                fromPerson = fromPerson.trim();
+                Ledger crLedger;
+                if (null != salutation) {
+                    salutation = salutation.concat(fromPerson);
+                    crLedger = ledgerVM.getCreateLedger(salutation, Constants.INDIRECT_INCOMES);
+                } else {
+                    crLedger = ledgerVM.getCreateLedger(fromPerson, Constants.INDIRECT_INCOMES);
+                }
+                Ledger drLedger = ledgerVM.getCreateLedger(smsConfig.getDrLederName() +
+                        Constants.DASH + acNo, Constants.BANK_ACCOUNTS);
+                VoucherType voucherType = voucherTypeVM.findVoucherTypeByName(smsConfig
+                        .getVoucherType());
+                saveVoucher(drLedger, crLedger, voucherType,
+                        Util.convertToLocalDateFromPattern(Constants.DATE_FORMAT_SBI, onDate),
+                        Double.parseDouble(amount), receivedOn, from, body);
+            }
+        }
+    }
+
+    private void processSbiBankSmsPattern2(SmsConfig smsConfig, String receivedOn, String from,
+                                           String body) {
+        String pattern = smsConfig.getPattern();
+        if (null != pattern && null != body) {
+            Pattern p = Pattern.compile(pattern);
+            Matcher matcher = p.matcher(body);
+            if (matcher.find()) {
+                String acNo = matcher.group(2);
+                String amount = removeComma(matcher.group(6));
+                String onDate = matcher.group(8);
+//                atMechant = atMechant.trim();
+                Ledger drLedger = ledgerVM.getCreateLedger(smsConfig.getDrLederName() +
+                        Constants.DASH + acNo, Constants.BANK_ACCOUNTS);
+                Ledger crLedger = ledgerVM.getCreateLedger(smsConfig.getCrLedgerName(), Constants
+                        .INDIRECT_INCOMES);
+                VoucherType voucherType = voucherTypeVM.findVoucherTypeByName(smsConfig
+                        .getVoucherType());
+                saveVoucher(drLedger, crLedger, voucherType,
+                        Util.convertToLocalDateFromPattern(Constants.DATE_FORMAT_SBI, onDate),
+                        Double.parseDouble(amount), receivedOn, from, body);
+            }
+        }
+    }
+
+    private void processSbiBankSmsPattern1(SmsConfig smsConfig, String receivedOn, String from,
+                                           String body) {
+        String pattern = smsConfig.getPattern();
+        if (null != pattern && null != body) {
+            Pattern p = Pattern.compile(pattern);
+            Matcher matcher = p.matcher(body);
+            if (matcher.find()) {
+                String amount = matcher.group(2);
+                amount = removeComma(amount);
+                String acNo = matcher.group(4);
+                String onDate = matcher.group(6);
+//                atMechant = atMechant.trim();
+                Ledger crLedger = ledgerVM.getCreateLedger(smsConfig.getDrLederName() +
+                        Constants.DASH + acNo, Constants.BANK_ACCOUNTS);
+                Ledger drLedger = ledgerVM.getCreateLedger(Constants.CASH_IN_WALLET, Constants
+                        .BANK_ACCOUNTS);
+                VoucherType voucherType = voucherTypeVM.findVoucherTypeByName(smsConfig
+                        .getVoucherType());
+                saveVoucher(drLedger, crLedger, voucherType,
+                        Util.convertToLocalDateFromPattern(Constants.DATE_FORMAT_SBI, onDate),
+                        Double.parseDouble(amount), receivedOn, from, body);
             }
         }
     }
@@ -175,9 +329,9 @@ public class ProcessSms {
                 amount = removeComma(amount);
                 String cardNo = matcher.group(7);
                 String onDate = matcher.group(9);
-                Ledger drLedger = ledgerVM.getCreateLedger(smsConfig.getDrLederName() +
+                Ledger crLedger = ledgerVM.getCreateLedger(smsConfig.getDrLederName() +
                         Constants.DASH + cardNo, Constants.BANK_ACCOUNTS);
-                Ledger crLedger = ledgerVM.getCreateLedger(Constants.CASH_IN_WALLET, Constants
+                Ledger drLedger = ledgerVM.getCreateLedger(Constants.CASH_IN_WALLET, Constants
                         .CASH_IN_HAND);
                 VoucherType voucherType = voucherTypeVM.findVoucherTypeByName(smsConfig
                         .getVoucherType());

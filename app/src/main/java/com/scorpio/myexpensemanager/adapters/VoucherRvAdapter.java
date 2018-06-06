@@ -86,7 +86,8 @@ public class VoucherRvAdapter extends RecyclerView.Adapter<VoucherRvAdapter.Vouc
     }
 
     public void addItems(@NonNull List<VoucherWithEntries> vouchers) {
-        this.vouchers = vouchers;
+        this.vouchers.clear();
+        this.vouchers.addAll(vouchers);
         copyVouchers.clear();
         copyVouchers.addAll(vouchers);
         notifyDataSetChanged();

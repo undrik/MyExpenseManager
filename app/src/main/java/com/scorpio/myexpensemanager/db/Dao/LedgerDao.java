@@ -32,13 +32,13 @@ public interface LedgerDao {
     @Query("SELECT * FROM Ledger WHERE id = :id")
     Ledger findLedgerById(final Long id);
 
-    @Query("SELECT * FROM Ledger")
+    @Query("SELECT * FROM Ledger ORDER BY name")
     List<Ledger> findAllLedgers();
 
     @Query("SELECT name FROM Ledger")
     List<Name> findAllLedgerNames();
 
-    @Query("SELECT * FROM Ledger")
+    @Query("SELECT * FROM Ledger ORDER BY name")
     LiveData<List<Ledger>> findAll();
 
     @Insert

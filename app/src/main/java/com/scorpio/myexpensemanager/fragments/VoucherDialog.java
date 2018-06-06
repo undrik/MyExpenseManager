@@ -12,6 +12,7 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.WindowManager;
 import android.widget.ArrayAdapter;
 import android.widget.AutoCompleteTextView;
 import android.widget.Button;
@@ -120,12 +121,18 @@ public class VoucherDialog extends DialogFragment {
             dialogTitle.setText(getString(R.string.credit));
         }
 
-        ArrayAdapter<String> adapter = new ArrayAdapter<String>(getActivity()
-                .getApplicationContext(), android.R.layout.simple_dropdown_item_1line,
-                ledgerNamesInDb);
+//        ArrayAdapter<String> adapter = new ArrayAdapter<String>(getActivity()
+//                .getApplicationContext(), android.R.layout.simple_dropdown_item_1line,
+//                ledgerNamesInDb);
+        ArrayAdapter<String> adapter = new ArrayAdapter<>(getActivity().getApplication(), R
+                .layout.autocomplete_layout, ledgerNamesInDb);
         textInputLedger = view.findViewById(R.id.textInputLedger);
         inputLedgerAcTv = view.findViewById(R.id.inputLedgerAcTv);
         inputLedgerAcTv.setAdapter(adapter);
+        inputLedgerAcTv.requestFocus();
+        //Show softkeyboard when the focus is on the Account field
+        getDialog().getWindow().setSoftInputMode(WindowManager.LayoutParams
+                .SOFT_INPUT_STATE_VISIBLE);
 
         ImageButton dropDownBtn = view.findViewById(R.id.dropDownBtn);
         dropDownBtn.setOnClickListener((dropDownView) -> {
@@ -157,16 +164,18 @@ public class VoucherDialog extends DialogFragment {
         String narration = inputNarration.getText().toString().trim();
 
         VoucherEntry voucherEntry = new VoucherEntry();
-        if (debitOrCredit == Constants.DEBIT) {
-            voucherEntry.setDebitOrCredit(Constants.DEBIT);
-        } else {
-            voucherEntry.setDebitOrCredit(Constants.CREDIT);
-        }
-        voucherEntry.setLedgerName(ledgerName);
         voucherEntry.setAmount(0.0);
         if (null != amountText && !amountText.isEmpty()) {
             voucherEntry.setAmount(Double.valueOf(amountText));
         }
+        if (debitOrCredit == Constants.DEBIT) {
+            voucherEntry.setDebitOrCredit(Constants.DEBIT);
+            voucherEntry.setAmount(-1 * voucherEntry.getAmount());
+        } else {
+            voucherEntry.setDebitOrCredit(Constants.CREDIT);
+        }
+        voucherEntry.setLedgerName(ledgerName);
+
         voucherEntry.setNarration(narration);
         if (null != onResultListner) {
             onResultListner.onResult(voucherEntry);

@@ -25,17 +25,24 @@ import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
+import android.widget.ImageButton;
+import android.widget.TextView;
 
 import com.scorpio.myexpensemanager.R;
 import com.scorpio.myexpensemanager.commons.Cache;
 import com.scorpio.myexpensemanager.commons.Constants;
 import com.scorpio.myexpensemanager.commons.FileSelector;
+import com.scorpio.myexpensemanager.commons.Util;
 import com.scorpio.myexpensemanager.commons.sms.ProcessSms;
 import com.scorpio.myexpensemanager.commons.tally.TallyFileHandler;
 import com.scorpio.myexpensemanager.db.CompanyDb;
 import com.scorpio.myexpensemanager.db.vo.AccountGroup;
 import com.scorpio.myexpensemanager.db.vo.Ledger;
+import com.squareup.timessquare.CalendarPickerView;
 
+import java.util.Calendar;
+import java.util.Date;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ExecutorService;
@@ -49,6 +56,9 @@ public class CompanyMain extends AppCompatActivity
     private static final int FILE_CHOOSER = 1010;
 
     CoordinatorLayout companyMainLayout;
+
+    private TextView companyNameDrawerTv, companyFinRangeTv;
+    private ImageButton navDatePicker;
 
     //    private static final int PERMISSION_READ_EXTERNAL_STORAGE = 1000;
 //    private static final int PERMISSION_WRITE_EXTERNAL_STORAGE = 1010;
@@ -79,7 +89,19 @@ public class CompanyMain extends AppCompatActivity
         NavigationView navigationView = findViewById(R.id.nav_view);
         navigationView.setNavigationItemSelectedListener(this);
 
+        View navHeaderView = navigationView.getHeaderView(0);
+        companyNameDrawerTv = navHeaderView.findViewById(R.id.companyNameDrawerTv);
+        companyNameDrawerTv.setText(Cache.getCompany().getName());
+        companyFinRangeTv = navHeaderView.findViewById(R.id.companyFinRangeTv);
+        navDatePicker = navHeaderView.findViewById(R.id.navDatePicker);
+        navDatePicker.setOnClickListener((view) -> {
+            showCalendarPickerView(CalendarPickerView.SelectionMode.RANGE);
+        });
+        refreshCompanyDateRange();
+
         companyMainLayout = findViewById(R.id.companyMainLayout);
+
+
     }
 
     @Override
@@ -294,8 +316,43 @@ public class CompanyMain extends AppCompatActivity
         }
     }
 
+    private void refreshCompanyDateRange() {
+        if (null == Cache.getCompany().getFinYearEnd()) {
+            Cache.getCompany().setFinYearEnd(new Date());
+        }
+        companyFinRangeTv.setText(Util.FormatDate(Constants.DATE_FORMAT_RANGE, Cache.getCompany()
+                .getFinYearStart(), Cache.getCompany().getFinYearEnd()));
+    }
+
     private void showSnackbarMessage(@NonNull String message) {
         Snackbar.make(companyMainLayout, message, Snackbar.LENGTH_LONG).show();
+    }
+
+    private void showCalendarPickerView(CalendarPickerView.SelectionMode selectionMode) {
+        CalendarPickerView calendarPickerView = (CalendarPickerView) getLayoutInflater().inflate
+                (R.layout.dialog_calendar_picker_view, null, false);
+        AlertDialog dialog = new AlertDialog.Builder(this).setTitle(getString(R.string
+                .title_select_range))
+                .setView(calendarPickerView)
+                .setPositiveButton(R.string
+                        .done, (dialog13, which) -> {
+                    //Handle the done button click
+                    List<Date> dates = calendarPickerView.getSelectedDates();
+                    if (dates.size() > 1) {
+                        Cache.getCompany().setFinYearStart(dates.get(0));
+                        Cache.getCompany().setFinYearEnd(dates.get(dates.size() - 1));
+                        refreshCompanyDateRange();
+                    }
+                }).setNeutralButton(getString(R.string.cancel), (dialog12, which) ->
+                        dialog12.dismiss())
+                .create();
+        dialog.setOnShowListener(dialog1 -> calendarPickerView.fixDialogDimens());
+        Date minDate = new Date(0);
+        Date maxDate = new Date(Calendar.getInstance().getTimeInMillis() + Constants.ONE_DAY);
+        calendarPickerView.init(minDate, maxDate).inMode(selectionMode);
+
+        dialog.show();
+
     }
 
     @SuppressLint("NewApi")
@@ -458,5 +515,7 @@ public class CompanyMain extends AppCompatActivity
             }
             companyMain.showSnackbarMessage(snackBarMsg);
         }
+
+
     }
 }
